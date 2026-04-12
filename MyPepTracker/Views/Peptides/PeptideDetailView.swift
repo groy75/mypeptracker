@@ -4,6 +4,7 @@ import SwiftData
 struct PeptideDetailView: View {
     @Bindable var peptide: Peptide
     @State private var showingReconstitution = false
+    @State private var showingEditVial = false
     @State private var showingLogDose = false
 
     private var recentDoses: [DoseEntry] {
@@ -61,6 +62,12 @@ struct PeptideDetailView: View {
                         .foregroundStyle(AppTheme.textSecondary)
                 }
 
+                if peptide.activeVial != nil {
+                    Button("Edit Vial") {
+                        showingEditVial = true
+                    }
+                }
+
                 Button("Reconstitute New Vial") {
                     showingReconstitution = true
                 }
@@ -110,6 +117,11 @@ struct PeptideDetailView: View {
         }
         .sheet(isPresented: $showingReconstitution) {
             ReconstitutionSheet(peptide: peptide)
+        }
+        .sheet(isPresented: $showingEditVial) {
+            if let vial = peptide.activeVial {
+                ReconstitutionSheet(peptide: peptide, vial: vial)
+            }
         }
         .sheet(isPresented: $showingLogDose) {
             LogDoseSheet(peptide: peptide)

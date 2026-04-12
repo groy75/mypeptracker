@@ -6,10 +6,21 @@ struct ReconstitutionSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     let peptide: Peptide
+    let existingVial: Vial?
 
-    @State private var peptideAmountMg: Double = 5.0
-    @State private var waterVolumeML: Double = 2.0
-    @State private var expiryDays: Int = 30
+    @State private var peptideAmountMg: Double
+    @State private var waterVolumeML: Double
+    @State private var expiryDays: Int
+
+    private var isEditing: Bool { existingVial != nil }
+
+    init(peptide: Peptide, vial: Vial? = nil) {
+        self.peptide = peptide
+        self.existingVial = vial
+        self._peptideAmountMg = State(initialValue: vial?.peptideAmountMg ?? 5.0)
+        self._waterVolumeML = State(initialValue: vial?.waterVolumeML ?? 2.0)
+        self._expiryDays = State(initialValue: vial?.expiryDays ?? 30)
+    }
 
     private var concentration: Double {
         guard waterVolumeML > 0 else { return 0 }
@@ -30,28 +41,28 @@ struct ReconstitutionSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Vial Contents") {
-                    HStack {
-                        Text("Peptide Amount")
-                        Spacer()
-                        TextField("mg", value: $peptideAmountMg, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("mg")
-                            .foregroundStyle(AppTheme.textSecondary)
-                    }
+                Section("Peptide Amount") {
+                    DoseStepperView(
+                        value: $peptideAmountMg,
+                        unit: "mg",
+                        steps: [1, 5, 10, 25],
+                        minimum: 1
+                    )
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .frame(maxWidth: .infinity)
+                }
 
-                    HStack {
-                        Text("BAC Water")
-                        Spacer()
-                        TextField("mL", value: $waterVolumeML, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("mL")
-                            .foregroundStyle(AppTheme.textSecondary)
-                    }
+                Section("BAC Water") {
+                    DoseStepperView(
+                        value: $waterVolumeML,
+                        unit: "mL",
+                        steps: [0.5, 1, 2],
+                        minimum: 0.5
+                    )
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .frame(maxWidth: .infinity)
                 }
 
                 Section("Calculated") {
@@ -69,10 +80,11 @@ struct ReconstitutionSheet: View {
                             .foregroundStyle(AppTheme.textSecondary)
                     }
 
+                    let usedML = existingVial?.totalVolumeUsedML ?? 0
                     let estDoses = concentration > 0
                         ? ConcentrationCalculator.estimatedRemainingDoses(
                             totalVolumeML: waterVolumeML,
-                            usedVolumeML: 0,
+                            usedVolumeML: usedML,
                             doseMcg: peptide.defaultDoseMcg,
                             concentrationMcgPerML: concentration
                         )
@@ -89,7 +101,7 @@ struct ReconstitutionSheet: View {
                     Stepper("Expires after \(expiryDays) days", value: $expiryDays, in: 7...90)
                 }
             }
-            .navigationTitle("New Vial")
+            .navigationTitle(isEditing ? "Edit Vial" : "New Vial")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -104,19 +116,28 @@ struct ReconstitutionSheet: View {
     }
 
     private func saveVial() {
-        for vial in peptide.vials where vial.isActive {
-            vial.isActive = false
+        if let vial = existingVial {
+            // Edit existing
+            vial.peptideAmountMg = peptideAmountMg
+            vial.waterVolumeML = waterVolumeML
+            vial.expiryDays = expiryDays
+            NotificationManager.shared.scheduleVialExpiryWarning(for: peptide, vial: vial)
+        } else {
+            // Create new — deactivate old vials
+            for vial in peptide.vials where vial.isActive {
+                vial.isActive = false
+            }
+
+            let vial = Vial(
+                peptideAmountMg: peptideAmountMg,
+                waterVolumeML: waterVolumeML,
+                expiryDays: expiryDays
+            )
+            vial.peptide = peptide
+            modelContext.insert(vial)
+
+            NotificationManager.shared.scheduleVialExpiryWarning(for: peptide, vial: vial)
         }
-
-        let vial = Vial(
-            peptideAmountMg: peptideAmountMg,
-            waterVolumeML: waterVolumeML,
-            expiryDays: expiryDays
-        )
-        vial.peptide = peptide
-        modelContext.insert(vial)
-
-        NotificationManager.shared.scheduleVialExpiryWarning(for: peptide, vial: vial)
 
         dismiss()
     }
