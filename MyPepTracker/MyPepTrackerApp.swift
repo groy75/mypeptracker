@@ -7,5 +7,6 @@ struct MyPepTrackerApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Peptide.self, Vial.self, DoseEntry.self])
     }
 }
