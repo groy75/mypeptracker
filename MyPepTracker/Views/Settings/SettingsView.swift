@@ -52,6 +52,12 @@ struct SettingsView: View {
                     LabeledContent("Total Doses Logged", value: "\(allDoses.count)")
                     LabeledContent("Vials Reconstituted", value: "\(allVials.count)")
                 }
+
+                Section {
+                    NavigationLink("About MyPepTracker") {
+                        AboutView()
+                    }
+                }
             }
             .navigationTitle("Settings")
             .sheet(isPresented: $showingExportSheet) {
