@@ -22,18 +22,10 @@ struct LogDoseSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    DatePicker("When", selection: $doseDate, in: ...Date(), displayedComponents: [.date, .hourAndMinute])
-
-                    HStack {
-                        Text("Dose")
-                        Spacer()
-                        TextField("mcg", value: $doseMcg, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 100)
-                        Text("mcg")
-                            .foregroundStyle(AppTheme.textSecondary)
-                    }
+                    DoseStepperView(value: $doseMcg)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .frame(maxWidth: .infinity)
 
                     if let vial = peptide.activeVial {
                         let volumeML = ConcentrationCalculator.volumeMLForDose(
@@ -48,6 +40,10 @@ struct LogDoseSheet: View {
                                 .foregroundStyle(AppTheme.textSecondary)
                         }
                     }
+                }
+
+                Section {
+                    DatePicker("When", selection: $doseDate, in: ...Date(), displayedComponents: [.date, .hourAndMinute])
 
                     Picker("Injection Site", selection: $injectionSite) {
                         Text("None").tag(nil as InjectionSite?)

@@ -61,16 +61,13 @@ struct AddPeptideView: View {
 
                 Section("Peptide Info") {
                     TextField("Name", text: $name)
-                    HStack {
-                        Text("Default Dose")
-                        Spacer()
-                        TextField("mcg", value: $defaultDoseMcg, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 100)
-                        Text("mcg")
-                            .foregroundStyle(AppTheme.textSecondary)
-                    }
+                }
+
+                Section("Default Dose") {
+                    DoseStepperView(value: $defaultDoseMcg)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .frame(maxWidth: .infinity)
                 }
 
                 Section("Schedule") {

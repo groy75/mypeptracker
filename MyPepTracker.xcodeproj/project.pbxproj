@@ -21,6 +21,7 @@
 		9D99D907DEE9148B66EB0560 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F191B29147AD98ABDCA19E9 /* Peptide.swift */; };
 		A0BF34117FE818BAFC3FCDD1 /* ReconstitutionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ECC4113749F474F47E77A8 /* ReconstitutionSheet.swift */; };
 		A13B7D5CDAE4A508176D42FB /* ConcentrationCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71AA9B61E4EBF37C8CA6F56C /* ConcentrationCalculator.swift */; };
+		A40C5B28CD80F4137221F670 /* DoseStepperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF431A6421D9AFAEE3A68793 /* DoseStepperView.swift */; };
 		A4485427DB57C8357C21E879 /* VialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9440C9FBE8980AEE280E66D /* VialTests.swift */; };
 		B31750A11BB1E2F890C845C7 /* PeptideListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9F57C6589006BF91933039 /* PeptideListView.swift */; };
 		B4D288B23DA6200A1D3655E5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E0B8EAF0BD0CDFB22ED08 /* ContentView.swift */; };
@@ -73,6 +74,7 @@
 		9C7FCA9C8C55C0CD522B4FA2 /* Vial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vial.swift; sourceTree = "<group>"; };
 		A3D233B90C406D254DF1E697 /* PeptideDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptideDetailView.swift; sourceTree = "<group>"; };
 		AD9B581FC5A23A2E43E00B30 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		BF431A6421D9AFAEE3A68793 /* DoseStepperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseStepperView.swift; sourceTree = "<group>"; };
 		C0B089C108229661247B2648 /* PeptideCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptideCardView.swift; sourceTree = "<group>"; };
 		C0D105B935C290C357603283 /* MyPepTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPepTrackerApp.swift; sourceTree = "<group>"; };
 		C5860419A80D895EE8346617 /* PeptidePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptidePreset.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 		038F6C9E8389D2D02D1B68A8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F753618ADBFC7A7935A3F182 /* Components */,
 				0356095ABF268082DBEE65FC /* History */,
 				50C821DB1DBC862935B09BFA /* Peptides */,
 				C4851944C85BED85F7867A5F /* Settings */,
@@ -216,6 +219,14 @@
 			);
 			sourceTree = "<group>";
 		};
+		F753618ADBFC7A7935A3F182 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				BF431A6421D9AFAEE3A68793 /* DoseStepperView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -328,6 +339,7 @@
 				F4CC0527142D6D8991FCD7F0 /* DoseEntry.swift in Sources */,
 				EF5540B861054AA947D84D02 /* DoseEntryRow.swift in Sources */,
 				CC31BCD0BC5CAEA6C18D9A07 /* DoseFrequency.swift in Sources */,
+				A40C5B28CD80F4137221F670 /* DoseStepperView.swift in Sources */,
 				D2AE5F45C97683158DCF5495 /* HistoryView.swift in Sources */,
 				8AFB133CC14757D4EC779450 /* InjectionSite.swift in Sources */,
 				9C88344974A0B77CC65D7D6D /* LogDoseSheet.swift in Sources */,
