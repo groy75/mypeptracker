@@ -21,13 +21,11 @@ struct LogDoseSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Date & Time") {
+                Section {
                     DatePicker("When", selection: $doseDate, in: ...Date(), displayedComponents: [.date, .hourAndMinute])
-                }
 
-                Section("Dose") {
                     HStack {
-                        Text("Amount")
+                        Text("Dose")
                         Spacer()
                         TextField("mcg", value: $doseMcg, format: .number)
                             .keyboardType(.decimalPad)
@@ -50,20 +48,16 @@ struct LogDoseSheet: View {
                                 .foregroundStyle(AppTheme.textSecondary)
                         }
                     }
-                }
 
-                Section("Injection Site") {
-                    Picker("Site", selection: $injectionSite) {
+                    Picker("Injection Site", selection: $injectionSite) {
                         Text("None").tag(nil as InjectionSite?)
                         ForEach(InjectionSite.allCases, id: \.self) { site in
                             Text(site.displayName).tag(site as InjectionSite?)
                         }
                     }
-                }
 
-                Section("Notes") {
-                    TextField("Optional observations...", text: $notes, axis: .vertical)
-                        .lineLimit(3...6)
+                    TextField("Notes (optional)", text: $notes, axis: .vertical)
+                        .lineLimit(2...4)
                 }
             }
             .navigationTitle("Log \(peptide.name)")
