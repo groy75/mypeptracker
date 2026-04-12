@@ -1,15 +1,15 @@
 import SwiftUI
 
 enum AppTheme {
-    // MARK: - Colors
-    static let background = Color(red: 0.94, green: 0.97, blue: 1.0)       // #f0f9ff
-    static let surface = Color.white
-    static let primary = Color(red: 0.23, green: 0.51, blue: 0.96)         // #3b82f6
-    static let success = Color(red: 0.06, green: 0.73, blue: 0.51)         // #10b981
-    static let warning = Color(red: 0.96, green: 0.62, blue: 0.04)         // #f59e0b
-    static let danger = Color(red: 0.94, green: 0.27, blue: 0.27)          // #ef4444
-    static let textPrimary = Color(red: 0.12, green: 0.16, blue: 0.21)     // #1e293b
-    static let textSecondary = Color(red: 0.39, green: 0.45, blue: 0.55)   // #64748b
+    // MARK: - Colors (adaptive light/dark)
+    static let background = Color(.systemGroupedBackground)
+    static let surface = Color(.secondarySystemGroupedBackground)
+    static let primary = Color(red: 0.20, green: 0.45, blue: 0.90)         // #3373E6 - deeper blue
+    static let success = Color(red: 0.05, green: 0.65, blue: 0.45)         // #0DA673
+    static let warning = Color(red: 0.90, green: 0.55, blue: 0.0)          // #E68C00
+    static let danger = Color(red: 0.88, green: 0.22, blue: 0.22)          // #E03838
+    static let textPrimary = Color(.label)
+    static let textSecondary = Color(.secondaryLabel)
 
     // MARK: - Spacing
     static let paddingSmall: CGFloat = 8
