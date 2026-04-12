@@ -36,6 +36,7 @@ struct DoseStepperView: View {
                         .foregroundStyle(value <= minimum ? AppTheme.textSecondary.opacity(0.3) : AppTheme.primary)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                .buttonStyle(.plain)
                 .disabled(value <= minimum)
 
                 // Step size selector
@@ -52,6 +53,7 @@ struct DoseStepperView: View {
                                 .foregroundStyle(selectedStep == step ? .white : AppTheme.textSecondary)
                                 .clipShape(RoundedRectangle(cornerRadius: 6))
                         }
+                        .buttonStyle(.plain)
                     }
                 }
 
@@ -67,6 +69,7 @@ struct DoseStepperView: View {
                         .foregroundStyle(AppTheme.primary)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(.vertical, 8)
