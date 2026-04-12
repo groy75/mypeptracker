@@ -39,7 +39,7 @@ final class NotificationManager: @unchecked Sendable {
 
     static func nextDoseDate(
         scheduleType: ScheduleType,
-        frequencyHours: Double,
+        frequency: DoseFrequency,
         lastDoseTimestamp: Date?,
         scheduledTime: Date?,
         scheduleDays: [Int]?
@@ -47,7 +47,7 @@ final class NotificationManager: @unchecked Sendable {
         switch scheduleType {
         case .afterDose:
             guard let lastDose = lastDoseTimestamp else { return nil }
-            return lastDose.addingTimeInterval(frequencyHours * 3600)
+            return lastDose.addingTimeInterval(frequency.hours * 3600)
 
         case .fixedRecurring:
             guard let time = scheduledTime else { return nil }
@@ -90,7 +90,7 @@ final class NotificationManager: @unchecked Sendable {
 
         guard let nextDate = Self.nextDoseDate(
             scheduleType: peptide.scheduleType,
-            frequencyHours: peptide.frequencyHours,
+            frequency: peptide.frequency,
             lastDoseTimestamp: peptide.lastDose?.timestamp,
             scheduledTime: peptide.scheduledTime,
             scheduleDays: peptide.scheduleDays
@@ -118,7 +118,7 @@ final class NotificationManager: @unchecked Sendable {
 
         guard let nextDate = Self.nextDoseDate(
             scheduleType: peptide.scheduleType,
-            frequencyHours: peptide.frequencyHours,
+            frequency: peptide.frequency,
             lastDoseTimestamp: peptide.lastDose?.timestamp,
             scheduledTime: peptide.scheduledTime,
             scheduleDays: peptide.scheduleDays

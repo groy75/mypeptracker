@@ -27,7 +27,7 @@ struct NotificationManagerTests {
         let lastDose = Date(timeIntervalSince1970: 1_700_000_000)
         let next = NotificationManager.nextDoseDate(
             scheduleType: .afterDose,
-            frequencyHours: 48,
+            frequency: .everyOtherDay,
             lastDoseTimestamp: lastDose,
             scheduledTime: nil,
             scheduleDays: nil
@@ -39,7 +39,7 @@ struct NotificationManagerTests {
     @Test func nextDoseDateReturnsNilForAfterDoseWithNoHistory() {
         let next = NotificationManager.nextDoseDate(
             scheduleType: .afterDose,
-            frequencyHours: 48,
+            frequency: .everyOtherDay,
             lastDoseTimestamp: nil,
             scheduledTime: nil,
             scheduleDays: nil

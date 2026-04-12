@@ -15,7 +15,7 @@ struct PeptidePresetTests {
             #expect(preset.typicalDoseMcgLow > 0)
             #expect(preset.typicalDoseMcgHigh >= preset.typicalDoseMcgLow)
             #expect(preset.typicalVialSizeMg > 0)
-            #expect(preset.commonFrequencyHours > 0)
+            #expect(!preset.commonFrequency.isEmpty)
             #expect(!preset.category.isEmpty)
         }
     }
@@ -26,6 +26,14 @@ struct PeptidePresetTests {
         #expect(grouped.keys.count > 0)
         for (_, items) in grouped {
             #expect(items.count > 0)
+        }
+    }
+
+    @Test func presetFrequencyMapsToEnum() throws {
+        let presets = try PeptidePreset.loadAll()
+        for preset in presets {
+            let freq = preset.doseFrequency
+            #expect(freq.hours > 0)
         }
     }
 }

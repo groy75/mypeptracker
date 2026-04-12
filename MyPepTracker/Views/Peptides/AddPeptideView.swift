@@ -8,13 +8,18 @@ struct AddPeptideView: View {
     @State private var name = ""
     @State private var defaultDoseMcg: Double = 250
     @State private var scheduleType: ScheduleType = .fixedRecurring
-    @State private var frequencyHours: Double = 24
+    @State private var frequency: DoseFrequency = .daily
     @State private var scheduledTime = Calendar.current.date(
         bySettingHour: 8, minute: 0, second: 0, of: Date()
     )!
     @State private var notes = ""
     @State private var selectedPreset: PeptidePreset?
     @State private var showPresets = true
+
+    // Cycle tracking
+    @State private var enableCycle = false
+    @State private var cycleStartDate = Date()
+    @State private var cycleLengthWeeks = 8
 
     private var presets: [PeptidePreset] {
         (try? PeptidePreset.loadAll()) ?? []
@@ -38,7 +43,7 @@ struct AddPeptideView: View {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(preset.name)
                                                 .foregroundStyle(AppTheme.textPrimary)
-                                            Text("\(Int(preset.typicalDoseMcgLow))–\(Int(preset.typicalDoseMcgHigh))mcg • \(Int(preset.commonFrequencyHours))hr")
+                                            Text("\(Int(preset.typicalDoseMcgLow))–\(Int(preset.typicalDoseMcgHigh))mcg • \(preset.doseFrequency.displayName)")
                                                 .font(.caption)
                                                 .foregroundStyle(AppTheme.textSecondary)
                                         }
@@ -75,19 +80,23 @@ struct AddPeptideView: View {
                         }
                     }
 
-                    HStack {
-                        Text("Every")
-                        Spacer()
-                        TextField("hours", value: $frequencyHours, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("hours")
-                            .foregroundStyle(AppTheme.textSecondary)
+                    Picker("Frequency", selection: $frequency) {
+                        ForEach(DoseFrequency.allCases, id: \.self) { freq in
+                            Text(freq.displayName).tag(freq)
+                        }
                     }
 
                     if scheduleType == .fixedRecurring {
                         DatePicker("Time of Day", selection: $scheduledTime, displayedComponents: .hourAndMinute)
+                    }
+                }
+
+                Section("Cycle Tracking") {
+                    Toggle("Track a Cycle", isOn: $enableCycle)
+
+                    if enableCycle {
+                        DatePicker("Cycle Start", selection: $cycleStartDate, displayedComponents: .date)
+                        Stepper("Length: \(cycleLengthWeeks) weeks", value: $cycleLengthWeeks, in: 1...52)
                     }
                 }
 
@@ -114,7 +123,11 @@ struct AddPeptideView: View {
     private func applyPreset(_ preset: PeptidePreset) {
         name = preset.name
         defaultDoseMcg = preset.typicalDoseMcgLow
-        frequencyHours = preset.commonFrequencyHours
+        frequency = preset.doseFrequency
+        if let weeks = preset.typicalCycleWeeks {
+            enableCycle = true
+            cycleLengthWeeks = weeks
+        }
         showPresets = false
         selectedPreset = preset
     }
@@ -124,9 +137,11 @@ struct AddPeptideView: View {
             name: name,
             defaultDoseMcg: defaultDoseMcg,
             scheduleType: scheduleType,
-            frequencyHours: frequencyHours,
+            frequency: frequency,
             scheduledTime: scheduleType == .fixedRecurring ? scheduledTime : nil,
-            notes: notes.isEmpty ? nil : notes
+            notes: notes.isEmpty ? nil : notes,
+            cycleStartDate: enableCycle ? cycleStartDate : nil,
+            cycleLengthWeeks: enableCycle ? cycleLengthWeeks : nil
         )
         modelContext.insert(peptide)
 

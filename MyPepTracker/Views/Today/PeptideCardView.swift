@@ -7,7 +7,7 @@ struct PeptideCardView: View {
     private var nextDoseDate: Date? {
         NotificationManager.nextDoseDate(
             scheduleType: peptide.scheduleType,
-            frequencyHours: peptide.frequencyHours,
+            frequency: peptide.frequency,
             lastDoseTimestamp: peptide.lastDose?.timestamp,
             scheduledTime: peptide.scheduledTime,
             scheduleDays: peptide.scheduleDays

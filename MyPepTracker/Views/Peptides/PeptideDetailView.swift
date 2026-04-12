@@ -17,9 +17,35 @@ struct PeptideDetailView: View {
         List {
             Section("Schedule") {
                 LabeledContent("Type", value: peptide.scheduleType.displayName)
-                LabeledContent("Frequency", value: "\(Int(peptide.frequencyHours)) hours")
+                LabeledContent("Frequency", value: peptide.frequency.displayName)
                 LabeledContent("Default Dose", value: "\(Int(peptide.defaultDoseMcg)) mcg")
                 Toggle("Active", isOn: $peptide.isActive)
+            }
+
+            if peptide.cycleStartDate != nil {
+                Section("Cycle") {
+                    if let progress = peptide.cycleProgress {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Text("Progress")
+                                Spacer()
+                                Text("\(Int(progress * 100))%")
+                                    .foregroundStyle(AppTheme.textSecondary)
+                            }
+                            ProgressView(value: progress)
+                                .tint(AppTheme.primary)
+                        }
+                    }
+                    if let days = peptide.cycleDaysRemaining {
+                        LabeledContent("Days Remaining", value: "\(days)")
+                    }
+                    if let end = peptide.cycleEndDate {
+                        LabeledContent("Cycle Ends", value: end, format: .dateTime.month().day().year())
+                    }
+                    if let weeks = peptide.cycleLengthWeeks {
+                        LabeledContent("Cycle Length", value: "\(weeks) weeks")
+                    }
+                }
             }
 
             Section("Active Vial") {

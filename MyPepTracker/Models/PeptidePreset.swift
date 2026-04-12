@@ -6,8 +6,13 @@ struct PeptidePreset: Codable, Identifiable {
     let typicalDoseMcgLow: Double
     let typicalDoseMcgHigh: Double
     let typicalVialSizeMg: Double
-    let commonFrequencyHours: Double
+    let commonFrequency: String
     let category: String
+    let typicalCycleWeeks: Int?
+
+    var doseFrequency: DoseFrequency {
+        DoseFrequency(rawValue: commonFrequency) ?? .daily
+    }
 
     static func loadAll() throws -> [PeptidePreset] {
         guard let url = Bundle.main.url(forResource: "peptide-presets", withExtension: "json") else {

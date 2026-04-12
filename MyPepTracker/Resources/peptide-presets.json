@@ -4,87 +4,251 @@
     "typicalDoseMcgLow": 200,
     "typicalDoseMcgHigh": 500,
     "typicalVialSizeMg": 5,
-    "commonFrequencyHours": 24,
-    "category": "Healing"
+    "commonFrequency": "daily",
+    "category": "Healing",
+    "typicalCycleWeeks": 8
   },
   {
     "name": "TB-500",
     "typicalDoseMcgLow": 2000,
     "typicalDoseMcgHigh": 5000,
     "typicalVialSizeMg": 5,
-    "commonFrequencyHours": 168,
-    "category": "Healing"
+    "commonFrequency": "twiceWeekly",
+    "category": "Healing",
+    "typicalCycleWeeks": 6
+  },
+  {
+    "name": "GHK-Cu",
+    "typicalDoseMcgLow": 1000,
+    "typicalDoseMcgHigh": 3000,
+    "typicalVialSizeMg": 50,
+    "commonFrequency": "daily",
+    "category": "Healing",
+    "typicalCycleWeeks": 12
   },
   {
     "name": "Semaglutide",
     "typicalDoseMcgLow": 250,
-    "typicalDoseMcgHigh": 2500,
+    "typicalDoseMcgHigh": 2400,
     "typicalVialSizeMg": 5,
-    "commonFrequencyHours": 168,
-    "category": "Weight Management"
+    "commonFrequency": "weekly",
+    "category": "Weight Management",
+    "typicalCycleWeeks": null
   },
   {
     "name": "Tirzepatide",
     "typicalDoseMcgLow": 2500,
     "typicalDoseMcgHigh": 15000,
     "typicalVialSizeMg": 10,
-    "commonFrequencyHours": 168,
-    "category": "Weight Management"
+    "commonFrequency": "weekly",
+    "category": "Weight Management",
+    "typicalCycleWeeks": null
   },
   {
     "name": "Retatrutide",
-    "typicalDoseMcgLow": 500,
+    "typicalDoseMcgLow": 1000,
     "typicalDoseMcgHigh": 12000,
     "typicalVialSizeMg": 10,
-    "commonFrequencyHours": 168,
-    "category": "Weight Management"
+    "commonFrequency": "weekly",
+    "category": "Weight Management",
+    "typicalCycleWeeks": null
+  },
+  {
+    "name": "Liraglutide",
+    "typicalDoseMcgLow": 600,
+    "typicalDoseMcgHigh": 3000,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "Weight Management",
+    "typicalCycleWeeks": null
+  },
+  {
+    "name": "AOD-9604",
+    "typicalDoseMcgLow": 250,
+    "typicalDoseMcgHigh": 500,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "Weight Management",
+    "typicalCycleWeeks": 12
+  },
+  {
+    "name": "5-Amino-1MQ",
+    "typicalDoseMcgLow": 50000,
+    "typicalDoseMcgHigh": 100000,
+    "typicalVialSizeMg": 50,
+    "commonFrequency": "daily",
+    "category": "Weight Management",
+    "typicalCycleWeeks": 8
+  },
+  {
+    "name": "MOTS-c",
+    "typicalDoseMcgLow": 5000,
+    "typicalDoseMcgHigh": 10000,
+    "typicalVialSizeMg": 10,
+    "commonFrequency": "threeTimesWeekly",
+    "category": "Weight Management",
+    "typicalCycleWeeks": 8
   },
   {
     "name": "CJC-1295 / Ipamorelin",
     "typicalDoseMcgLow": 100,
     "typicalDoseMcgHigh": 300,
     "typicalVialSizeMg": 5,
-    "commonFrequencyHours": 24,
-    "category": "GH Secretagogue"
+    "commonFrequency": "daily",
+    "category": "GH Secretagogue",
+    "typicalCycleWeeks": 12
+  },
+  {
+    "name": "Ipamorelin",
+    "typicalDoseMcgLow": 100,
+    "typicalDoseMcgHigh": 300,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "GH Secretagogue",
+    "typicalCycleWeeks": 12
+  },
+  {
+    "name": "Sermorelin",
+    "typicalDoseMcgLow": 200,
+    "typicalDoseMcgHigh": 500,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "GH Secretagogue",
+    "typicalCycleWeeks": 12
   },
   {
     "name": "Tesamorelin",
     "typicalDoseMcgLow": 1000,
     "typicalDoseMcgHigh": 2000,
     "typicalVialSizeMg": 5,
-    "commonFrequencyHours": 24,
-    "category": "GH Secretagogue"
+    "commonFrequency": "daily",
+    "category": "GH Secretagogue",
+    "typicalCycleWeeks": 12
   },
   {
     "name": "MK-677 (Ibutamoren)",
     "typicalDoseMcgLow": 10000,
     "typicalDoseMcgHigh": 25000,
     "typicalVialSizeMg": 25,
-    "commonFrequencyHours": 24,
-    "category": "GH Secretagogue"
+    "commonFrequency": "daily",
+    "category": "GH Secretagogue",
+    "typicalCycleWeeks": 12
   },
   {
-    "name": "PT-141",
+    "name": "HGH Fragment 176-191",
+    "typicalDoseMcgLow": 250,
+    "typicalDoseMcgHigh": 500,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "GH Secretagogue",
+    "typicalCycleWeeks": 12
+  },
+  {
+    "name": "PT-141 (Bremelanotide)",
     "typicalDoseMcgLow": 500,
     "typicalDoseMcgHigh": 2000,
     "typicalVialSizeMg": 10,
-    "commonFrequencyHours": 72,
-    "category": "Other"
+    "commonFrequency": "weekly",
+    "category": "Sexual Health",
+    "typicalCycleWeeks": null
+  },
+  {
+    "name": "Kisspeptin",
+    "typicalDoseMcgLow": 100,
+    "typicalDoseMcgHigh": 500,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "Sexual Health",
+    "typicalCycleWeeks": 8
+  },
+  {
+    "name": "Selank",
+    "typicalDoseMcgLow": 200,
+    "typicalDoseMcgHigh": 400,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "Cognitive",
+    "typicalCycleWeeks": 4
+  },
+  {
+    "name": "Semax",
+    "typicalDoseMcgLow": 200,
+    "typicalDoseMcgHigh": 600,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "Cognitive",
+    "typicalCycleWeeks": 4
+  },
+  {
+    "name": "DSIP",
+    "typicalDoseMcgLow": 100,
+    "typicalDoseMcgHigh": 300,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "Sleep",
+    "typicalCycleWeeks": 4
+  },
+  {
+    "name": "Epitalon",
+    "typicalDoseMcgLow": 5000,
+    "typicalDoseMcgHigh": 10000,
+    "typicalVialSizeMg": 10,
+    "commonFrequency": "daily",
+    "category": "Anti-Aging",
+    "typicalCycleWeeks": 2
+  },
+  {
+    "name": "SS-31 (Elamipretide)",
+    "typicalDoseMcgLow": 4000,
+    "typicalDoseMcgHigh": 40000,
+    "typicalVialSizeMg": 50,
+    "commonFrequency": "daily",
+    "category": "Anti-Aging",
+    "typicalCycleWeeks": 4
+  },
+  {
+    "name": "NAD+",
+    "typicalDoseMcgLow": 50000,
+    "typicalDoseMcgHigh": 100000,
+    "typicalVialSizeMg": 100,
+    "commonFrequency": "twiceWeekly",
+    "category": "Anti-Aging",
+    "typicalCycleWeeks": null
+  },
+  {
+    "name": "Thymosin Alpha-1",
+    "typicalDoseMcgLow": 1600,
+    "typicalDoseMcgHigh": 3200,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "twiceWeekly",
+    "category": "Immune",
+    "typicalCycleWeeks": 8
+  },
+  {
+    "name": "LL-37",
+    "typicalDoseMcgLow": 50,
+    "typicalDoseMcgHigh": 100,
+    "typicalVialSizeMg": 5,
+    "commonFrequency": "daily",
+    "category": "Immune",
+    "typicalCycleWeeks": 4
   },
   {
     "name": "KPV",
     "typicalDoseMcgLow": 200,
-    "typicalDoseMcgHigh": 600,
+    "typicalDoseMcgHigh": 500,
     "typicalVialSizeMg": 5,
-    "commonFrequencyHours": 24,
-    "category": "Anti-Inflammatory"
+    "commonFrequency": "daily",
+    "category": "Anti-Inflammatory",
+    "typicalCycleWeeks": 8
   },
   {
-    "name": "GHK-Cu",
-    "typicalDoseMcgLow": 100,
-    "typicalDoseMcgHigh": 200,
-    "typicalVialSizeMg": 5,
-    "commonFrequencyHours": 24,
-    "category": "Anti-Aging"
+    "name": "Melanotan II",
+    "typicalDoseMcgLow": 250,
+    "typicalDoseMcgHigh": 500,
+    "typicalVialSizeMg": 10,
+    "commonFrequency": "daily",
+    "category": "Tanning",
+    "typicalCycleWeeks": 4
   }
 ]
