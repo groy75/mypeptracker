@@ -106,7 +106,6 @@ struct PeptideDetailView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("Log Dose") { showingLogDose = true }
-                    .disabled(peptide.activeVial == nil)
             }
         }
         .sheet(isPresented: $showingReconstitution) {

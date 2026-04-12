@@ -8,6 +8,7 @@ struct LogDoseSheet: View {
     let peptide: Peptide
 
     @State private var doseMcg: Double
+    @State private var doseDate = Date()
     @State private var injectionSite: InjectionSite?
     @State private var notes: String = ""
 
@@ -20,6 +21,10 @@ struct LogDoseSheet: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Date & Time") {
+                    DatePicker("When", selection: $doseDate, in: ...Date(), displayedComponents: [.date, .hourAndMinute])
+                }
+
                 Section("Dose") {
                     HStack {
                         Text("Amount")
@@ -70,21 +75,26 @@ struct LogDoseSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Log") { logDose() }
                         .fontWeight(.semibold)
-                        .disabled(peptide.activeVial == nil)
                 }
             }
         }
     }
 
     private func logDose() {
-        guard let vial = peptide.activeVial else { return }
+        let vial = peptide.activeVial
 
-        let volumeML = ConcentrationCalculator.volumeMLForDose(
-            doseMcg: doseMcg,
-            concentrationMcgPerML: vial.concentrationMcgPerML
-        )
+        let volumeML: Double
+        if let vial {
+            volumeML = ConcentrationCalculator.volumeMLForDose(
+                doseMcg: doseMcg,
+                concentrationMcgPerML: vial.concentrationMcgPerML
+            )
+        } else {
+            volumeML = 0
+        }
 
         let entry = DoseEntry(
+            timestamp: doseDate,
             doseMcg: doseMcg,
             unitsInjectedML: volumeML,
             injectionSite: injectionSite,
@@ -93,16 +103,17 @@ struct LogDoseSheet: View {
         entry.peptide = peptide
         entry.vial = vial
 
-        vial.totalVolumeUsedML += volumeML
+        if let vial {
+            vial.totalVolumeUsedML += volumeML
+            let remaining = vial.estimatedRemainingDoses(forDoseMcg: peptide.defaultDoseMcg)
+            NotificationManager.shared.scheduleVialLowWarning(for: peptide, remainingDoses: remaining)
+        }
 
         modelContext.insert(entry)
 
         let manager = NotificationManager.shared
         manager.scheduleDoseReminder(for: peptide)
         manager.scheduleOverdueReminder(for: peptide)
-
-        let remaining = vial.estimatedRemainingDoses(forDoseMcg: peptide.defaultDoseMcg)
-        manager.scheduleVialLowWarning(for: peptide, remainingDoses: remaining)
 
         dismiss()
     }
