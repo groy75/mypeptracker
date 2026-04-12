@@ -1,0 +1,422 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4A41AE1D6BB125BD74909165 /* MyPepTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DC584CD04CF9002461B159 /* MyPepTrackerTests.swift */; };
+		6AA0934573AE3873FD490892 /* MyPepTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D105B935C290C357603283 /* MyPepTrackerApp.swift */; };
+		B4D288B23DA6200A1D3655E5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E0B8EAF0BD0CDFB22ED08 /* ContentView.swift */; };
+		FD794DFF7B2D88623A83E11B /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178A306A1886C715EF51B0C8 /* AppTheme.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2CC657A03E25A1F804C8B1BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5E681A79C578A461902004A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 235C243B259E26EDC2409DD5;
+			remoteInfo = MyPepTracker;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		178A306A1886C715EF51B0C8 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		204E1C4E2FB245D90E7DF24F /* MyPepTrackerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MyPepTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		482B308AB0857A52C0B902BF /* MyPepTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MyPepTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F4E0B8EAF0BD0CDFB22ED08 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		94DC584CD04CF9002461B159 /* MyPepTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPepTrackerTests.swift; sourceTree = "<group>"; };
+		C0D105B935C290C357603283 /* MyPepTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPepTrackerApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0C3E6108779968AF9E0F774F /* MyPepTracker */ = {
+			isa = PBXGroup;
+			children = (
+				5F4E0B8EAF0BD0CDFB22ED08 /* ContentView.swift */,
+				C0D105B935C290C357603283 /* MyPepTrackerApp.swift */,
+				409495D2B81A9FDE0C561682 /* Theme */,
+			);
+			path = MyPepTracker;
+			sourceTree = "<group>";
+		};
+		409495D2B81A9FDE0C561682 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				178A306A1886C715EF51B0C8 /* AppTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		4F2A35BA2CC8168E4020A216 /* MyPepTrackerTests */ = {
+			isa = PBXGroup;
+			children = (
+				94DC584CD04CF9002461B159 /* MyPepTrackerTests.swift */,
+			);
+			path = MyPepTrackerTests;
+			sourceTree = "<group>";
+		};
+		64FA592F0139E6381D0C857F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				482B308AB0857A52C0B902BF /* MyPepTracker.app */,
+				204E1C4E2FB245D90E7DF24F /* MyPepTrackerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F6D27E077DFACED6B5C3F08E = {
+			isa = PBXGroup;
+			children = (
+				0C3E6108779968AF9E0F774F /* MyPepTracker */,
+				4F2A35BA2CC8168E4020A216 /* MyPepTrackerTests */,
+				64FA592F0139E6381D0C857F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		"TEMP_BC2B3028-82A4-40BE-A55B-717E4271F41A" /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		235C243B259E26EDC2409DD5 /* MyPepTracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8E205F4EE72E52DAFBCD9E4D /* Build configuration list for PBXNativeTarget "MyPepTracker" */;
+			buildPhases = (
+				A3D7F8920A0F6D333665E74E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyPepTracker;
+			packageProductDependencies = (
+			);
+			productName = MyPepTracker;
+			productReference = 482B308AB0857A52C0B902BF /* MyPepTracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F3E6AF2F9F1F59833AC96C27 /* MyPepTrackerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF175D83C2933ACC8D14966B /* Build configuration list for PBXNativeTarget "MyPepTrackerTests" */;
+			buildPhases = (
+				9A2FAFB988DB3185AC88CD32 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DFCF86EAED38227048E0480C /* PBXTargetDependency */,
+			);
+			name = MyPepTrackerTests;
+			packageProductDependencies = (
+			);
+			productName = MyPepTrackerTests;
+			productReference = 204E1C4E2FB245D90E7DF24F /* MyPepTrackerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A5E681A79C578A461902004A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					235C243B259E26EDC2409DD5 = {
+						DevelopmentTeam = "";
+					};
+					F3E6AF2F9F1F59833AC96C27 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 00218351E8AED6830C885CD5 /* Build configuration list for PBXProject "MyPepTracker" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F6D27E077DFACED6B5C3F08E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 64FA592F0139E6381D0C857F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				235C243B259E26EDC2409DD5 /* MyPepTracker */,
+				F3E6AF2F9F1F59833AC96C27 /* MyPepTrackerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9A2FAFB988DB3185AC88CD32 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A41AE1D6BB125BD74909165 /* MyPepTrackerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A3D7F8920A0F6D333665E74E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD794DFF7B2D88623A83E11B /* AppTheme.swift in Sources */,
+				B4D288B23DA6200A1D3655E5 /* ContentView.swift in Sources */,
+				6AA0934573AE3873FD490892 /* MyPepTrackerApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DFCF86EAED38227048E0480C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 235C243B259E26EDC2409DD5 /* MyPepTracker */;
+			targetProxy = 2CC657A03E25A1F804C8B1BD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		292CADF7B776C614F75EA116 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = MyPepTracker;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.greg.roy.MyPepTracker;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3479E7DD67C708DC6F468205 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.greg.roy.MyPepTrackerTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyPepTracker.app/MyPepTracker";
+			};
+			name = Release;
+		};
+		5DC90C919BBDD9CA7B5CCF18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = MyPepTracker;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.greg.roy.MyPepTracker;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8D21C3B3C3E20A3DCF024B52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.greg.roy.MyPepTrackerTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyPepTracker.app/MyPepTracker";
+			};
+			name = Debug;
+		};
+		8E22DC98AF439D231E310A9B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		AE1235EB745D9C0332322D32 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		00218351E8AED6830C885CD5 /* Build configuration list for PBXProject "MyPepTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8E22DC98AF439D231E310A9B /* Debug */,
+				AE1235EB745D9C0332322D32 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8E205F4EE72E52DAFBCD9E4D /* Build configuration list for PBXNativeTarget "MyPepTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DC90C919BBDD9CA7B5CCF18 /* Debug */,
+				292CADF7B776C614F75EA116 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DF175D83C2933ACC8D14966B /* Build configuration list for PBXNativeTarget "MyPepTrackerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D21C3B3C3E20A3DCF024B52 /* Debug */,
+				3479E7DD67C708DC6F468205 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A5E681A79C578A461902004A /* Project object */;
+}
