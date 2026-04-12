@@ -1,0 +1,82 @@
+[
+  {
+    "name": "BPC-157",
+    "typicalDoseMcgLow": 200,
+    "typicalDoseMcgHigh": 500,
+    "typicalVialSizeMg": 5,
+    "commonFrequencyHours": 24,
+    "category": "Healing"
+  },
+  {
+    "name": "TB-500",
+    "typicalDoseMcgLow": 2000,
+    "typicalDoseMcgHigh": 5000,
+    "typicalVialSizeMg": 5,
+    "commonFrequencyHours": 168,
+    "category": "Healing"
+  },
+  {
+    "name": "Semaglutide",
+    "typicalDoseMcgLow": 250,
+    "typicalDoseMcgHigh": 2500,
+    "typicalVialSizeMg": 5,
+    "commonFrequencyHours": 168,
+    "category": "Weight Management"
+  },
+  {
+    "name": "Tirzepatide",
+    "typicalDoseMcgLow": 2500,
+    "typicalDoseMcgHigh": 15000,
+    "typicalVialSizeMg": 10,
+    "commonFrequencyHours": 168,
+    "category": "Weight Management"
+  },
+  {
+    "name": "CJC-1295 / Ipamorelin",
+    "typicalDoseMcgLow": 100,
+    "typicalDoseMcgHigh": 300,
+    "typicalVialSizeMg": 5,
+    "commonFrequencyHours": 24,
+    "category": "GH Secretagogue"
+  },
+  {
+    "name": "Tesamorelin",
+    "typicalDoseMcgLow": 1000,
+    "typicalDoseMcgHigh": 2000,
+    "typicalVialSizeMg": 5,
+    "commonFrequencyHours": 24,
+    "category": "GH Secretagogue"
+  },
+  {
+    "name": "MK-677 (Ibutamoren)",
+    "typicalDoseMcgLow": 10000,
+    "typicalDoseMcgHigh": 25000,
+    "typicalVialSizeMg": 25,
+    "commonFrequencyHours": 24,
+    "category": "GH Secretagogue"
+  },
+  {
+    "name": "PT-141",
+    "typicalDoseMcgLow": 500,
+    "typicalDoseMcgHigh": 2000,
+    "typicalVialSizeMg": 10,
+    "commonFrequencyHours": 72,
+    "category": "Other"
+  },
+  {
+    "name": "KPV",
+    "typicalDoseMcgLow": 200,
+    "typicalDoseMcgHigh": 600,
+    "typicalVialSizeMg": 5,
+    "commonFrequencyHours": 24,
+    "category": "Anti-Inflammatory"
+  },
+  {
+    "name": "GHK-Cu",
+    "typicalDoseMcgLow": 100,
+    "typicalDoseMcgHigh": 200,
+    "typicalVialSizeMg": 5,
+    "commonFrequencyHours": 24,
+    "category": "Anti-Aging"
+  }
+]
