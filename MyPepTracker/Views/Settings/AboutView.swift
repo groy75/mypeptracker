@@ -25,7 +25,7 @@ struct AboutView: View {
 
             // Feedback
             Section("Feedback") {
-                Link(destination: URL(string: "mailto:greg.roy@metricaid.com?subject=MyPepTracker%20Feedback")!) {
+                Link(destination: URL(string: "mailto:greg@gregsplace.cc?subject=MyPepTracker%20Feedback")!) {
                     Label("Email the Developer", systemImage: "envelope.fill")
                 }
             }
