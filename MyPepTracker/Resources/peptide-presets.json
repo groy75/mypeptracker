@@ -32,6 +32,14 @@
     "category": "Weight Management"
   },
   {
+    "name": "Retatrutide",
+    "typicalDoseMcgLow": 500,
+    "typicalDoseMcgHigh": 12000,
+    "typicalVialSizeMg": 10,
+    "commonFrequencyHours": 168,
+    "category": "Weight Management"
+  },
+  {
     "name": "CJC-1295 / Ipamorelin",
     "typicalDoseMcgLow": 100,
     "typicalDoseMcgHigh": 300,
