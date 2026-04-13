@@ -11,6 +11,8 @@ struct ReconstitutionSheet: View {
     @State private var peptideAmountMg: Double
     @State private var waterVolumeML: Double
     @State private var expiryDays: Int
+    @State private var showGuide = false
+    @State private var desiredDoses: Double = 20
 
     private var isEditing: Bool { existingVial != nil }
 
@@ -38,9 +40,145 @@ struct ReconstitutionSheet: View {
         )
     }
 
+    // Guide calculations
+    private var guideTotalMcgNeeded: Double {
+        peptide.defaultDoseMcg * desiredDoses
+    }
+
+    private var guideRecommendedWaterML: Double {
+        guard peptideAmountMg > 0, peptide.defaultDoseMcg > 0 else { return 0 }
+        // Calculate water needed so each dose draws a clean volume
+        // Target: each dose = 0.1mL (10 IU) for easy measuring
+        let targetMLPerDose = 0.1
+        let totalVolumeNeeded = targetMLPerDose * desiredDoses
+        // But can't exceed what the peptide amount supports
+        let maxWater = peptideAmountMg * 1000.0 / peptide.defaultDoseMcg * targetMLPerDose
+        return min(totalVolumeNeeded, maxWater)
+    }
+
+    private var guideConcentration: Double {
+        guard guideRecommendedWaterML > 0 else { return 0 }
+        return ConcentrationCalculator.concentrationMcgPerML(
+            peptideAmountMg: peptideAmountMg,
+            waterVolumeML: guideRecommendedWaterML
+        )
+    }
+
+    private var guideMLPerDose: Double {
+        guard guideConcentration > 0 else { return 0 }
+        return ConcentrationCalculator.volumeMLForDose(
+            doseMcg: peptide.defaultDoseMcg,
+            concentrationMcgPerML: guideConcentration
+        )
+    }
+
+    private var guideActualDoses: Int {
+        guard guideMLPerDose > 0 else { return 0 }
+        return Int(guideRecommendedWaterML / guideMLPerDose)
+    }
+
     var body: some View {
         NavigationStack {
             Form {
+                // Reconstitution Guide
+                Section {
+                    DisclosureGroup("Reconstitution Guide", isExpanded: $showGuide) {
+                        VStack(spacing: 16) {
+                            // Desired doses stepper
+                            HStack {
+                                Text("I want")
+                                    .foregroundStyle(AppTheme.textPrimary)
+                                Spacer()
+                                HStack(spacing: 8) {
+                                    Button {
+                                        if desiredDoses > 5 { desiredDoses -= 5 }
+                                    } label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .font(.title3)
+                                            .foregroundStyle(AppTheme.primary)
+                                    }
+                                    .buttonStyle(.plain)
+
+                                    Text("\(Int(desiredDoses))")
+                                        .font(.title3.weight(.semibold).monospacedDigit())
+                                        .frame(minWidth: 40)
+
+                                    Button {
+                                        desiredDoses += 5
+                                    } label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .font(.title3)
+                                            .foregroundStyle(AppTheme.primary)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                                Text("doses")
+                                    .foregroundStyle(AppTheme.textPrimary)
+                            }
+
+                            // Results
+                            VStack(spacing: 8) {
+                                HStack {
+                                    Text("Add this much BAC water")
+                                        .font(.subheadline)
+                                    Spacer()
+                                    Text(String(format: "%.1f mL", guideRecommendedWaterML))
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(AppTheme.primary)
+                                }
+                                HStack {
+                                    Text("Concentration")
+                                        .font(.caption)
+                                        .foregroundStyle(AppTheme.textSecondary)
+                                    Spacer()
+                                    Text(String(format: "%.0f mcg/mL", guideConcentration))
+                                        .font(.caption)
+                                        .foregroundStyle(AppTheme.textSecondary)
+                                }
+                                HStack {
+                                    Text("Each dose draws")
+                                        .font(.caption)
+                                        .foregroundStyle(AppTheme.textSecondary)
+                                    Spacer()
+                                    Text(String(format: "%.2f mL (%.0f IU)", guideMLPerDose, ConcentrationCalculator.insulinUnits(fromML: guideMLPerDose)))
+                                        .font(.caption)
+                                        .foregroundStyle(AppTheme.textSecondary)
+                                }
+                                HStack {
+                                    Text("Actual doses in vial")
+                                        .font(.caption)
+                                        .foregroundStyle(AppTheme.textSecondary)
+                                    Spacer()
+                                    Text("~\(guideActualDoses)")
+                                        .font(.caption)
+                                        .foregroundStyle(AppTheme.textSecondary)
+                                }
+                            }
+                            .padding(12)
+                            .background(AppTheme.background)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                            // Apply button
+                            Button {
+                                withAnimation {
+                                    waterVolumeML = (guideRecommendedWaterML * 10).rounded() / 10
+                                    showGuide = false
+                                }
+                            } label: {
+                                Text("Use \(String(format: "%.1f", guideRecommendedWaterML)) mL")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 10)
+                                    .background(AppTheme.primary)
+                                    .foregroundStyle(.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.vertical, 8)
+                    }
+                }
+
                 Section("Peptide Amount") {
                     DoseStepperView(
                         value: $peptideAmountMg,
@@ -118,13 +256,11 @@ struct ReconstitutionSheet: View {
 
     private func saveVial() {
         if let vial = existingVial {
-            // Edit existing
             vial.peptideAmountMg = peptideAmountMg
             vial.waterVolumeML = waterVolumeML
             vial.expiryDays = expiryDays
             NotificationManager.shared.scheduleVialExpiryWarning(for: peptide, vial: vial)
         } else {
-            // Create new — deactivate old vials
             for vial in peptide.vials where vial.isActive {
                 vial.isActive = false
             }
