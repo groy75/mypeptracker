@@ -44,6 +44,7 @@ struct LogDoseSheet: View {
 
                 Section {
                     DatePicker("When", selection: $doseDate, in: ...Date(), displayedComponents: [.date, .hourAndMinute])
+                        .datePickerStyle(.compact)
 
                     Picker("Injection Site", selection: $injectionSite) {
                         Text("None").tag(nil as InjectionSite?)
