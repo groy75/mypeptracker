@@ -58,7 +58,8 @@ struct ReconstitutionSheet: View {
                         value: $waterVolumeML,
                         unit: "mL",
                         steps: [0.5, 1, 2],
-                        minimum: 0.5
+                        minimum: 0.5,
+                        initialStep: 1
                     )
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))

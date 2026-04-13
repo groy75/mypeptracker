@@ -5,6 +5,7 @@ struct DoseStepperView: View {
     var unit: String = "mcg"
     var steps: [Double] = [10, 25, 50, 100]
     var minimum: Double = 0
+    var initialStep: Double? = nil
 
     @State private var selectedStep: Double = 25
 
@@ -74,11 +75,14 @@ struct DoseStepperView: View {
         }
         .padding(.vertical, 8)
         .onAppear {
-            // Pick the best default step based on current value
-            if value >= 1000 {
+            if let initial = initialStep, steps.contains(initial) {
+                selectedStep = initial
+            } else if value >= 1000 {
                 selectedStep = steps.last ?? 100
             } else if value >= 200 {
                 selectedStep = steps.dropFirst().first ?? 25
+            } else {
+                selectedStep = steps.first ?? 25
             }
         }
     }
