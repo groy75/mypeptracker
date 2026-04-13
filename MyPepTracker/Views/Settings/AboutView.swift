@@ -23,10 +23,16 @@ struct AboutView: View {
                 .listRowBackground(Color.clear)
             }
 
-            // Feedback
-            Section("Feedback") {
+            // Feedback & Links
+            Section("Feedback & Support") {
                 Link(destination: URL(string: "mailto:greg@gregsplace.cc?subject=MyPepTracker%20Feedback")!) {
                     Label("Email the Developer", systemImage: "envelope.fill")
+                }
+                Link(destination: URL(string: "https://mypeptracker.gregsplace.cc/privacy")!) {
+                    Label("Privacy Policy", systemImage: "hand.raised.fill")
+                }
+                Link(destination: URL(string: "https://mypeptracker.gregsplace.cc")!) {
+                    Label("Support Website", systemImage: "globe")
                 }
             }
 

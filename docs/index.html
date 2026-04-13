@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPepTracker — Peptide Tracking for iOS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #1e293b;
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 50%, #f0f9ff 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+        .tagline {
+            font-size: 1.1rem;
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .card h2 {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+        }
+        .card p { color: #475569; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .feature {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+        .feature strong { display: block; color: #0f172a; margin-bottom: 0.2rem; }
+        a { color: #3373e6; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+        @media (max-width: 480px) {
+            .features { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="icon">💉</div>
+            <h1>MyPepTracker</h1>
+            <p class="tagline">Simple, private peptide tracking for iOS</p>
+        </div>
+
+        <div class="card">
+            <h2>What It Does</h2>
+            <p>MyPepTracker helps you track peptide reconstitution, dosing schedules, and injection sites — all on your device, with no account required.</p>
+            <div class="features">
+                <div class="feature">
+                    <strong>Reconstitution</strong>
+                    Log vials with auto-calculated concentration
+                </div>
+                <div class="feature">
+                    <strong>Dose Tracking</strong>
+                    Log doses with injection site and notes
+                </div>
+                <div class="feature">
+                    <strong>Reminders</strong>
+                    Push notifications for doses and vial expiry
+                </div>
+                <div class="feature">
+                    <strong>Cycle Tracking</strong>
+                    Monitor cycle progress and days remaining
+                </div>
+                <div class="feature">
+                    <strong>28+ Presets</strong>
+                    Quick-start with common peptide protocols
+                </div>
+                <div class="feature">
+                    <strong>100% Private</strong>
+                    No data leaves your device. Ever.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Support</h2>
+            <p>Having trouble or want to request a feature? Reach out directly:</p>
+            <p><a href="mailto:greg@gregsplace.cc">greg@gregsplace.cc</a></p>
+        </div>
+
+        <div class="links">
+            <a href="/privacy">Privacy Policy</a>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Greg Roy. All rights reserved.<br>
+        MyPepTracker is a tracking tool, not medical advice.
+    </footer>
+</body>
+</html>
