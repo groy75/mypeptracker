@@ -30,9 +30,8 @@ struct TodayView: View {
             }
             .background(AppTheme.background)
             .navigationTitle("Today")
-            .sheet(item: $peptideToLog) { peptide in
+            .fullScreenCover(item: $peptideToLog) { peptide in
                 LogDoseSheet(peptide: peptide)
-                    .presentationDetents([.medium, .large])
             }
         }
     }

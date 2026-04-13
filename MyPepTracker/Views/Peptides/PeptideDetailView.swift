@@ -123,9 +123,8 @@ struct PeptideDetailView: View {
                 ReconstitutionSheet(peptide: peptide, vial: vial)
             }
         }
-        .sheet(isPresented: $showingLogDose) {
+        .fullScreenCover(isPresented: $showingLogDose) {
             LogDoseSheet(peptide: peptide)
-                .presentationDetents([.medium, .large])
         }
     }
 }
