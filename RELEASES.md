@@ -31,7 +31,7 @@ Single source of truth for MyPepTracker App Store submissions.
 | --------- | ----- | --------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1.0.0     | 1     | 2026-04-12      | **Live**      | Initial App Store release. Peptide + vial + dose tracking. ASC state: VALID, not expired.                                                      |
 | 1.1.0     | 2     | 2026-04-18      | **TestFlight** | Peptide deletion with cascade + confirmation. Notification scheduling bug fixes. Privacy manifest. Delivery UUID `ae1a3cf5-9a5c-4243-80db-d68e54c319d0`.                                     |
-| 1.2.0     | 3     | 2026-04-18      | **TestFlight** | Dose deletion with vial rollback (#2), editable vial `dateMixed` with concentration-change warning (#3), dose-log toast + auto-nav to Today (#1). Delivery UUID `d6032529-e4d4-4614-b9e6-9e0418c854a4`. |
+| 1.2.0     | 3     | 2026-04-18      | **In Review** | Dose deletion with vial rollback (#2), editable vial `dateMixed` with concentration-change warning (#3), dose-log toast + auto-nav to Today (#1). Delivery UUID `d6032529-e4d4-4614-b9e6-9e0418c854a4`. Submitted 2026-04-18 via ASC API `reviewSubmissions` flow, release type: **automatic after approval**. appStoreVersion `76cc0b20-5531-4d77-8d3e-bf301e9ce462`, reviewSubmission `a46d3c82-c9fb-48fa-bc7c-44ea9ff05883`. |
 
 ## Next submission will be
 
