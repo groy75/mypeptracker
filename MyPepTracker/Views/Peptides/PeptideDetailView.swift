@@ -3,9 +3,12 @@ import SwiftData
 
 struct PeptideDetailView: View {
     @Bindable var peptide: Peptide
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     @State private var showingReconstitution = false
     @State private var showingEditVial = false
     @State private var showingLogDose = false
+    @State private var showingDeleteConfirmation = false
 
     private var recentDoses: [DoseEntry] {
         peptide.doseEntries
@@ -108,6 +111,18 @@ struct PeptideDetailView: View {
                         .foregroundStyle(AppTheme.textSecondary)
                 }
             }
+
+            Section {
+                Button(role: .destructive) {
+                    showingDeleteConfirmation = true
+                } label: {
+                    HStack {
+                        Spacer()
+                        Label("Delete Peptide", systemImage: "trash")
+                        Spacer()
+                    }
+                }
+            }
         }
         .navigationTitle(peptide.name)
         .toolbar {
@@ -125,6 +140,19 @@ struct PeptideDetailView: View {
         }
         .fullScreenCover(isPresented: $showingLogDose) {
             LogDoseSheet(peptide: peptide)
+        }
+        .confirmationDialog(
+            "Delete \(peptide.name)?",
+            isPresented: $showingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete Peptide & History", role: .destructive) {
+                modelContext.delete(peptide)
+                dismiss()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This permanently deletes the peptide, all vials, and all dose history. This cannot be undone.")
         }
     }
 }

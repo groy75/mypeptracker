@@ -50,15 +50,15 @@ final class NotificationManager: @unchecked Sendable {
             return lastDose.addingTimeInterval(frequency.hours * 3600)
 
         case .fixedRecurring:
-            guard let time = scheduledTime else { return nil }
             let calendar = Calendar.current
-            let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+            let now = Date()
 
-            if let days = scheduleDays, !days.isEmpty {
-                let now = Date()
+            // If specific weekdays are set (e.g., Mon/Wed/Fri), find the next matching day
+            if let days = scheduleDays, !days.isEmpty, let time = scheduledTime {
+                let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
                 let sortedDays = days.sorted()
 
-                for dayOffset in 0 ..< 8 {
+                for dayOffset in 0 ..< 15 {
                     let candidateDate = calendar.date(byAdding: .day, value: dayOffset, to: now)!
                     let candidateWeekday = calendar.component(.weekday, from: candidateDate)
                     if sortedDays.contains(candidateWeekday) {
@@ -70,15 +70,39 @@ final class NotificationManager: @unchecked Sendable {
                         }
                     }
                 }
+                return nil
             }
 
-            var components = calendar.dateComponents([.year, .month, .day], from: Date())
-            components.hour = timeComponents.hour
-            components.minute = timeComponents.minute
-            if let date = calendar.date(from: components), date > Date() {
-                return date
+            // No specific weekdays — use last dose + frequency interval
+            if let lastDose = lastDoseTimestamp {
+                let nextFromLastDose = lastDose.addingTimeInterval(frequency.hours * 3600)
+
+                // If a scheduled time is set, align to that time on the target day
+                if let time = scheduledTime {
+                    let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+                    var dayComponents = calendar.dateComponents([.year, .month, .day], from: nextFromLastDose)
+                    dayComponents.hour = timeComponents.hour
+                    dayComponents.minute = timeComponents.minute
+                    if let aligned = calendar.date(from: dayComponents) {
+                        return aligned > now ? aligned : nil
+                    }
+                }
+
+                return nextFromLastDose > now ? nextFromLastDose : nil
             }
-            return calendar.date(byAdding: .day, value: 1, to: calendar.date(from: components)!)
+
+            // No last dose — schedule for today at the scheduled time, or now
+            if let time = scheduledTime {
+                let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+                var components = calendar.dateComponents([.year, .month, .day], from: now)
+                components.hour = timeComponents.hour
+                components.minute = timeComponents.minute
+                if let date = calendar.date(from: components), date > now {
+                    return date
+                }
+                return calendar.date(byAdding: .day, value: 1, to: calendar.date(from: components)!)
+            }
+            return nil
         }
     }
 

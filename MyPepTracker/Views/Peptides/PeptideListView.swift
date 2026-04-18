@@ -2,8 +2,10 @@ import SwiftUI
 import SwiftData
 
 struct PeptideListView: View {
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: \Peptide.name) private var allPeptides: [Peptide]
     @State private var showingAddPeptide = false
+    @State private var peptidePendingDeletion: Peptide?
 
     private var activePeptides: [Peptide] { allPeptides.filter(\.isActive) }
     private var archivedPeptides: [Peptide] { allPeptides.filter { !$0.isActive } }
@@ -17,6 +19,13 @@ struct PeptideListView: View {
                             NavigationLink(value: peptide) {
                                 PeptideRowView(peptide: peptide)
                             }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    peptidePendingDeletion = peptide
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                         }
                     }
                 }
@@ -26,6 +35,13 @@ struct PeptideListView: View {
                         ForEach(archivedPeptides) { peptide in
                             NavigationLink(value: peptide) {
                                 PeptideRowView(peptide: peptide)
+                            }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    peptidePendingDeletion = peptide
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
                             }
                         }
                     }
@@ -52,6 +68,25 @@ struct PeptideListView: View {
             }
             .sheet(isPresented: $showingAddPeptide) {
                 AddPeptideView()
+            }
+            .confirmationDialog(
+                peptidePendingDeletion.map { "Delete \($0.name)?" } ?? "Delete peptide?",
+                isPresented: Binding(
+                    get: { peptidePendingDeletion != nil },
+                    set: { if !$0 { peptidePendingDeletion = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: peptidePendingDeletion
+            ) { peptide in
+                Button("Delete Peptide & History", role: .destructive) {
+                    modelContext.delete(peptide)
+                    peptidePendingDeletion = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    peptidePendingDeletion = nil
+                }
+            } message: { _ in
+                Text("This permanently deletes the peptide, all vials, and all dose history. This cannot be undone.")
             }
         }
     }
