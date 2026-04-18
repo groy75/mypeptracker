@@ -4,6 +4,7 @@ import SwiftData
 struct LogDoseSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppState.self) private var appState
 
     let peptide: Peptide
 
@@ -106,6 +107,8 @@ struct LogDoseSheet: View {
         manager.scheduleDoseReminder(for: peptide)
         manager.scheduleOverdueReminder(for: peptide)
 
+        appState.showToast("Logged \(Int(doseMcg))mcg of \(peptide.name)")
+        appState.selectedTab = .today
         dismiss()
     }
 }

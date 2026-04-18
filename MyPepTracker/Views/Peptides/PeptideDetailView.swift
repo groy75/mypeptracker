@@ -9,6 +9,7 @@ struct PeptideDetailView: View {
     @State private var showingEditVial = false
     @State private var showingLogDose = false
     @State private var showingDeleteConfirmation = false
+    @State private var dosePendingDeletion: DoseEntry?
 
     private var recentDoses: [DoseEntry] {
         peptide.doseEntries
@@ -65,14 +66,18 @@ struct PeptideDetailView: View {
                         .foregroundStyle(AppTheme.textSecondary)
                 }
 
-                if peptide.activeVial != nil {
-                    Button("Edit Vial") {
+                if peptide.vials.first(where: \.isActive) != nil {
+                    Button {
                         showingEditVial = true
+                    } label: {
+                        Label("Edit Vial", systemImage: "pencil")
                     }
                 }
 
-                Button("Reconstitute New Vial") {
+                Button {
                     showingReconstitution = true
+                } label: {
+                    Label("Reconstitute New Vial", systemImage: "drop.fill")
                 }
             }
 
@@ -101,6 +106,13 @@ struct PeptideDetailView: View {
                             }
                         }
                         .padding(.vertical, 2)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                dosePendingDeletion = dose
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
                 }
             }
@@ -134,7 +146,7 @@ struct PeptideDetailView: View {
             ReconstitutionSheet(peptide: peptide)
         }
         .sheet(isPresented: $showingEditVial) {
-            if let vial = peptide.activeVial {
+            if let vial = peptide.vials.first(where: \.isActive) {
                 ReconstitutionSheet(peptide: peptide, vial: vial)
             }
         }
@@ -154,5 +166,29 @@ struct PeptideDetailView: View {
         } message: {
             Text("This permanently deletes the peptide, all vials, and all dose history. This cannot be undone.")
         }
+        .confirmationDialog(
+            "Delete this dose?",
+            isPresented: Binding(
+                get: { dosePendingDeletion != nil },
+                set: { if !$0 { dosePendingDeletion = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: dosePendingDeletion
+        ) { dose in
+            Button("Delete Dose", role: .destructive) {
+                deleteDose(dose)
+                dosePendingDeletion = nil
+            }
+            Button("Cancel", role: .cancel) { dosePendingDeletion = nil }
+        } message: { dose in
+            Text("Removes \(Int(dose.doseMcg))mcg. Any vial volume used by this dose will be returned.")
+        }
+    }
+
+    private func deleteDose(_ dose: DoseEntry) {
+        if let vial = dose.vial {
+            vial.totalVolumeUsedML = max(0, vial.totalVolumeUsedML - dose.unitsInjectedML)
+        }
+        modelContext.delete(dose)
     }
 }

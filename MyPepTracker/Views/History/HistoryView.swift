@@ -2,11 +2,13 @@ import SwiftUI
 import SwiftData
 
 struct HistoryView: View {
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: \DoseEntry.timestamp, order: .reverse) private var allDoses: [DoseEntry]
     @Query(sort: \Peptide.name) private var allPeptides: [Peptide]
 
     @State private var selectedPeptide: Peptide?
     @State private var showBodyMap = false
+    @State private var dosePendingDeletion: DoseEntry?
 
     private var filteredDoses: [DoseEntry] {
         if let selected = selectedPeptide {
@@ -62,11 +64,43 @@ struct HistoryView: View {
                     Section("Doses") {
                         ForEach(filteredDoses) { dose in
                             DoseEntryRow(entry: dose)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
+                                        dosePendingDeletion = dose
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                         }
                     }
                 }
             }
             .navigationTitle("History")
+            .confirmationDialog(
+                "Delete this dose?",
+                isPresented: Binding(
+                    get: { dosePendingDeletion != nil },
+                    set: { if !$0 { dosePendingDeletion = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: dosePendingDeletion
+            ) { dose in
+                Button("Delete Dose", role: .destructive) {
+                    deleteDose(dose)
+                    dosePendingDeletion = nil
+                }
+                Button("Cancel", role: .cancel) { dosePendingDeletion = nil }
+            } message: { dose in
+                let peptideName = dose.peptide?.name ?? "peptide"
+                Text("Removes \(Int(dose.doseMcg))mcg of \(peptideName). Any vial volume used by this dose will be returned.")
+            }
         }
+    }
+
+    private func deleteDose(_ dose: DoseEntry) {
+        if let vial = dose.vial {
+            vial.totalVolumeUsedML = max(0, vial.totalVolumeUsedML - dose.unitsInjectedML)
+        }
+        modelContext.delete(dose)
     }
 }

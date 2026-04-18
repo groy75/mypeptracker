@@ -11,6 +11,7 @@ struct ReconstitutionSheet: View {
     @State private var peptideAmountMg: Double
     @State private var waterVolumeML: Double
     @State private var expiryDays: Int
+    @State private var dateMixed: Date
     @State private var showGuide = false
     @State private var desiredDoses: Double = 20
 
@@ -22,6 +23,16 @@ struct ReconstitutionSheet: View {
         self._peptideAmountMg = State(initialValue: vial?.peptideAmountMg ?? 5.0)
         self._waterVolumeML = State(initialValue: vial?.waterVolumeML ?? 2.0)
         self._expiryDays = State(initialValue: vial?.expiryDays ?? 30)
+        self._dateMixed = State(initialValue: vial?.dateMixed ?? Date())
+    }
+
+    private var concentrationChanged: Bool {
+        guard let existing = existingVial else { return false }
+        return existing.peptideAmountMg != peptideAmountMg || existing.waterVolumeML != waterVolumeML
+    }
+
+    private var priorDoseCount: Int {
+        existingVial?.doseEntries.count ?? 0
     }
 
     private var concentration: Double {
@@ -238,6 +249,27 @@ struct ReconstitutionSheet: View {
 
                 Section {
                     Stepper("Expires after \(expiryDays) days", value: $expiryDays, in: 7...90)
+                    if isEditing {
+                        DatePicker("Date Mixed", selection: $dateMixed, in: ...Date(), displayedComponents: [.date, .hourAndMinute])
+                            .datePickerStyle(.compact)
+                    }
+                }
+
+                if isEditing && concentrationChanged && priorDoseCount > 0 {
+                    Section {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                                .accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Concentration is changing")
+                                    .font(.subheadline.weight(.semibold))
+                                Text("\(priorDoseCount) logged dose\(priorDoseCount == 1 ? "" : "s") on this vial were recorded at the old concentration. Their mcg values won't be recalculated.")
+                                    .font(.caption)
+                                    .foregroundStyle(AppTheme.textSecondary)
+                            }
+                        }
+                    }
                 }
             }
             .navigationTitle(isEditing ? "Edit Vial" : "New Vial")
@@ -259,6 +291,7 @@ struct ReconstitutionSheet: View {
             vial.peptideAmountMg = peptideAmountMg
             vial.waterVolumeML = waterVolumeML
             vial.expiryDays = expiryDays
+            vial.dateMixed = dateMixed
             NotificationManager.shared.scheduleVialExpiryWarning(for: peptide, vial: vial)
         } else {
             for vial in peptide.vials where vial.isActive {
