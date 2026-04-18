@@ -27,11 +27,12 @@ Single source of truth for MyPepTracker App Store submissions.
 
 ## History
 
-| Marketing | Build | Uploaded to ASC | Status   | Notes                                                                   |
-| --------- | ----- | --------------- | -------- | ----------------------------------------------------------------------- |
-| 1.0.0     | 1     | 2026-04-12      | **Live** | Initial App Store release. Peptide + vial + dose tracking. ASC state: VALID, not expired. |
+| Marketing | Build | Uploaded to ASC | Status        | Notes                                                                                                                                          |
+| --------- | ----- | --------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0     | 1     | 2026-04-12      | **Live**      | Initial App Store release. Peptide + vial + dose tracking. ASC state: VALID, not expired.                                                      |
+| 1.1.0     | 2     | 2026-04-18      | **TestFlight** | Peptide deletion with cascade + confirmation. Notification scheduling bug fixes. Privacy manifest. Delivery UUID `ae1a3cf5-9a5c-4243-80db-d68e54c319d0`. |
 
 ## Next submission will be
 
-- Marketing: **1.1.0** (peptide deletion is a user-visible feature, minor bump).
-- Build: **2**.
+- Marketing: **1.2.0** (next round of user-visible features per GitHub issues #1, #2, #3).
+- Build: **3**.
