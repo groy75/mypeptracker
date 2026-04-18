@@ -28,34 +28,15 @@ struct AboutView: View {
                 Link(destination: URL(string: "mailto:greg@gregsplace.cc?subject=MyPepTracker%20Feedback")!) {
                     Label("Email the Developer", systemImage: "envelope.fill")
                 }
+                Link(destination: URL(string: "https://mypeptracker.gregsplace.cc/changelog")!) {
+                    Label("What's New", systemImage: "sparkles")
+                }
                 Link(destination: URL(string: "https://mypeptracker.gregsplace.cc/privacy")!) {
                     Label("Privacy Policy", systemImage: "hand.raised.fill")
                 }
                 Link(destination: URL(string: "https://mypeptracker.gregsplace.cc")!) {
                     Label("Support Website", systemImage: "globe")
                 }
-            }
-
-            // Changelog
-            Section("Changelog") {
-                ChangelogEntry(
-                    version: "1.0.0",
-                    date: "April 12, 2026",
-                    changes: [
-                        "Initial release",
-                        "Track 3-5 peptides with mixed schedules",
-                        "Reconstitution logging with auto-calculated concentration",
-                        "Dose logging with injection site tracking and notes",
-                        "Backdate doses for past entries",
-                        "Push notification reminders (dose, overdue, vial expiry, low vial)",
-                        "Flexible scheduling: twice daily through monthly",
-                        "Cycle tracking with progress and days remaining",
-                        "28 peptide presets across 10 categories",
-                        "Injection site body map visualization",
-                        "Data export (JSON / CSV)",
-                        "Dose stepper widget with selectable step sizes",
-                    ]
-                )
             }
 
             // License
@@ -88,34 +69,5 @@ struct AboutView: View {
         }
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-struct ChangelogEntry: View {
-    let version: String
-    let date: String
-    let changes: [String]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("v\(version)")
-                    .font(.subheadline.weight(.semibold))
-                Spacer()
-                Text(date)
-                    .font(.caption)
-                    .foregroundStyle(AppTheme.textSecondary)
-            }
-            ForEach(changes, id: \.self) { change in
-                HStack(alignment: .top, spacing: 8) {
-                    Text("•")
-                        .foregroundStyle(AppTheme.primary)
-                    Text(change)
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.textSecondary)
-                }
-            }
-        }
-        .padding(.vertical, 4)
     }
 }

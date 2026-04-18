@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPepTracker — Release Notes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #1e293b;
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 50%, #f0f9ff 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 640px; margin: 0 auto; }
+        .hero { text-align: center; padding: 2.5rem 1rem 1rem; }
+        .icon { font-size: 3rem; margin-bottom: 0.75rem; }
+        h1 { font-size: 1.8rem; color: #0f172a; margin-bottom: 0.25rem; }
+        .tagline { font-size: 1rem; color: #475569; margin-bottom: 2rem; }
+        .release {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .release-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .release-version {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .release-version .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #3373e6;
+            color: #fff;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+        .release-date {
+            font-size: 0.85rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        .release ul { list-style: none; padding: 0; }
+        .release li {
+            padding: 0.4rem 0 0.4rem 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+            color: #334155;
+        }
+        .release li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #3373e6;
+            font-weight: 600;
+        }
+        .release li strong { color: #0f172a; }
+        a { color: #3373e6; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="icon">📋</div>
+            <h1>Release Notes</h1>
+            <p class="tagline">What's new in MyPepTracker</p>
+        </div>
+
+        <div class="release">
+            <div class="release-head">
+                <div class="release-version">v1.2.0 <span class="badge">Latest</span></div>
+                <div class="release-date">April 18, 2026</div>
+            </div>
+            <ul>
+                <li><strong>Delete logged doses</strong> to fix mistakes — vial usage is rolled back automatically so your "doses remaining" estimate stays accurate.</li>
+                <li><strong>Edit an active vial</strong>, including the mix date. Useful for correcting reconstitution errors, even on vials flagged as expired.</li>
+                <li><strong>Dose log confirmation</strong> — a toast appears after logging and the app returns to the Today screen automatically.</li>
+                <li><strong>Delete peptides</strong> with full cascade to vials and dose history.</li>
+                <li><strong>Fixed</strong> notification scheduling for fixed-recurring peptides without a set time; reminders now align to your last-dose time.</li>
+                <li><strong>Warning when editing vial concentration</strong> would affect previously logged doses.</li>
+            </ul>
+        </div>
+
+        <div class="release">
+            <div class="release-head">
+                <div class="release-version">v1.0.0</div>
+                <div class="release-date">April 12, 2026</div>
+            </div>
+            <ul>
+                <li><strong>Initial release.</strong></li>
+                <li>Track 3–5 peptides with mixed schedules.</li>
+                <li>Reconstitution logging with auto-calculated concentration.</li>
+                <li>Dose logging with injection site tracking and notes.</li>
+                <li>Backdate doses for past entries.</li>
+                <li>Push notification reminders: dose, overdue, vial expiry, low vial.</li>
+                <li>Flexible scheduling: twice daily through monthly.</li>
+                <li>Cycle tracking with progress and days remaining.</li>
+                <li>28 peptide presets across 10 categories.</li>
+                <li>Injection site body map visualization.</li>
+                <li>Data export in JSON and CSV.</li>
+                <li>Dose stepper widget with selectable step sizes.</li>
+            </ul>
+        </div>
+
+        <div class="back">
+            <a href="/">← Back to MyPepTracker</a>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Greg Roy. MyPepTracker is a tracking tool, not medical advice.
+    </footer>
+</body>
+</html>
