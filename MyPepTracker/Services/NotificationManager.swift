@@ -19,20 +19,20 @@ final class NotificationManager: @unchecked Sendable {
 
     // MARK: - Identifiers
 
-    static func doseReminderID(peptideName: String) -> String {
-        "dose-reminder-\(peptideName)"
+    static func doseReminderID(peptideNotificationID: UUID) -> String {
+        "dose-reminder-\(peptideNotificationID.uuidString)"
     }
 
-    static func overdueReminderID(peptideName: String) -> String {
-        "overdue-\(peptideName)"
+    static func overdueReminderID(peptideNotificationID: UUID) -> String {
+        "overdue-\(peptideNotificationID.uuidString)"
     }
 
-    static func vialExpiryID(peptideName: String) -> String {
-        "vial-expiry-\(peptideName)"
+    static func vialExpiryID(peptideNotificationID: UUID) -> String {
+        "vial-expiry-\(peptideNotificationID.uuidString)"
     }
 
-    static func vialLowID(peptideName: String) -> String {
-        "vial-low-\(peptideName)"
+    static func vialLowID(peptideNotificationID: UUID) -> String {
+        "vial-low-\(peptideNotificationID.uuidString)"
     }
 
     // MARK: - Scheduling Logic
@@ -109,7 +109,7 @@ final class NotificationManager: @unchecked Sendable {
     // MARK: - Schedule Dose Reminder
 
     func scheduleDoseReminder(for peptide: Peptide) {
-        let id = Self.doseReminderID(peptideName: peptide.name)
+        let id = Self.doseReminderID(peptideNotificationID: peptide.notificationID)
         center.removePendingNotificationRequests(withIdentifiers: [id])
 
         guard let nextDate = Self.nextDoseDate(
@@ -137,7 +137,7 @@ final class NotificationManager: @unchecked Sendable {
     // MARK: - Schedule Overdue Reminder
 
     func scheduleOverdueReminder(for peptide: Peptide, overdueDelayHours: Double = 2.0) {
-        let id = Self.overdueReminderID(peptideName: peptide.name)
+        let id = Self.overdueReminderID(peptideNotificationID: peptide.notificationID)
         center.removePendingNotificationRequests(withIdentifiers: [id])
 
         guard let nextDate = Self.nextDoseDate(
@@ -166,7 +166,7 @@ final class NotificationManager: @unchecked Sendable {
     // MARK: - Schedule Vial Expiry Warning
 
     func scheduleVialExpiryWarning(for peptide: Peptide, vial: Vial, warningDays: Int = 3) {
-        let id = Self.vialExpiryID(peptideName: peptide.name)
+        let id = Self.vialExpiryID(peptideNotificationID: peptide.notificationID)
         center.removePendingNotificationRequests(withIdentifiers: [id])
 
         let warningDate = Calendar.current.date(byAdding: .day, value: -warningDays, to: vial.expiryDate)!
@@ -188,7 +188,7 @@ final class NotificationManager: @unchecked Sendable {
     // MARK: - Vial Low Warning
 
     func scheduleVialLowWarning(for peptide: Peptide, remainingDoses: Int) {
-        let id = Self.vialLowID(peptideName: peptide.name)
+        let id = Self.vialLowID(peptideNotificationID: peptide.notificationID)
         if remainingDoses <= 2 {
             let content = UNMutableNotificationContent()
             content.title = "\(peptide.name) vial running low"
@@ -207,12 +207,29 @@ final class NotificationManager: @unchecked Sendable {
 
     func cancelAll(for peptide: Peptide) {
         let ids = [
-            Self.doseReminderID(peptideName: peptide.name),
-            Self.overdueReminderID(peptideName: peptide.name),
-            Self.vialExpiryID(peptideName: peptide.name),
-            Self.vialLowID(peptideName: peptide.name),
+            Self.doseReminderID(peptideNotificationID: peptide.notificationID),
+            Self.overdueReminderID(peptideNotificationID: peptide.notificationID),
+            Self.vialExpiryID(peptideNotificationID: peptide.notificationID),
+            Self.vialLowID(peptideNotificationID: peptide.notificationID),
         ]
         center.removePendingNotificationRequests(withIdentifiers: ids)
+    }
+
+    // MARK: - One-time Migration
+
+    /// Wipes every pending notification request and re-schedules dose + overdue
+    /// reminders for all active peptides, plus vial-expiry warnings for their
+    /// active vials. Called once at launch on v1.4.0 to purge legacy
+    /// name-keyed identifiers left over from ≤1.3.0.
+    func wipePendingAndReschedule(peptides: [Peptide]) {
+        center.removeAllPendingNotificationRequests()
+        for peptide in peptides where peptide.isActive {
+            scheduleDoseReminder(for: peptide)
+            scheduleOverdueReminder(for: peptide)
+            if let vial = peptide.activeVial {
+                scheduleVialExpiryWarning(for: peptide, vial: vial)
+            }
+        }
     }
 
     // MARK: - Register Actions

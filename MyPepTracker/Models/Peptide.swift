@@ -4,6 +4,10 @@ import SwiftData
 @Model
 final class Peptide {
     var name: String
+    // Stable identifier for scheduled notifications. Must NOT be derived from
+    // user-editable fields (e.g. `name`) — renaming would orphan pending
+    // requests registered with UNUserNotificationCenter.
+    var notificationID: UUID = UUID()
     var defaultDoseMcg: Double
     var scheduleType: ScheduleType
     var frequency: DoseFrequency

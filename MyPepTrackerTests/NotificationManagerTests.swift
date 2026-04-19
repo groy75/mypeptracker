@@ -4,23 +4,41 @@ import Foundation
 
 struct NotificationManagerTests {
     @Test func doseReminderIdentifier() {
-        let id = NotificationManager.doseReminderID(peptideName: "BPC-157")
-        #expect(id == "dose-reminder-BPC-157")
+        let uuid = UUID()
+        let id = NotificationManager.doseReminderID(peptideNotificationID: uuid)
+        #expect(id == "dose-reminder-\(uuid.uuidString)")
     }
 
     @Test func overdueIdentifier() {
-        let id = NotificationManager.overdueReminderID(peptideName: "BPC-157")
-        #expect(id == "overdue-BPC-157")
+        let uuid = UUID()
+        let id = NotificationManager.overdueReminderID(peptideNotificationID: uuid)
+        #expect(id == "overdue-\(uuid.uuidString)")
     }
 
     @Test func vialExpiryIdentifier() {
-        let id = NotificationManager.vialExpiryID(peptideName: "BPC-157")
-        #expect(id == "vial-expiry-BPC-157")
+        let uuid = UUID()
+        let id = NotificationManager.vialExpiryID(peptideNotificationID: uuid)
+        #expect(id == "vial-expiry-\(uuid.uuidString)")
     }
 
     @Test func vialLowIdentifier() {
-        let id = NotificationManager.vialLowID(peptideName: "BPC-157")
-        #expect(id == "vial-low-BPC-157")
+        let uuid = UUID()
+        let id = NotificationManager.vialLowID(peptideNotificationID: uuid)
+        #expect(id == "vial-low-\(uuid.uuidString)")
+    }
+
+    @Test func identifiersAreStableForSameUUID() {
+        let uuid = UUID()
+        #expect(
+            NotificationManager.doseReminderID(peptideNotificationID: uuid)
+                == NotificationManager.doseReminderID(peptideNotificationID: uuid)
+        )
+    }
+
+    @Test func identifiersDifferForDifferentUUIDs() {
+        let a = NotificationManager.doseReminderID(peptideNotificationID: UUID())
+        let b = NotificationManager.doseReminderID(peptideNotificationID: UUID())
+        #expect(a != b)
     }
 
     @Test func nextDoseDateForAfterDoseSchedule() {
