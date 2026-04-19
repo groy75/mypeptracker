@@ -7,12 +7,14 @@ struct MetricDetailView: View {
     let metric: BodyMetric
 
     // SwiftData's #Predicate cannot safely traverse enum rawValue paths on
-    // @Model-stored enums — triggered a crash when tapping any metric. Fetch
-    // everything and filter in-memory; per-metric entry counts are tiny.
+    // @Model-stored enums (it crashes at query time on some builds). Fetch
+    // everything and filter in-memory — per-metric entry counts are tiny.
     @Query(sort: \BodyMeasurement.timestamp, order: .forward) private var allEntries: [BodyMeasurement]
+    @Query private var allGoals: [BodyMetricGoal]
     @AppStorage("preferImperial") private var preferImperial = false
 
     @State private var showingLogSheet = false
+    @State private var showingGoalSheet = false
 
     init(metric: BodyMetric) {
         self.metric = metric
@@ -20,6 +22,10 @@ struct MetricDetailView: View {
 
     private var entries: [BodyMeasurement] {
         allEntries.filter { $0.metric == metric }
+    }
+
+    private var goal: BodyMetricGoal? {
+        allGoals.first { $0.metric == metric }
     }
 
     private var latest: BodyMeasurement? { entries.last }
@@ -45,6 +51,10 @@ struct MetricDetailView: View {
                 chart
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
+            }
+
+            Section("Goal") {
+                goalCard
             }
 
             Section("History (\(entries.count))") {
@@ -75,6 +85,70 @@ struct MetricDetailView: View {
                 LogMeasurementView(preselectedMetric: metric)
             }
         }
+        .sheet(isPresented: $showingGoalSheet) {
+            NavigationStack {
+                SetGoalSheet(metric: metric, existing: goal, currentValue: latest?.value)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var goalCard: some View {
+        if let g = goal, let current = latest?.value {
+            let progress = g.progressFractionForDisplay(currentValue: current)
+            let narrative = goalNarrative(goal: g, current: current)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .firstTextBaseline) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(narrative)
+                            .font(.body.monospacedDigit())
+                        Text("Target: \(BodyMetricFormat.formatted(g.targetValue, unit: metric.unit, imperial: preferImperial))\(g.targetDate.map { " by \(dateString($0))" } ?? "")")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.textSecondary)
+                    }
+                    Spacer()
+                    Button { showingGoalSheet = true } label: {
+                        Label("Edit", systemImage: "pencil")
+                            .labelStyle(.iconOnly)
+                    }
+                    .buttonStyle(.borderless)
+                }
+                ProgressView(value: progress)
+                    .tint(g.isComplete(currentValue: current) ? AppTheme.success : AppTheme.primary)
+            }
+            .padding(.vertical, 4)
+        } else {
+            Button {
+                showingGoalSheet = true
+            } label: {
+                Label("Set a goal", systemImage: "target")
+            }
+        }
+    }
+
+    private func goalNarrative(goal g: BodyMetricGoal, current: Double) -> String {
+        let imperial = preferImperial
+        let unit = metric.unit
+        let suffix = imperial ? unit.imperialSuffix : unit.storageSuffix
+        switch g.direction {
+        case .increase:
+            let gained = BodyMetricFormat.display(max(current - g.startValue, 0), unit: unit, imperial: imperial)
+            let needed = BodyMetricFormat.display(g.targetValue - g.startValue, unit: unit, imperial: imperial)
+            return String(format: "%.1f of %.1f %@ gained", gained, needed, suffix)
+        case .decrease:
+            let lost = BodyMetricFormat.display(max(g.startValue - current, 0), unit: unit, imperial: imperial)
+            let needed = BodyMetricFormat.display(g.startValue - g.targetValue, unit: unit, imperial: imperial)
+            return String(format: "%.1f of %.1f %@ lost", lost, needed, suffix)
+        case .steady:
+            return "Hold steady at \(BodyMetricFormat.formatted(g.targetValue, unit: unit, imperial: imperial))"
+        }
+    }
+
+    private func dateString(_ date: Date) -> String {
+        let fmt = DateFormatter()
+        fmt.dateStyle = .medium
+        fmt.timeStyle = .none
+        return fmt.string(from: date)
     }
 
     @ViewBuilder
@@ -118,6 +192,20 @@ struct MetricDetailView: View {
                     )
                     .foregroundStyle(AppTheme.primary)
                     .symbolSize(30)
+                }
+
+                // Horizontal goal line, if a goal is set for this metric.
+                if let g = goal {
+                    let displayedGoal = BodyMetricFormat.display(g.targetValue, unit: metric.unit, imperial: preferImperial)
+                    RuleMark(y: .value("Goal", displayedGoal))
+                        .foregroundStyle(AppTheme.warning.opacity(0.8))
+                        .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [6, 3]))
+                        .annotation(position: .top, alignment: .leading) {
+                            Text("Goal")
+                                .font(.caption2)
+                                .foregroundStyle(AppTheme.warning)
+                                .padding(.horizontal, 4)
+                        }
                 }
 
                 // Rolling mean — helps weight especially, which fluctuates daily.

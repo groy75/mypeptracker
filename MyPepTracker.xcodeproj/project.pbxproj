@@ -14,6 +14,7 @@
 		1642014B0577C1214E497E81 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D04F1B869D20A5F77D05F /* ScreenshotTests.swift */; };
 		221FABA8C87B231A26A2E860 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9B581FC5A23A2E43E00B30 /* NotificationManager.swift */; };
 		332E766E2253F9F92A4112D7 /* ChangelogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2891B96AD4082F9C80488300 /* ChangelogView.swift */; };
+		3DE9E4582BAFF3072F95B73C /* BodyMetricGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE1E2F79C7B604A7B2A01B0 /* BodyMetricGoal.swift */; };
 		4A41AE1D6BB125BD74909165 /* MyPepTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DC584CD04CF9002461B159 /* MyPepTrackerTests.swift */; };
 		50E371DDDF549F6E11B3B277 /* BodyMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 421280E413EB1ACAFE7B40D6 /* BodyMapView.swift */; };
 		516A1E080F6C4BB3A9D5A7A3 /* Vial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7FCA9C8C55C0CD522B4FA2 /* Vial.swift */; };
@@ -21,7 +22,9 @@
 		592F3E6495D5E054F42DA85B /* PeptideCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B089C108229661247B2648 /* PeptideCardView.swift */; };
 		5B7F0208479E76A2CD28AF1A /* BodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF8603AEB3F0911479947E6 /* BodyView.swift */; };
 		5BB59CE92FAAB8A305EA34B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C2FF38F93794C374A2F7A34 /* Assets.xcassets */; };
+		62678171A54118E1820FCC1B /* BodyMetricGoalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89034B3E187651CFC429D8CF /* BodyMetricGoalTests.swift */; };
 		64F80D8C4009C6E4BD5CA730 /* DemoSeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C23AAD8372C2C56BF7DA68F /* DemoSeed.swift */; };
+		657CEA4720AFC0FEEF36A5AE /* SetGoalSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E5CBC4C1A374B54451A0B53 /* SetGoalSheet.swift */; };
 		6AA0934573AE3873FD490892 /* MyPepTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D105B935C290C357603283 /* MyPepTrackerApp.swift */; };
 		76CC53D08607C2EE9FE84F71 /* PeptidePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5860419A80D895EE8346617 /* PeptidePreset.swift */; };
 		7DC026CCA2877B995C756024 /* NotificationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE67484E9876714CFF5E7D7B /* NotificationManagerTests.swift */; };
@@ -93,6 +96,7 @@
 		482B308AB0857A52C0B902BF /* MyPepTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MyPepTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F191B29147AD98ABDCA19E9 /* Peptide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peptide.swift; sourceTree = "<group>"; };
 		5D3D04F1B869D20A5F77D05F /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
+		5E5CBC4C1A374B54451A0B53 /* SetGoalSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGoalSheet.swift; sourceTree = "<group>"; };
 		5E9F57C6589006BF91933039 /* PeptideListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptideListView.swift; sourceTree = "<group>"; };
 		5F4E0B8EAF0BD0CDFB22ED08 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5FDE9B60AC4C6ACE5A793A2B /* LogDoseSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogDoseSheet.swift; sourceTree = "<group>"; };
@@ -100,9 +104,11 @@
 		633AB668A6887F39BBDDA204 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		6B5693C9EE963CE69AB7655F /* AddPeptideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPeptideView.swift; sourceTree = "<group>"; };
 		6BADC94D1E8279708FE6C7BA /* ScheduleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleType.swift; sourceTree = "<group>"; };
+		6EE1E2F79C7B604A7B2A01B0 /* BodyMetricGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMetricGoal.swift; sourceTree = "<group>"; };
 		71AA9B61E4EBF37C8CA6F56C /* ConcentrationCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcentrationCalculator.swift; sourceTree = "<group>"; };
 		7A64A99CE351AF3776765C91 /* DoseEntryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseEntryRow.swift; sourceTree = "<group>"; };
 		841771287EFD5C384684A851 /* PeptidePresetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptidePresetTests.swift; sourceTree = "<group>"; };
+		89034B3E187651CFC429D8CF /* BodyMetricGoalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMetricGoalTests.swift; sourceTree = "<group>"; };
 		8D5CCF00A726CF4E34B1CC89 /* ChangelogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangelogEntry.swift; sourceTree = "<group>"; };
 		94DC584CD04CF9002461B159 /* MyPepTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPepTrackerTests.swift; sourceTree = "<group>"; };
 		95982356A66ECB822F58DFEA /* PeptideDeletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptideDeletionTests.swift; sourceTree = "<group>"; };
@@ -191,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				FBA7577CAD3B4D5FDBE9AE89 /* BodyMeasurementTests.swift */,
+				89034B3E187651CFC429D8CF /* BodyMetricGoalTests.swift */,
 				3180C14ADE1B1847F2BB2255 /* ConcentrationCalculatorTests.swift */,
 				F25899BA6DFD5B8109D1CE04 /* DoseDeletionTests.swift */,
 				94DC584CD04CF9002461B159 /* MyPepTrackerTests.swift */,
@@ -238,6 +245,7 @@
 				AFF8603AEB3F0911479947E6 /* BodyView.swift */,
 				CE4BF5E1B65748F333B09B3D /* LogMeasurementView.swift */,
 				10774E3A1DB078C43414D5D5 /* MetricDetailView.swift */,
+				5E5CBC4C1A374B54451A0B53 /* SetGoalSheet.swift */,
 			);
 			path = Body;
 			sourceTree = "<group>";
@@ -257,6 +265,7 @@
 			children = (
 				028CCDCB0B3E5408FC57DFA0 /* BodyMeasurement.swift */,
 				34533476C5E0C5A357C1343E /* BodyMetric.swift */,
+				6EE1E2F79C7B604A7B2A01B0 /* BodyMetricGoal.swift */,
 				8D5CCF00A726CF4E34B1CC89 /* ChangelogEntry.swift */,
 				DCB5B6EBA083D7B616394EA6 /* DoseEntry.swift */,
 				2C4FD0E2F614AE531BA12F6D /* DoseFrequency.swift */,
@@ -424,6 +433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				02E16BC357265E576FB2A0BE /* BodyMeasurementTests.swift in Sources */,
+				62678171A54118E1820FCC1B /* BodyMetricGoalTests.swift in Sources */,
 				E5F9E5AAA7392992895FF00A /* ConcentrationCalculatorTests.swift in Sources */,
 				88358B3082CF809C389DB5CE /* DoseDeletionTests.swift in Sources */,
 				4A41AE1D6BB125BD74909165 /* MyPepTrackerTests.swift in Sources */,
@@ -445,6 +455,7 @@
 				50E371DDDF549F6E11B3B277 /* BodyMapView.swift in Sources */,
 				F7BF34700E656EBB691B6369 /* BodyMeasurement.swift in Sources */,
 				B756E0BFF06E14E5451D2FED /* BodyMetric.swift in Sources */,
+				3DE9E4582BAFF3072F95B73C /* BodyMetricGoal.swift in Sources */,
 				5B7F0208479E76A2CD28AF1A /* BodyView.swift in Sources */,
 				EA30653EEAACB5402DE96943 /* Changelog.swift in Sources */,
 				141F1FCA7399C1D55AF5D162 /* ChangelogEntry.swift in Sources */,
@@ -470,6 +481,7 @@
 				76CC53D08607C2EE9FE84F71 /* PeptidePreset.swift in Sources */,
 				A0BF34117FE818BAFC3FCDD1 /* ReconstitutionSheet.swift in Sources */,
 				8EE1937E929512441D22B03D /* ScheduleType.swift in Sources */,
+				657CEA4720AFC0FEEF36A5AE /* SetGoalSheet.swift in Sources */,
 				F6A4B96A3C8F64BA8418DA16 /* SettingsView.swift in Sources */,
 				92E7DB68F57CCF0AE1AF46AF /* ToastView.swift in Sources */,
 				C0C47889864F61D697921076 /* TodayView.swift in Sources */,

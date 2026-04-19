@@ -4,7 +4,7 @@ import SwiftData
 @main
 struct MyPepTrackerApp: App {
     private let container: ModelContainer = {
-        let schema = Schema([Peptide.self, Vial.self, DoseEntry.self, BodyMeasurement.self])
+        let schema = Schema([Peptide.self, Vial.self, DoseEntry.self, BodyMeasurement.self, BodyMetricGoal.self])
 
         #if DEBUG
         // Screenshot mode: isolated in-memory store with deterministic seed data.

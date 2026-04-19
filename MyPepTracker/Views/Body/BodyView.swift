@@ -5,6 +5,7 @@ struct BodyView: View {
     @Environment(\.modelContext) private var context
     @Environment(AppState.self) private var appState
     @Query(sort: \BodyMeasurement.timestamp, order: .reverse) private var allMeasurements: [BodyMeasurement]
+    @Query private var allGoals: [BodyMetricGoal]
     @AppStorage("preferImperial") private var preferImperial = false
 
     @State private var showingLogSheet = false
@@ -68,11 +69,17 @@ struct BodyView: View {
         }
     }
 
+    private func goal(for metric: BodyMetric) -> BodyMetricGoal? {
+        allGoals.first { $0.metric == metric }
+    }
+
     @ViewBuilder
     private func row(for metric: BodyMetric) -> some View {
         let latest = latestByMetric[metric]
         let delta = sevenDayDelta(for: metric)
+        let goalForRow = goal(for: metric)
 
+        VStack(alignment: .leading, spacing: 6) {
         HStack(spacing: 12) {
             Image(systemName: metric.symbol)
                 .font(.title3)
@@ -114,6 +121,15 @@ struct BodyView: View {
                         .foregroundStyle(delta > 0 ? AppTheme.success : AppTheme.warning)
                 }
             }
+        }
+        // Goal progress bar (only when a goal and at least one logged value exist).
+        if let g = goalForRow, let current = latest?.value {
+            let progress = g.progressFractionForDisplay(currentValue: current)
+            ProgressView(value: progress)
+                .tint(g.isComplete(currentValue: current) ? AppTheme.success : AppTheme.primary)
+                .accessibilityLabel("\(metric.displayName) goal progress")
+                .accessibilityValue(String(format: "%.0f percent", progress * 100))
+        }
         }
         .padding(.vertical, 4)
     }
