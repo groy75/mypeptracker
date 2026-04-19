@@ -26,6 +26,12 @@ struct ContentView: View {
                         Label("History", systemImage: "list.clipboard.fill")
                     }
 
+                BodyView()
+                    .tag(AppTab.body)
+                    .tabItem {
+                        Label("Body", systemImage: "figure.arms.open")
+                    }
+
                 SettingsView()
                     .tag(AppTab.settings)
                     .tabItem {

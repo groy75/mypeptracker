@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 enum AppTab: Hashable {
-    case today, peptides, history, settings
+    case today, peptides, history, body, settings
 }
 
 @Observable

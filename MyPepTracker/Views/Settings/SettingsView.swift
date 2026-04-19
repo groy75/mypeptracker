@@ -6,6 +6,7 @@ struct SettingsView: View {
     @AppStorage("syringeType") private var syringeType = "insulin"
     @AppStorage("overdueDelayHours") private var overdueDelayHours = 2.0
     @AppStorage("expiryWarningDays") private var expiryWarningDays = 3
+    @AppStorage("preferImperial") private var preferImperial = false
 
     @Query(sort: \DoseEntry.timestamp) private var allDoses: [DoseEntry]
     @Query(sort: \Peptide.name) private var allPeptides: [Peptide]
@@ -22,6 +23,10 @@ struct SettingsView: View {
                         Text("Insulin (U-100 / IU)").tag("insulin")
                         Text("Standard (mL)").tag("standard")
                     }
+                }
+
+                Section("Body Measurements") {
+                    Toggle("Use imperial units (lb, in)", isOn: $preferImperial)
                 }
 
                 Section("Notifications") {
