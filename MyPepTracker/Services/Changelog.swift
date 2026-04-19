@@ -6,6 +6,17 @@ enum Changelog {
     /// Newest entry first.
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.4.0",
+            build: 5,
+            date: date("2026-04-19"),
+            changes: [
+                "New Body tab for tracking weight, waist, neck, chest, back width, biceps, thighs, and body-fat %.",
+                "Swift Charts line graph of every metric over time, with a 7-day rolling mean on weight so daily fluctuations don\u{2019}t mislead you.",
+                "Log measurements in metric or imperial — toggle in Settings.",
+                "Fixes a notification-scheduling fragility so renaming a peptide no longer leaves ghost reminders behind."
+            ]
+        ),
+        ChangelogEntry(
             version: "1.3.0",
             build: 4,
             date: date("2026-04-18"),
