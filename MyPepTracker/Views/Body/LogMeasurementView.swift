@@ -5,18 +5,20 @@ struct LogMeasurementView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Environment(AppState.self) private var appState
-    @AppStorage("preferImperial") private var preferImperial = false
 
-    let preselectedMetric: BodyMetric?
+    /// A LogMeasurementView is always scoped to one metric — users enter it
+    /// from the metric's detail view. The no-picker design mirrors how the
+    /// Log Dose flow works for peptides: pick the subject first, log second.
+    let metric: BodyMetric
+    let preferImperial: Bool
 
-    @State private var metric: BodyMetric
     @State private var inputValue: String = ""
     @State private var timestamp: Date = .now
     @State private var notes: String = ""
 
-    init(preselectedMetric: BodyMetric? = nil) {
-        self.preselectedMetric = preselectedMetric
-        _metric = State(initialValue: preselectedMetric ?? .weight)
+    init(preselectedMetric: BodyMetric) {
+        self.metric = preselectedMetric
+        self.preferImperial = BodyMetricUnitPreference.preferImperial(for: preselectedMetric)
     }
 
     private var unitSuffix: String {
@@ -29,19 +31,18 @@ struct LogMeasurementView: View {
 
     var body: some View {
         Form {
-            Section("Metric") {
-                if preselectedMetric != nil {
-                    LabeledContent("Metric", value: metric.displayName)
-                } else {
-                    Picker("Metric", selection: $metric) {
-                        ForEach(BodyMetric.allCases, id: \.self) { m in
-                            Label(m.displayName, systemImage: m.symbol).tag(m)
-                        }
-                    }
+            Section {
+                HStack(spacing: 12) {
+                    Image(systemName: metric.symbol)
+                        .font(.title2)
+                        .foregroundStyle(AppTheme.primary)
+                    Text("Recording your current \(metric.displayName.lowercased())")
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.textSecondary)
                 }
             }
 
-            Section("Value") {
+            Section(metric.displayName) {
                 HStack {
                     TextField("Value", text: $inputValue)
                         .keyboardType(.decimalPad)
@@ -56,7 +57,7 @@ struct LogMeasurementView: View {
                     .lineLimit(1...4)
             }
         }
-        .navigationTitle("Log measurement")
+        .navigationTitle("Log \(metric.displayName.lowercased())")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -80,7 +81,7 @@ struct LogMeasurementView: View {
         )
         context.insert(entry)
         try? context.save()
-        appState.showToast("Logged \(BodyMetricFormat.formatted(siValue, unit: metric.unit, imperial: preferImperial)) (\(metric.displayName))")
+        appState.showToast("\(metric.displayName): \(BodyMetricFormat.formatted(siValue, unit: metric.unit, imperial: preferImperial))")
         dismiss()
     }
 }

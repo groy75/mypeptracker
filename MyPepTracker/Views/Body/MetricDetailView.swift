@@ -11,13 +11,17 @@ struct MetricDetailView: View {
     // everything and filter in-memory — per-metric entry counts are tiny.
     @Query(sort: \BodyMeasurement.timestamp, order: .forward) private var allEntries: [BodyMeasurement]
     @Query private var allGoals: [BodyMetricGoal]
-    @AppStorage("preferImperial") private var preferImperial = false
+
+    // Per-metric unit preference. Starts from the stored value; writes back
+    // to UserDefaults via the BodyMetricUnitPreference helper when toggled.
+    @State private var preferImperial: Bool
 
     @State private var showingLogSheet = false
     @State private var showingGoalSheet = false
 
     init(metric: BodyMetric) {
         self.metric = metric
+        _preferImperial = State(initialValue: BodyMetricUnitPreference.preferImperial(for: metric))
     }
 
     private var entries: [BodyMeasurement] {
@@ -42,6 +46,19 @@ struct MetricDetailView: View {
         }
     }
 
+    private var unitSuffix: String {
+        preferImperial ? metric.unit.imperialSuffix : metric.unit.storageSuffix
+    }
+
+    /// Unit chip toggles kg↔lb or cm↔in for this metric only. Percent is
+    /// unitless — we hide the chip for body fat.
+    private var supportsUnitToggle: Bool { metric.unit != .percent }
+
+    private func toggleUnit() {
+        preferImperial.toggle()
+        BodyMetricUnitPreference.setPreferImperial(preferImperial, for: metric)
+    }
+
     var body: some View {
         List {
             Section {
@@ -59,8 +76,11 @@ struct MetricDetailView: View {
 
             Section("History (\(entries.count))") {
                 if entries.isEmpty {
-                    Text("No entries yet — tap + to log one.")
-                        .foregroundStyle(AppTheme.textSecondary)
+                    Button {
+                        showingLogSheet = true
+                    } label: {
+                        Label("Record your current \(metric.displayName.lowercased())", systemImage: "plus.circle.fill")
+                    }
                 } else {
                     ForEach(entries.reversed()) { entry in
                         historyRow(entry)
@@ -76,7 +96,7 @@ struct MetricDetailView: View {
                 Button {
                     showingLogSheet = true
                 } label: {
-                    Label("Log", systemImage: "plus")
+                    Label("Log \(metric.displayName.lowercased())", systemImage: "plus")
                 }
             }
         }
@@ -157,7 +177,7 @@ struct MetricDetailView: View {
             Image(systemName: metric.symbol)
                 .font(.largeTitle)
                 .foregroundStyle(AppTheme.primary)
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
                 if let latest {
                     Text(BodyMetricFormat.formatted(latest.value, unit: metric.unit, imperial: preferImperial))
                         .font(.title.monospacedDigit())
@@ -165,12 +185,28 @@ struct MetricDetailView: View {
                         .font(.caption)
                         .foregroundStyle(AppTheme.textSecondary)
                 } else {
-                    Text("—")
-                        .font(.title.monospacedDigit())
+                    Text("No measurements yet")
+                        .font(.title3)
                         .foregroundStyle(AppTheme.textSecondary)
                 }
             }
             Spacer()
+            if supportsUnitToggle {
+                // Small segmented control to flip between metric and imperial.
+                Picker("Unit", selection: Binding(
+                    get: { preferImperial },
+                    set: { newValue in
+                        preferImperial = newValue
+                        BodyMetricUnitPreference.setPreferImperial(newValue, for: metric)
+                    }
+                )) {
+                    Text(metric.unit.storageSuffix).tag(false)
+                    Text(metric.unit.imperialSuffix).tag(true)
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 100)
+                .accessibilityLabel("Unit for \(metric.displayName)")
+            }
         }
         .padding()
     }
@@ -223,8 +259,8 @@ struct MetricDetailView: View {
             }
             .frame(height: 220)
             .padding()
-        } else {
-            Text("Log at least two entries to see a chart.")
+        } else if entries.count == 1 {
+            Text("Log one more entry to see a chart.")
                 .font(.caption)
                 .foregroundStyle(AppTheme.textSecondary)
                 .padding()

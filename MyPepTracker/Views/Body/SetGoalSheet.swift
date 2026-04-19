@@ -5,13 +5,14 @@ struct SetGoalSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Environment(AppState.self) private var appState
-    @AppStorage("preferImperial") private var preferImperial = false
 
     let metric: BodyMetric
     /// If non-nil, user is editing this existing goal instead of creating one.
     let existing: BodyMetricGoal?
     /// Latest measurement for sensible defaults on start value.
     let currentValue: Double?
+    /// Unit preference for this metric — read once at init, stays stable for the sheet.
+    let preferImperial: Bool
 
     @State private var startInput: String
     @State private var targetInput: String
@@ -23,9 +24,9 @@ struct SetGoalSheet: View {
         self.metric = metric
         self.existing = existing
         self.currentValue = currentValue
+        let imperial = BodyMetricUnitPreference.preferImperial(for: metric)
+        self.preferImperial = imperial
 
-        // Wrap SwiftUI @State init via an isolated helper.
-        let imperial = UserDefaults.standard.bool(forKey: "preferImperial")
         let fmt: (Double?) -> String = { v in
             guard let v else { return "" }
             let display = BodyMetricFormat.display(v, unit: metric.unit, imperial: imperial)
@@ -73,13 +74,27 @@ struct SetGoalSheet: View {
                 LabeledContent("Unit", value: unitSuffix)
             }
 
-            Section("Start") {
+            Section {
                 HStack {
                     TextField("Value", text: $startInput)
                         .keyboardType(.decimalPad)
                     Text(unitSuffix).foregroundStyle(AppTheme.textSecondary)
                 }
                 DatePicker("Date", selection: $startDate, displayedComponents: .date)
+                if let current = currentValue, startInput.isEmpty {
+                    Button {
+                        let display = BodyMetricFormat.display(current, unit: metric.unit, imperial: preferImperial)
+                        startInput = String(format: "%.1f", display)
+                    } label: {
+                        Label("Use current \(metric.displayName.lowercased())", systemImage: "arrow.down.circle")
+                            .font(.caption)
+                    }
+                }
+            } header: {
+                Text("Starting \(metric.displayName.lowercased())")
+            } footer: {
+                Text("Where you're starting from today — progress is measured against this.")
+                    .font(.caption2)
             }
 
             Section("Target") {

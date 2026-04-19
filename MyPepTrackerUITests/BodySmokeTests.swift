@@ -39,15 +39,21 @@ final class BodySmokeTests: XCTestCase {
         // crashed the same way MetricDetailView's query did.
         app.tabBars.buttons["Body"].tap()
 
-        // Log a weight so the goal form has a sensible default.
-        app.buttons["Log measurement"].tap()
+        // Logging is now per-metric: enter Weight detail first, then log there.
+        app.staticTexts["Weight"].firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["Weight"].waitForExistence(timeout: 3))
+
+        // Empty-state "Record your current weight" button.
+        let recordButton = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Record your current'")).firstMatch
+        XCTAssertTrue(recordButton.waitForExistence(timeout: 3), "Record-current button missing on empty metric")
+        recordButton.tap()
+
         let valueField = app.textFields["Value"].firstMatch
         XCTAssertTrue(valueField.waitForExistence(timeout: 3))
         valueField.tap(); valueField.typeText("82.0")
         app.buttons["Save"].tap()
 
-        // Open Weight detail.
-        app.staticTexts["Weight"].firstMatch.tap()
+        // Back on Weight detail (same screen; sheet dismissed).
         XCTAssertTrue(app.navigationBars["Weight"].waitForExistence(timeout: 3))
 
         // Set a goal.

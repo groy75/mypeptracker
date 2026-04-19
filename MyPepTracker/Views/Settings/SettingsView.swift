@@ -25,8 +25,13 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("Body Measurements") {
-                    Toggle("Use imperial units (lb, in)", isOn: $preferImperial)
+                Section {
+                    Toggle("Default new metrics to imperial", isOn: $preferImperial)
+                } header: {
+                    Text("Body Measurements")
+                } footer: {
+                    Text("Each metric in Body has its own kg/lb or cm/in toggle. This setting only controls the default for metrics you haven't customized.")
+                        .font(.caption2)
                 }
 
                 Section("Notifications") {

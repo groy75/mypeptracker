@@ -6,10 +6,6 @@ struct BodyView: View {
     @Environment(AppState.self) private var appState
     @Query(sort: \BodyMeasurement.timestamp, order: .reverse) private var allMeasurements: [BodyMeasurement]
     @Query private var allGoals: [BodyMetricGoal]
-    @AppStorage("preferImperial") private var preferImperial = false
-
-    @State private var showingLogSheet = false
-    @State private var preselectedMetric: BodyMetric?
 
     // Latest entry per metric.
     private var latestByMetric: [BodyMetric: BodyMeasurement] {
@@ -39,33 +35,9 @@ struct BodyView: View {
                     } label: {
                         row(for: metric)
                     }
-                    .swipeActions(edge: .leading) {
-                        Button {
-                            preselectedMetric = metric
-                            showingLogSheet = true
-                        } label: {
-                            Label("Log", systemImage: "plus")
-                        }
-                        .tint(AppTheme.primary)
-                    }
                 }
             }
             .navigationTitle("Body")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        preselectedMetric = nil
-                        showingLogSheet = true
-                    } label: {
-                        Label("Log measurement", systemImage: "plus.circle.fill")
-                    }
-                }
-            }
-            .sheet(isPresented: $showingLogSheet) {
-                NavigationStack {
-                    LogMeasurementView(preselectedMetric: preselectedMetric)
-                }
-            }
         }
     }
 
@@ -78,58 +50,59 @@ struct BodyView: View {
         let latest = latestByMetric[metric]
         let delta = sevenDayDelta(for: metric)
         let goalForRow = goal(for: metric)
+        let imperial = BodyMetricUnitPreference.preferImperial(for: metric)
 
         VStack(alignment: .leading, spacing: 6) {
-        HStack(spacing: 12) {
-            Image(systemName: metric.symbol)
-                .font(.title3)
-                .foregroundStyle(AppTheme.primary)
-                .frame(width: 32)
+            HStack(spacing: 12) {
+                Image(systemName: metric.symbol)
+                    .font(.title3)
+                    .foregroundStyle(AppTheme.primary)
+                    .frame(width: 32)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(metric.displayName)
-                    .font(.body)
-                    .foregroundStyle(AppTheme.textPrimary)
-                if let latest {
-                    Text(latest.timestamp, style: .relative)
-                        .font(.caption2)
-                        .foregroundStyle(AppTheme.textSecondary)
-                } else {
-                    Text("No entries")
-                        .font(.caption2)
-                        .foregroundStyle(AppTheme.textSecondary)
-                }
-            }
-
-            Spacer()
-
-            VStack(alignment: .trailing, spacing: 2) {
-                if let latest {
-                    Text(BodyMetricFormat.formatted(latest.value, unit: metric.unit, imperial: preferImperial))
-                        .font(.body.monospacedDigit())
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(metric.displayName)
+                        .font(.body)
                         .foregroundStyle(AppTheme.textPrimary)
-                } else {
-                    Text("—")
-                        .foregroundStyle(AppTheme.textSecondary)
+                    if let latest {
+                        Text(latest.timestamp, style: .relative)
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.textSecondary)
+                    } else {
+                        Text("Tap to record")
+                            .font(.caption2)
+                            .foregroundStyle(AppTheme.primary)
+                    }
                 }
-                if let delta, abs(delta) > 0.0001 {
-                    let displayDelta = BodyMetricFormat.display(delta, unit: metric.unit, imperial: preferImperial)
-                    let suffix = preferImperial ? metric.unit.imperialSuffix : metric.unit.storageSuffix
-                    let sign = delta > 0 ? "+" : ""
-                    Text("\(sign)\(String(format: "%.1f", displayDelta)) \(suffix) / 7d")
-                        .font(.caption2.monospacedDigit())
-                        .foregroundStyle(delta > 0 ? AppTheme.success : AppTheme.warning)
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    if let latest {
+                        Text(BodyMetricFormat.formatted(latest.value, unit: metric.unit, imperial: imperial))
+                            .font(.body.monospacedDigit())
+                            .foregroundStyle(AppTheme.textPrimary)
+                    } else {
+                        Text("—")
+                            .foregroundStyle(AppTheme.textSecondary)
+                    }
+                    if let delta, abs(delta) > 0.0001 {
+                        let displayDelta = BodyMetricFormat.display(delta, unit: metric.unit, imperial: imperial)
+                        let suffix = imperial ? metric.unit.imperialSuffix : metric.unit.storageSuffix
+                        let sign = delta > 0 ? "+" : ""
+                        Text("\(sign)\(String(format: "%.1f", displayDelta)) \(suffix) / 7d")
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(delta > 0 ? AppTheme.success : AppTheme.warning)
+                    }
                 }
             }
-        }
-        // Goal progress bar (only when a goal and at least one logged value exist).
-        if let g = goalForRow, let current = latest?.value {
-            let progress = g.progressFractionForDisplay(currentValue: current)
-            ProgressView(value: progress)
-                .tint(g.isComplete(currentValue: current) ? AppTheme.success : AppTheme.primary)
-                .accessibilityLabel("\(metric.displayName) goal progress")
-                .accessibilityValue(String(format: "%.0f percent", progress * 100))
-        }
+            // Goal progress bar (only when a goal and at least one logged value exist).
+            if let g = goalForRow, let current = latest?.value {
+                let progress = g.progressFractionForDisplay(currentValue: current)
+                ProgressView(value: progress)
+                    .tint(g.isComplete(currentValue: current) ? AppTheme.success : AppTheme.primary)
+                    .accessibilityLabel("\(metric.displayName) goal progress")
+                    .accessibilityValue(String(format: "%.0f percent", progress * 100))
+            }
         }
         .padding(.vertical, 4)
     }

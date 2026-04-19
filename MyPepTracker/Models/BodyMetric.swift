@@ -97,6 +97,34 @@ extension BodyMetric.Unit {
     }
 }
 
+/// Per-metric unit preference. Stored in UserDefaults as `unit_<metric.rawValue>`
+/// — values `"metric"` or `"imperial"`. Falls back to the user's Settings
+/// `preferImperial` toggle (the old global default) when unset, which in turn
+/// falls back to the device locale's measurement system on first launch.
+enum BodyMetricUnitPreference {
+    private static func storageKey(for metric: BodyMetric) -> String { "unit_\(metric.rawValue)" }
+
+    /// True if the user wants imperial for this metric.
+    static func preferImperial(for metric: BodyMetric) -> Bool {
+        let defaults = UserDefaults.standard
+        if let stored = defaults.string(forKey: storageKey(for: metric)) {
+            return stored == "imperial"
+        }
+        // Legacy global fallback if the user set one before we introduced
+        // per-metric preferences.
+        if defaults.object(forKey: "preferImperial") != nil {
+            return defaults.bool(forKey: "preferImperial")
+        }
+        // Final fallback: device locale. US → imperial; everywhere else → metric.
+        return Locale.current.measurementSystem == .us
+    }
+
+    /// Persist the user's choice for this metric.
+    static func setPreferImperial(_ imperial: Bool, for metric: BodyMetric) {
+        UserDefaults.standard.set(imperial ? "imperial" : "metric", forKey: storageKey(for: metric))
+    }
+}
+
 enum BodyMetricFormat {
     /// Convert stored SI value → user's preferred display value.
     /// `imperial` toggles to lb/in; percent is unchanged.
