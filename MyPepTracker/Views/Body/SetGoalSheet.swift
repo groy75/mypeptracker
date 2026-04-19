@@ -135,10 +135,12 @@ struct SetGoalSheet: View {
             existing.targetDate = resolvedTargetDate
         } else {
             // Delete any stale goal for this metric before inserting.
-            let rawMetric = metric.rawValue
-            let predicate = #Predicate<BodyMetricGoal> { $0.metric.rawValue == rawMetric }
-            if let stale = try? context.fetch(FetchDescriptor(predicate: predicate)) {
-                for g in stale { context.delete(g) }
+            // NB: SwiftData's #Predicate can't traverse .rawValue on @Model
+            // enums — fetch all + filter in memory (goal count is tiny).
+            if let all = try? context.fetch(FetchDescriptor<BodyMetricGoal>()) {
+                for g in all where g.metric == metric {
+                    context.delete(g)
+                }
             }
             let goal = BodyMetricGoal(
                 metric: metric,
