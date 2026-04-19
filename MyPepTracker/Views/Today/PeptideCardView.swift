@@ -37,11 +37,12 @@ struct PeptideCardView: View {
                     Text("Log Dose")
                         .font(.subheadline.weight(.semibold))
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        .frame(minHeight: 44)
                         .background(AppTheme.primary)
                         .foregroundStyle(.white)
                         .clipShape(Capsule())
                 }
+                .accessibilityLabel("Log dose for \(peptide.name)")
             }
 
             if let next = nextDoseDate {
@@ -64,7 +65,7 @@ struct PeptideCardView: View {
                     .font(.caption)
                     .foregroundStyle(vial.daysUntilExpiry <= 3 ? AppTheme.warning : AppTheme.textSecondary)
 
-                    let remaining = vial.estimatedRemainingDoses(forDoseMcg: peptide.defaultDoseMcg)
+                    let remaining = vial.estimatedRemainingDoses(forPeptide: peptide)
                     Label(
                         "~\(remaining) doses",
                         systemImage: "syringe.fill"

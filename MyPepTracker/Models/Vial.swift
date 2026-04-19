@@ -47,6 +47,19 @@ final class Vial {
         )
     }
 
+    /// Remaining doses projected from the actual volume-per-dose history of this vial.
+    /// Uses the average of logged doses on this vial; falls back to the peptide's default
+    /// when there is no history yet.
+    func estimatedRemainingDoses(forPeptide peptide: Peptide) -> Int {
+        let loggedVolumes = doseEntries.map(\.unitsInjectedML).filter { $0 > 0 }
+        guard !loggedVolumes.isEmpty else {
+            return estimatedRemainingDoses(forDoseMcg: peptide.defaultDoseMcg)
+        }
+        let avgVolumeML = loggedVolumes.reduce(0, +) / Double(loggedVolumes.count)
+        guard avgVolumeML > 0 else { return 0 }
+        return Int(remainingVolumeML / avgVolumeML)
+    }
+
     init(
         peptideAmountMg: Double,
         waterVolumeML: Double,

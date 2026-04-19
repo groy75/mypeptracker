@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct PeptideListView: View {
     @Environment(\.modelContext) private var modelContext
@@ -64,6 +65,7 @@ struct PeptideListView: View {
                     Button(action: { showingAddPeptide = true }) {
                         Image(systemName: "plus")
                     }
+                    .accessibilityLabel("Add peptide")
                 }
             }
             .sheet(isPresented: $showingAddPeptide) {
@@ -79,6 +81,7 @@ struct PeptideListView: View {
                 presenting: peptidePendingDeletion
             ) { peptide in
                 Button("Delete Peptide & History", role: .destructive) {
+                    UINotificationFeedbackGenerator().notificationOccurred(.warning)
                     modelContext.delete(peptide)
                     peptidePendingDeletion = nil
                 }

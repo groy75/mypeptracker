@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
@@ -86,6 +87,7 @@ struct HistoryView: View {
                 presenting: dosePendingDeletion
             ) { dose in
                 Button("Delete Dose", role: .destructive) {
+                    UINotificationFeedbackGenerator().notificationOccurred(.warning)
                     deleteDose(dose)
                     dosePendingDeletion = nil
                 }

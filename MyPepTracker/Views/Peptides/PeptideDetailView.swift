@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct PeptideDetailView: View {
     @Bindable var peptide: Peptide
@@ -59,7 +60,7 @@ struct PeptideDetailView: View {
                     LabeledContent("Concentration", value: String(format: "%.0f mcg/mL", vial.concentrationMcgPerML))
                     LabeledContent("Expires", value: vial.expiryDate, format: .dateTime.month().day())
                     LabeledContent("Days Left", value: "\(vial.daysUntilExpiry)")
-                    let remaining = vial.estimatedRemainingDoses(forDoseMcg: peptide.defaultDoseMcg)
+                    let remaining = vial.estimatedRemainingDoses(forPeptide: peptide)
                     LabeledContent("Doses Remaining", value: "~\(remaining)")
                 } else {
                     Text("No active vial")
@@ -150,8 +151,10 @@ struct PeptideDetailView: View {
                 ReconstitutionSheet(peptide: peptide, vial: vial)
             }
         }
-        .fullScreenCover(isPresented: $showingLogDose) {
+        .sheet(isPresented: $showingLogDose) {
             LogDoseSheet(peptide: peptide)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
         }
         .confirmationDialog(
             "Delete \(peptide.name)?",
@@ -159,6 +162,7 @@ struct PeptideDetailView: View {
             titleVisibility: .visible
         ) {
             Button("Delete Peptide & History", role: .destructive) {
+                UINotificationFeedbackGenerator().notificationOccurred(.warning)
                 modelContext.delete(peptide)
                 dismiss()
             }
@@ -176,6 +180,7 @@ struct PeptideDetailView: View {
             presenting: dosePendingDeletion
         ) { dose in
             Button("Delete Dose", role: .destructive) {
+                UINotificationFeedbackGenerator().notificationOccurred(.warning)
                 deleteDose(dose)
                 dosePendingDeletion = nil
             }

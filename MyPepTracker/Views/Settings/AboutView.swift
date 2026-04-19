@@ -28,7 +28,9 @@ struct AboutView: View {
                 Link(destination: URL(string: "mailto:greg@gregsplace.cc?subject=MyPepTracker%20Feedback")!) {
                     Label("Email the Developer", systemImage: "envelope.fill")
                 }
-                Link(destination: URL(string: "https://mypeptracker.gregsplace.cc/changelog")!) {
+                NavigationLink {
+                    ChangelogView()
+                } label: {
                     Label("What's New", systemImage: "sparkles")
                 }
                 Link(destination: URL(string: "https://mypeptracker.gregsplace.cc/privacy")!) {

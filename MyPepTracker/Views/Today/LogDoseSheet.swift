@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct LogDoseSheet: View {
     @Environment(\.modelContext) private var modelContext
@@ -19,6 +20,17 @@ struct LogDoseSheet: View {
         self._injectionSite = State(initialValue: peptide.lastDose?.injectionSite)
     }
 
+    private var sliderMax: Double {
+        let base = max(peptide.defaultDoseMcg * 2, 100)
+        return max(base, doseMcg + 50)   // keep thumb in range if user steps beyond
+    }
+
+    private var sliderStep: Double {
+        if sliderMax <= 500 { return 5 }
+        if sliderMax <= 5_000 { return 25 }
+        return 100
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -27,6 +39,20 @@ struct LogDoseSheet: View {
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                         .frame(maxWidth: .infinity)
+
+                    VStack(spacing: 4) {
+                        Slider(value: $doseMcg, in: 0...sliderMax, step: sliderStep)
+                            .tint(AppTheme.primary)
+                            .accessibilityLabel("Dose in micrograms")
+                            .accessibilityValue("\(Int(doseMcg)) micrograms")
+                        HStack {
+                            Text("0")
+                            Spacer()
+                            Text("\(Int(sliderMax)) mcg")
+                        }
+                        .font(.caption2)
+                        .foregroundStyle(AppTheme.textSecondary)
+                    }
 
                     if let vial = peptide.activeVial {
                         let volumeML = ConcentrationCalculator.volumeMLForDose(
@@ -38,6 +64,9 @@ struct LogDoseSheet: View {
                             Text("Volume")
                             Spacer()
                             Text(String(format: "%.2f mL (%.0f IU)", volumeML, iu))
+                                .monospacedDigit()
+                                .contentTransition(.numericText())
+                                .animation(.snappy(duration: 0.15), value: doseMcg)
                                 .foregroundStyle(AppTheme.textSecondary)
                         }
                     }
@@ -97,7 +126,7 @@ struct LogDoseSheet: View {
 
         if let vial {
             vial.totalVolumeUsedML += volumeML
-            let remaining = vial.estimatedRemainingDoses(forDoseMcg: peptide.defaultDoseMcg)
+            let remaining = vial.estimatedRemainingDoses(forPeptide: peptide)
             NotificationManager.shared.scheduleVialLowWarning(for: peptide, remainingDoses: remaining)
         }
 
@@ -106,6 +135,8 @@ struct LogDoseSheet: View {
         let manager = NotificationManager.shared
         manager.scheduleDoseReminder(for: peptide)
         manager.scheduleOverdueReminder(for: peptide)
+
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
 
         appState.showToast("Logged \(Int(doseMcg))mcg of \(peptide.name)")
         appState.selectedTab = .today

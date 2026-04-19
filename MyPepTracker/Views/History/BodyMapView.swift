@@ -13,6 +13,18 @@ struct BodyMapView: View {
         return counts
     }
 
+    private var voiceOverSummary: String {
+        guard !siteCounts.isEmpty else {
+            return "No recent injection sites recorded."
+        }
+        let total = siteCounts.values.reduce(0, +)
+        let breakdown = siteCounts
+            .sorted { $0.value > $1.value }
+            .map { "\($0.key.displayName) \($0.value) time\($0.value == 1 ? "" : "s")" }
+            .joined(separator: ", ")
+        return "Recent injection sites over the last 30 days. \(total) total doses: \(breakdown)."
+    }
+
     var body: some View {
         VStack(spacing: 8) {
             Text("Recent Injection Sites")
@@ -38,6 +50,9 @@ struct BodyMapView: View {
             }
             .frame(width: 200, height: 340)
             .padding()
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Body map")
+            .accessibilityValue(voiceOverSummary)
 
             if !siteCounts.isEmpty {
                 HStack(spacing: 16) {
@@ -46,10 +61,12 @@ struct BodyMapView: View {
                             Circle()
                                 .fill(AppTheme.primary)
                                 .frame(width: 8, height: 8)
+                                .accessibilityHidden(true)
                             Text("\(site.displayName): \(count)")
                                 .font(.caption2)
                                 .foregroundStyle(AppTheme.textSecondary)
                         }
+                        .accessibilityElement(children: .combine)
                     }
                 }
                 .padding(.bottom)

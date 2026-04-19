@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var appState = AppState()
+    @AppStorage("lastSeenChangelogBuild") private var lastSeenChangelogBuild = 0
+    @State private var showWhatsNew = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -41,5 +43,27 @@ struct ContentView: View {
         }
         .animation(.spring(response: 0.35, dampingFraction: 0.85), value: appState.toastMessage)
         .environment(appState)
+        .onAppear(perform: presentWhatsNewIfNeeded)
+        .sheet(isPresented: $showWhatsNew) {
+            NavigationStack {
+                ChangelogView()
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") { showWhatsNew = false }
+                        }
+                    }
+            }
+            .presentationDetents([.large])
+        }
+    }
+
+    private func presentWhatsNewIfNeeded() {
+        let current = Changelog.currentBuild
+        // Only show on a genuine upgrade: lastSeen must be non-zero (prior install)
+        // AND strictly less than the running build. Fresh installs don't count.
+        if lastSeenChangelogBuild > 0, current > lastSeenChangelogBuild {
+            showWhatsNew = true
+        }
+        lastSeenChangelogBuild = current
     }
 }
