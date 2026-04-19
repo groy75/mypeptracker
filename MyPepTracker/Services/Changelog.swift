@@ -59,9 +59,11 @@ enum Changelog {
     }
 
     private static func date(_ string: String) -> Date {
+        // Parse as the device's local calendar day so the formatted display
+        // matches what the user sees — UTC parsing caused an off-by-one west of GMT.
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
-        fmt.timeZone = TimeZone(identifier: "UTC")
+        fmt.timeZone = .current
         return fmt.date(from: string) ?? Date()
     }
 }

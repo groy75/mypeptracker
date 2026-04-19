@@ -50,6 +50,17 @@
                ReferencedContainer = "container:MyPepTracker.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2EACD6D4EF88BF9FA8201C4C"
+               BuildableName = "MyPepTrackerUITests.xctest"
+               BlueprintName = "MyPepTrackerUITests"
+               ReferencedContainer = "container:MyPepTracker.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>
