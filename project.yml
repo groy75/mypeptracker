@@ -46,6 +46,10 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortraitUpsideDown"
         INFOPLIST_KEY_UIRequiresFullScreen: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Auto-answer "Missing Compliance" on TestFlight — the app only uses
+        # HTTPS (Apple's always-exempt category) so this is truthful and lets
+        # builds skip the manual Export Compliance click in ASC.
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
   MyPepTrackerTests:
     type: bundle.unit-test
     platform: iOS
