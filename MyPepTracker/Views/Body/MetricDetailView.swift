@@ -6,20 +6,20 @@ struct MetricDetailView: View {
     @Environment(\.modelContext) private var context
     let metric: BodyMetric
 
-    @Query private var entries: [BodyMeasurement]
+    // SwiftData's #Predicate cannot safely traverse enum rawValue paths on
+    // @Model-stored enums — triggered a crash when tapping any metric. Fetch
+    // everything and filter in-memory; per-metric entry counts are tiny.
+    @Query(sort: \BodyMeasurement.timestamp, order: .forward) private var allEntries: [BodyMeasurement]
     @AppStorage("preferImperial") private var preferImperial = false
 
     @State private var showingLogSheet = false
 
     init(metric: BodyMetric) {
         self.metric = metric
-        // Predicate on enum stored as rawValue-backed attribute.
-        let raw = metric.rawValue
-        _entries = Query(
-            filter: #Predicate<BodyMeasurement> { $0.metric.rawValue == raw },
-            sort: \.timestamp,
-            order: .forward
-        )
+    }
+
+    private var entries: [BodyMeasurement] {
+        allEntries.filter { $0.metric == metric }
     }
 
     private var latest: BodyMeasurement? { entries.last }
