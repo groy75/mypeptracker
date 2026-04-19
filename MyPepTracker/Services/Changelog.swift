@@ -6,6 +6,16 @@ enum Changelog {
     /// Newest entry first.
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.6.0",
+            build: 8,
+            date: date("2026-04-19"),
+            changes: [
+                "Each body metric now has its own kg/lb or cm/in toggle — weight in lb, waist in cm, whatever you prefer.",
+                "Logging is scoped to one metric at a time: open a metric, tap to record. No more picking the wrong metric from a list.",
+                "Fresh metrics show a clear \u{201C}Tap to record\u{201D} hint and a prominent \u{201C}Record your current \u{2026}\u{201D} button."
+            ]
+        ),
+        ChangelogEntry(
             version: "1.5.0",
             build: 7,
             date: date("2026-04-19"),
