@@ -163,6 +163,7 @@ struct PeptideDetailView: View {
         ) {
             Button("Delete Peptide & History", role: .destructive) {
                 UINotificationFeedbackGenerator().notificationOccurred(.warning)
+                NotificationManager.shared.cancelAll(for: peptide)
                 modelContext.delete(peptide)
                 dismiss()
             }
