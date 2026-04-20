@@ -37,8 +37,9 @@ Single source of truth for MyPepTracker App Store submissions.
 | 1.4.1     | 6     | 2026-04-19      | **TestFlight** | Hotfix: tapping a Body metric (e.g. Weight) to see its chart no longer crashes. SwiftData `#Predicate` traversing `.rawValue` on an @Model-stored enum was the cause; switched MetricDetailView to fetch-all + filter-in-memory. Also baked `ITSAppUsesNonExemptEncryption=NO` into Info.plist so future builds skip the Export Compliance prompt. Delivery UUID `8c8db232-50bb-4301-a4b0-60b3a00d65e7`. **TestFlight-only**. |
 | 1.5.0     | 7     | 2026-04-19      | **Superseded** | Phase 2 body-metric goals: `BodyMetricGoal` @Model with direction inference + progress calc. New `SetGoalSheet`, goal card + dashed RuleMark on `MetricDetailView`, progress bar on each `BodyView` row. Delivery UUID `f80b0bed-6cd8-4773-a2d9-07558b10d98d`. Superseded by 1.6.0 after dogfooding feedback on logging UX. |
 | 1.6.0     | 8     | 2026-04-19      | **TestFlight** | Per-metric kg/lb (cm/in) toggle in each metric detail header — weight in lb + waist in cm is a real user pattern. Logging is scoped per-metric (no more generic sheet with picker); empty state shows "Record your current <metric>" button. `BodyMetricUnitPreference` helper + UserDefaults `unit_<metric>`. Settings global toggle demoted to "default for new metrics" with explanatory footer. Delivery UUID `b80aa1c0-a113-47d8-a1c8-639d9100a9ce`. **TestFlight-only**. |
+| 1.7.0     | 9     | 2026-04-19      | **TestFlight** | Phase 3 body silhouette: new `BodySilhouetteView` renders a front-facing figure with tappable markers at each anatomy metric's `bodyPosition`. Weight + body-fat as pills above (they don't map to a body point). Segmented List/Body toggle on BodyView, persisted via `@AppStorage("bodyLayout")`. Marker color: gray (no entries), primary (has entries), success (goal met). 4 UI smoke tests green incl. new silhouette→detail navigation. Delivery UUID `73f9a8ad-737f-4b17-9329-6fd1056f98f8`. **TestFlight-only**. |
 
 ## Next submission will be
 
-- Marketing: **1.7.0** (Phase 3 body-silhouette overlay, or other work).
-- Build: **9**.
+- Marketing: **1.8.0** (TBD — your call).
+- Build: **10**.
