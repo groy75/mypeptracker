@@ -1,7 +1,16 @@
 import SwiftUI
 
+/// Shows injection-site distribution over the recent dose history. Uses
+/// the shared `AthleticSilhouette` — same figure as the Body tab — so
+/// the two views feel like the same app, just zoomed differently.
 struct BodyMapView: View {
     let recentDoses: [DoseEntry]
+
+    /// Render size for the silhouette in this view. The shared component
+    /// scales its reference 320x560 drawing to whatever size is supplied;
+    /// we pick a compact size because this view sits inside the History
+    /// scroll list alongside the dose rows.
+    private static let canvasSize = CGSize(width: 240, height: 420)
 
     private var siteCounts: [InjectionSite: Int] {
         var counts: [InjectionSite: Int] = [:]
@@ -32,23 +41,25 @@ struct BodyMapView: View {
                 .padding(.top)
 
             ZStack {
-                bodyOutline
-
+                AthleticSilhouette()
                 ForEach(InjectionSite.allCases.filter { $0 != .other }, id: \.self) { site in
                     if let count = siteCounts[site], count > 0 {
+                        // Scale the reference-space site position into the
+                        // actual render size.
+                        let pos = AthleticSilhouette.scaled(site.silhouettePosition, in: Self.canvasSize)
                         Circle()
                             .fill(AppTheme.primary.opacity(min(1.0, Double(count) * 0.3)))
-                            .frame(width: 24, height: 24)
+                            .frame(width: 26, height: 26)
                             .overlay(
                                 Text("\(count)")
-                                    .font(.system(size: 10, weight: .bold))
+                                    .font(.system(size: 11, weight: .bold))
                                     .foregroundStyle(.white)
                             )
-                            .position(position(for: site))
+                            .position(pos)
                     }
                 }
             }
-            .frame(width: 200, height: 340)
+            .frame(width: Self.canvasSize.width, height: Self.canvasSize.height)
             .padding()
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Body map")
@@ -74,75 +85,5 @@ struct BodyMapView: View {
         }
         .background(AppTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
-    }
-
-    private var bodyOutline: some View {
-        Canvas { context, size in
-            let midX = size.width / 2
-
-            let headRect = CGRect(x: midX - 15, y: 10, width: 30, height: 30)
-            context.fill(Ellipse().path(in: headRect), with: .color(.gray.opacity(0.15)))
-
-            let torso = Path { p in
-                p.move(to: CGPoint(x: midX - 25, y: 45))
-                p.addLine(to: CGPoint(x: midX + 25, y: 45))
-                p.addLine(to: CGPoint(x: midX + 20, y: 160))
-                p.addLine(to: CGPoint(x: midX - 20, y: 160))
-                p.closeSubpath()
-            }
-            context.fill(torso, with: .color(.gray.opacity(0.15)))
-
-            let leftArm = Path { p in
-                p.move(to: CGPoint(x: midX - 25, y: 50))
-                p.addLine(to: CGPoint(x: midX - 45, y: 55))
-                p.addLine(to: CGPoint(x: midX - 50, y: 130))
-                p.addLine(to: CGPoint(x: midX - 38, y: 130))
-                p.addLine(to: CGPoint(x: midX - 33, y: 60))
-                p.closeSubpath()
-            }
-            context.fill(leftArm, with: .color(.gray.opacity(0.15)))
-
-            let rightArm = Path { p in
-                p.move(to: CGPoint(x: midX + 25, y: 50))
-                p.addLine(to: CGPoint(x: midX + 45, y: 55))
-                p.addLine(to: CGPoint(x: midX + 50, y: 130))
-                p.addLine(to: CGPoint(x: midX + 38, y: 130))
-                p.addLine(to: CGPoint(x: midX + 33, y: 60))
-                p.closeSubpath()
-            }
-            context.fill(rightArm, with: .color(.gray.opacity(0.15)))
-
-            let leftLeg = Path { p in
-                p.move(to: CGPoint(x: midX - 18, y: 160))
-                p.addLine(to: CGPoint(x: midX - 22, y: 300))
-                p.addLine(to: CGPoint(x: midX - 8, y: 300))
-                p.addLine(to: CGPoint(x: midX - 3, y: 160))
-                p.closeSubpath()
-            }
-            context.fill(leftLeg, with: .color(.gray.opacity(0.15)))
-
-            let rightLeg = Path { p in
-                p.move(to: CGPoint(x: midX + 18, y: 160))
-                p.addLine(to: CGPoint(x: midX + 22, y: 300))
-                p.addLine(to: CGPoint(x: midX + 8, y: 300))
-                p.addLine(to: CGPoint(x: midX + 3, y: 160))
-                p.closeSubpath()
-            }
-            context.fill(rightLeg, with: .color(.gray.opacity(0.15)))
-        }
-    }
-
-    private func position(for site: InjectionSite) -> CGPoint {
-        let midX: CGFloat = 100
-        switch site {
-        case .abdomen:       return CGPoint(x: midX, y: 120)
-        case .thighLeft:     return CGPoint(x: midX - 12, y: 220)
-        case .thighRight:    return CGPoint(x: midX + 12, y: 220)
-        case .deltoidLeft:   return CGPoint(x: midX - 42, y: 70)
-        case .deltoidRight:  return CGPoint(x: midX + 42, y: 70)
-        case .gluteLeft:     return CGPoint(x: midX - 18, y: 165)
-        case .gluteRight:    return CGPoint(x: midX + 18, y: 165)
-        case .other:         return CGPoint(x: midX, y: 310)
-        }
     }
 }
