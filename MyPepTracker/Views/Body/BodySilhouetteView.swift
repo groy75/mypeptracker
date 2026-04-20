@@ -11,7 +11,7 @@ struct BodySilhouetteView: View {
     @Query(sort: \BodyMeasurement.timestamp, order: .reverse) private var allMeasurements: [BodyMeasurement]
     @Query private var allGoals: [BodyMetricGoal]
 
-    private static let canvasSize = CGSize(width: 240, height: 400)
+    private static let canvasSize = CGSize(width: 320, height: 560)
 
     private var latestByMetric: [BodyMetric: BodyMeasurement] {
         var out: [BodyMetric: BodyMeasurement] = [:]
@@ -147,78 +147,128 @@ struct BodySilhouetteView: View {
     // here at 240x400 with slightly softer proportions. Pure Canvas — no
     // image assets.
 
+    /// Stylized muscular front-facing silhouette. Built from a handful of
+    /// overlapping filled shapes rather than one precise outline — easier
+    /// to tune visually and reads clearly as a V-tapered torso with wide
+    /// shoulders, round pecs/delts, narrow waist, flared hips, and tapered
+    /// quads/calves.
+    ///
+    /// Canvas is 320x560. All coordinates are absolute so marker positions
+    /// in `BodyMetric.bodyPosition` read as pixels.
     private var silhouetteOutline: some View {
         Canvas { context, _ in
-            let midX: CGFloat = 120
-            let fill = GraphicsContext.Shading.color(Color.gray.opacity(0.18))
+            let fill = GraphicsContext.Shading.color(Color.gray.opacity(0.22))
 
-            // Head.
-            let headRect = CGRect(x: midX - 26, y: 14, width: 52, height: 52)
+            // MARK: Head (oval, slightly taller than wide)
+            let headRect = CGRect(x: 130, y: 14, width: 60, height: 70)
             context.fill(Path(ellipseIn: headRect), with: fill)
 
-            // Neck.
+            // MARK: Neck (short tapered trapezoid)
             let neck = Path { p in
-                p.move(to: CGPoint(x: midX - 10, y: 60))
-                p.addLine(to: CGPoint(x: midX + 10, y: 60))
-                p.addLine(to: CGPoint(x: midX + 10, y: 76))
-                p.addLine(to: CGPoint(x: midX - 10, y: 76))
+                p.move(to: CGPoint(x: 146, y: 80))
+                p.addLine(to: CGPoint(x: 174, y: 80))
+                p.addLine(to: CGPoint(x: 180, y: 112))
+                p.addLine(to: CGPoint(x: 140, y: 112))
                 p.closeSubpath()
             }
             context.fill(neck, with: fill)
 
-            // Torso (shoulders → waist → pelvis), slightly hourglass.
-            let torso = Path { p in
-                p.move(to: CGPoint(x: midX - 45, y: 76))   // left shoulder
-                p.addLine(to: CGPoint(x: midX + 45, y: 76)) // right shoulder
-                p.addLine(to: CGPoint(x: midX + 38, y: 170)) // right waist
-                p.addLine(to: CGPoint(x: midX + 42, y: 240)) // right hip
-                p.addLine(to: CGPoint(x: midX - 42, y: 240)) // left hip
-                p.addLine(to: CGPoint(x: midX - 38, y: 170)) // left waist
-                p.closeSubpath()
-            }
+            // MARK: Shoulders / deltoids — wide rounded cap across the top.
+            // Drawn as two overlapping ellipses to give a muscular delt shape.
+            let leftDelt = CGRect(x: 52, y: 108, width: 88, height: 70)
+            let rightDelt = CGRect(x: 180, y: 108, width: 88, height: 70)
+            context.fill(Path(ellipseIn: leftDelt), with: fill)
+            context.fill(Path(ellipseIn: rightDelt), with: fill)
+
+            // MARK: Chest / torso — a V-tapered trapezoid with rounded corners.
+            let torso = Path(roundedRect: CGRect(x: 88, y: 130, width: 144, height: 130), cornerRadius: 20)
             context.fill(torso, with: fill)
 
-            // Left arm.
-            let leftArm = Path { p in
-                p.move(to: CGPoint(x: midX - 45, y: 80))
-                p.addLine(to: CGPoint(x: midX - 62, y: 90))
-                p.addLine(to: CGPoint(x: midX - 72, y: 200))
-                p.addLine(to: CGPoint(x: midX - 58, y: 205))
-                p.addLine(to: CGPoint(x: midX - 52, y: 100))
-                p.closeSubpath()
-            }
-            context.fill(leftArm, with: fill)
+            // MARK: Waist — narrower block blending torso to hips.
+            let waist = Path(roundedRect: CGRect(x: 104, y: 250, width: 112, height: 70), cornerRadius: 16)
+            context.fill(waist, with: fill)
 
-            // Right arm (mirrored).
-            let rightArm = Path { p in
-                p.move(to: CGPoint(x: midX + 45, y: 80))
-                p.addLine(to: CGPoint(x: midX + 62, y: 90))
-                p.addLine(to: CGPoint(x: midX + 72, y: 200))
-                p.addLine(to: CGPoint(x: midX + 58, y: 205))
-                p.addLine(to: CGPoint(x: midX + 52, y: 100))
-                p.closeSubpath()
-            }
-            context.fill(rightArm, with: fill)
+            // MARK: Hips / pelvis — flares back out.
+            let hips = Path(roundedRect: CGRect(x: 92, y: 300, width: 136, height: 62), cornerRadius: 22)
+            context.fill(hips, with: fill)
 
-            // Left leg.
-            let leftLeg = Path { p in
-                p.move(to: CGPoint(x: midX - 42, y: 240))
-                p.addLine(to: CGPoint(x: midX - 4, y: 240))
-                p.addLine(to: CGPoint(x: midX - 10, y: 385))
-                p.addLine(to: CGPoint(x: midX - 36, y: 385))
+            // MARK: Upper arms — tapered capsules from delt down past the waist.
+            // Angled slightly outward at the bottom for a relaxed stance.
+            let leftUpperArm = Path { p in
+                p.move(to: CGPoint(x: 58, y: 145))   // outer shoulder
+                p.addLine(to: CGPoint(x: 92, y: 155)) // inner shoulder (tucks under delt)
+                p.addLine(to: CGPoint(x: 84, y: 290)) // inner elbow
+                p.addLine(to: CGPoint(x: 46, y: 280)) // outer elbow
                 p.closeSubpath()
             }
-            context.fill(leftLeg, with: fill)
+            context.fill(leftUpperArm, with: fill)
 
-            // Right leg.
-            let rightLeg = Path { p in
-                p.move(to: CGPoint(x: midX + 4, y: 240))
-                p.addLine(to: CGPoint(x: midX + 42, y: 240))
-                p.addLine(to: CGPoint(x: midX + 36, y: 385))
-                p.addLine(to: CGPoint(x: midX + 10, y: 385))
+            let rightUpperArm = Path { p in
+                p.move(to: CGPoint(x: 262, y: 145))
+                p.addLine(to: CGPoint(x: 228, y: 155))
+                p.addLine(to: CGPoint(x: 236, y: 290))
+                p.addLine(to: CGPoint(x: 274, y: 280))
                 p.closeSubpath()
             }
-            context.fill(rightLeg, with: fill)
+            context.fill(rightUpperArm, with: fill)
+
+            // MARK: Forearms — narrower, down to the wrist.
+            let leftForearm = Path { p in
+                p.move(to: CGPoint(x: 46, y: 280))
+                p.addLine(to: CGPoint(x: 84, y: 290))
+                p.addLine(to: CGPoint(x: 76, y: 380))
+                p.addLine(to: CGPoint(x: 44, y: 380))
+                p.closeSubpath()
+            }
+            context.fill(leftForearm, with: fill)
+
+            let rightForearm = Path { p in
+                p.move(to: CGPoint(x: 274, y: 280))
+                p.addLine(to: CGPoint(x: 236, y: 290))
+                p.addLine(to: CGPoint(x: 244, y: 380))
+                p.addLine(to: CGPoint(x: 276, y: 380))
+                p.closeSubpath()
+            }
+            context.fill(rightForearm, with: fill)
+
+            // MARK: Left thigh — wide at hip, tapered to knee.
+            let leftThigh = Path { p in
+                p.move(to: CGPoint(x: 96, y: 358))
+                p.addLine(to: CGPoint(x: 156, y: 358))
+                p.addLine(to: CGPoint(x: 150, y: 470))
+                p.addLine(to: CGPoint(x: 108, y: 470))
+                p.closeSubpath()
+            }
+            context.fill(leftThigh, with: fill)
+
+            // MARK: Right thigh (mirror).
+            let rightThigh = Path { p in
+                p.move(to: CGPoint(x: 164, y: 358))
+                p.addLine(to: CGPoint(x: 224, y: 358))
+                p.addLine(to: CGPoint(x: 212, y: 470))
+                p.addLine(to: CGPoint(x: 170, y: 470))
+                p.closeSubpath()
+            }
+            context.fill(rightThigh, with: fill)
+
+            // MARK: Calves — narrower than thighs, down to ankles.
+            let leftCalf = Path { p in
+                p.move(to: CGPoint(x: 110, y: 470))
+                p.addLine(to: CGPoint(x: 148, y: 470))
+                p.addLine(to: CGPoint(x: 142, y: 548))
+                p.addLine(to: CGPoint(x: 116, y: 548))
+                p.closeSubpath()
+            }
+            context.fill(leftCalf, with: fill)
+
+            let rightCalf = Path { p in
+                p.move(to: CGPoint(x: 172, y: 470))
+                p.addLine(to: CGPoint(x: 210, y: 470))
+                p.addLine(to: CGPoint(x: 204, y: 548))
+                p.addLine(to: CGPoint(x: 178, y: 548))
+                p.closeSubpath()
+            }
+            context.fill(rightCalf, with: fill)
         }
     }
 }

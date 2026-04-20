@@ -6,6 +6,14 @@ enum Changelog {
     /// Newest entry first.
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.7.1",
+            build: 10,
+            date: date("2026-04-19"),
+            changes: [
+                "Larger, more athletic body silhouette with room for each marker to breathe — neck, chest, and back are no longer stacked on top of each other."
+            ]
+        ),
+        ChangelogEntry(
             version: "1.7.0",
             build: 9,
             date: date("2026-04-19"),

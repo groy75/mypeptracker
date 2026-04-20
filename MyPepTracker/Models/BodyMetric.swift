@@ -57,22 +57,22 @@ enum BodyMetric: String, Codable, CaseIterable, Hashable {
         }
     }
 
-    // Position on the BodySilhouetteView canvas (240x400). Used to place
-    // interactive markers over a rendered silhouette. Weight and body-fat
-    // don't map to a single anatomical point — they live in pills above
-    // the silhouette instead.
+    // Position on the BodySilhouetteView canvas (320x560). Used to place
+    // interactive markers over a rendered muscular silhouette. Weight and
+    // body-fat don't map to a single anatomical point — they live in pills
+    // above the silhouette instead.
     var bodyPosition: CGPoint? {
         switch self {
         case .weight, .bodyFatPercent:
             return nil
-        case .neck:       return CGPoint(x: 120, y: 64)
-        case .backWidth:  return CGPoint(x: 120, y: 82)
-        case .chest:      return CGPoint(x: 120, y: 108)
-        case .waist:      return CGPoint(x: 120, y: 180)
-        case .bicepLeft:  return CGPoint(x: 65,  y: 132)
-        case .bicepRight: return CGPoint(x: 175, y: 132)
-        case .thighLeft:  return CGPoint(x: 108, y: 290)
-        case .thighRight: return CGPoint(x: 132, y: 290)
+        case .neck:       return CGPoint(x: 160, y: 103)
+        case .backWidth:  return CGPoint(x: 160, y: 148)
+        case .chest:      return CGPoint(x: 160, y: 200)
+        case .waist:      return CGPoint(x: 160, y: 290)
+        case .bicepLeft:  return CGPoint(x: 82,  y: 230)
+        case .bicepRight: return CGPoint(x: 238, y: 230)
+        case .thighLeft:  return CGPoint(x: 132, y: 410)
+        case .thighRight: return CGPoint(x: 188, y: 410)
         }
     }
 }
