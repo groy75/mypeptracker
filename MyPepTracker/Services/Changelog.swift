@@ -6,6 +6,14 @@ enum Changelog {
     /// Newest entry first.
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.8.0",
+            build: 11,
+            date: date("2026-04-19"),
+            changes: [
+                "The Body tab now opens directly to the silhouette. The List layout has been retired — every metric is reachable by tapping its marker or the Weight/Body fat pills."
+            ]
+        ),
+        ChangelogEntry(
             version: "1.7.1",
             build: 10,
             date: date("2026-04-19"),

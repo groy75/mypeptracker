@@ -100,20 +100,27 @@ final class BodySmokeTests: XCTestCase {
     }
 
     func test_everyMetricOpensWithoutCrashing() throws {
-        // Comprehensive: tap every metric and back out. Cheap; fails fast on regressions.
+        // Comprehensive: open every metric's detail via silhouette pills or
+        // markers and back out. Cheap; fails fast on regressions.
+        app.tabBars.buttons["Body"].tap()
         let metrics = [
             "Weight", "Body fat", "Waist", "Neck", "Chest",
             "Back width", "Bicep (L)", "Bicep (R)", "Thigh (L)", "Thigh (R)"
         ]
-        app.tabBars.buttons["Body"].tap()
         for name in metrics {
-            let row = app.staticTexts[name].firstMatch
-            XCTAssertTrue(row.waitForExistence(timeout: 3), "\(name) row missing")
-            row.tap()
+            // Weight and Body fat are pills above the silhouette — their
+            // NavigationLink exposes the metric name as static text. The
+            // anatomy metrics are markers whose accessibilityLabel starts
+            // with the metric's display name.
+            let pill = app.staticTexts[name].firstMatch
+            let marker = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(name):")).firstMatch
+            let target = pill.exists ? pill : marker
+            XCTAssertTrue(target.waitForExistence(timeout: 3), "\(name) pill/marker missing on Body tab")
+            target.tap()
             let title = app.navigationBars[name].firstMatch
             XCTAssertTrue(title.waitForExistence(timeout: 3), "\(name) detail did not open")
             XCTAssertEqual(app.state, .runningForeground, "App crashed opening \(name) detail")
-            app.navigationBars.buttons.element(boundBy: 0).tap() // back button
+            app.navigationBars.buttons.element(boundBy: 0).tap()
         }
     }
 }
