@@ -1,14 +1,15 @@
 import XCTest
 
-/// Captures screenshots of the Body tab + per-metric unit UX.
-/// Not a CI test; used for interactive verification.
 @MainActor
 final class BodyWalkthrough: XCTestCase {
     let app = XCUIApplication()
 
     override func setUpWithError() throws {
         continueAfterFailure = false
-        app.launchArguments += ["-lastSeenChangelogBuild", "999"]
+        app.launchArguments += [
+            "-lastSeenChangelogBuild", "999",
+            "-bodyLayout", "body"  // silhouette by default
+        ]
         app.launch()
         try? FileManager.default.createDirectory(
             at: URL(fileURLWithPath: "/tmp/sim-shots"),
@@ -16,52 +17,51 @@ final class BodyWalkthrough: XCTestCase {
         )
     }
 
-    func test_walkNewUX() throws {
-        // 1. Body tab — each row shows "Tap to record" for first-time users.
+    func test_walkSilhouette() throws {
+        // First flip to list so we can log. (Launch-arg pre-seeded to silhouette.)
         app.tabBars.buttons["Body"].tap()
-        pause(1)
-        snap("20-body-empty")
+        pause(0.6)
+        snap("30-silhouette-empty")
 
-        // 2. Tap Weight → metric detail view with empty-state record button.
-        app.staticTexts["Weight"].firstMatch.tap()
-        pause(1)
-        snap("21-weight-empty-detail")
+        // Switch to list by tapping the leftmost segment (list icon).
+        let segments = app.buttons.matching(identifier: "List")
+        if segments.count > 0 {
+            segments.firstMatch.tap()
+            pause(0.6)
+        }
 
-        // 3. Tap the "Record your current weight" button.
+        // Log three metrics so markers have data to render.
+        logMetric("Weight", value: "82.0")
+        logMetric("Waist", value: "90.0")
+        logMetric("Bicep (L)", value: "38.0")
+
+        // Flip back to silhouette — pick the body-icon segment explicitly.
+        let bodySegment = app.buttons.matching(identifier: "Body").element(boundBy: 1)
+        if bodySegment.waitForExistence(timeout: 2) {
+            bodySegment.tap()
+            pause(1)
+            snap("31-silhouette-with-data")
+        }
+    }
+
+    private func logMetric(_ name: String, value: String) {
+        app.staticTexts[name].firstMatch.tap()
         let recordButton = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Record your current'")).firstMatch
+        XCTAssertTrue(recordButton.waitForExistence(timeout: 3))
         recordButton.tap()
-        pause(1)
-        snap("22-log-sheet-per-metric")
-
-        // 4. Type a value and save.
         let field = app.textFields["Value"].firstMatch
-        field.tap(); field.typeText("82.0")
-        pause(0.5)
+        XCTAssertTrue(field.waitForExistence(timeout: 3))
+        field.tap(); field.typeText(value)
         app.buttons["Save"].tap()
-        pause(1)
-
-        // 5. Detail view now shows the value + unit toggle segmented control.
-        snap("23-weight-detail-with-value")
-
-        // 6. Toggle to imperial via the unit picker.
-        app.buttons["lb"].firstMatch.tap()
-        pause(0.8)
-        snap("24-weight-detail-imperial")
-
-        // 7. Back to Body list — Weight row shows lb, others in their own prefs.
+        pause(0.4)
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        pause(0.8)
-        snap("25-body-list-per-metric-units")
+        pause(0.4)
     }
 
     private func snap(_ name: String) {
         let shot = XCUIScreen.main.screenshot()
         let url = URL(fileURLWithPath: "/tmp/sim-shots/\(name).png")
         try? shot.pngRepresentation.write(to: url)
-        let att = XCTAttachment(screenshot: shot)
-        att.name = name
-        att.lifetime = .keepAlways
-        add(att)
     }
 
     private func pause(_ seconds: TimeInterval) {

@@ -2,10 +2,21 @@ import SwiftUI
 import SwiftData
 
 struct BodyView: View {
+    enum Layout: String, CaseIterable, Identifiable {
+        case list, body
+        var id: String { rawValue }
+        var title: String { self == .list ? "List" : "Body" }
+        var symbol: String { self == .list ? "list.bullet" : "figure.arms.open" }
+    }
+
     @Environment(\.modelContext) private var context
     @Environment(AppState.self) private var appState
     @Query(sort: \BodyMeasurement.timestamp, order: .reverse) private var allMeasurements: [BodyMeasurement]
     @Query private var allGoals: [BodyMetricGoal]
+    @AppStorage("bodyLayout") private var layoutRaw: String = Layout.list.rawValue
+    private var layout: Layout {
+        get { Layout(rawValue: layoutRaw) ?? .list }
+    }
 
     // Latest entry per metric.
     private var latestByMetric: [BodyMetric: BodyMeasurement] {
@@ -28,16 +39,37 @@ struct BodyView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(BodyMetric.allCases, id: \.self) { metric in
-                    NavigationLink {
-                        MetricDetailView(metric: metric)
-                    } label: {
-                        row(for: metric)
+            Group {
+                switch layout {
+                case .list:
+                    List {
+                        ForEach(BodyMetric.allCases, id: \.self) { metric in
+                            NavigationLink {
+                                MetricDetailView(metric: metric)
+                            } label: {
+                                row(for: metric)
+                            }
+                        }
                     }
+                case .body:
+                    BodySilhouetteView()
                 }
             }
             .navigationTitle("Body")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Picker("Layout", selection: Binding(
+                        get: { layout },
+                        set: { layoutRaw = $0.rawValue }
+                    )) {
+                        ForEach(Layout.allCases) { option in
+                            Label(option.title, systemImage: option.symbol).tag(option)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(maxWidth: 200)
+                }
+            }
         }
     }
 

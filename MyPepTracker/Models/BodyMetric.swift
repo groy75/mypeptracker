@@ -57,20 +57,22 @@ enum BodyMetric: String, Codable, CaseIterable, Hashable {
         }
     }
 
-    // Position on the silhouette used by BodyMapView (200x340 canvas).
-    // Phase 3 reads this; phase 1 doesn't render the silhouette overlay yet.
+    // Position on the BodySilhouetteView canvas (240x400). Used to place
+    // interactive markers over a rendered silhouette. Weight and body-fat
+    // don't map to a single anatomical point — they live in pills above
+    // the silhouette instead.
     var bodyPosition: CGPoint? {
         switch self {
         case .weight, .bodyFatPercent:
             return nil
-        case .waist:     return CGPoint(x: 100, y: 120)
-        case .neck:      return CGPoint(x: 100, y: 50)
-        case .chest:     return CGPoint(x: 100, y: 85)
-        case .backWidth: return CGPoint(x: 100, y: 70)
-        case .bicepLeft:  return CGPoint(x: 58,  y: 95)
-        case .bicepRight: return CGPoint(x: 142, y: 95)
-        case .thighLeft:  return CGPoint(x: 88,  y: 220)
-        case .thighRight: return CGPoint(x: 112, y: 220)
+        case .neck:       return CGPoint(x: 120, y: 64)
+        case .backWidth:  return CGPoint(x: 120, y: 82)
+        case .chest:      return CGPoint(x: 120, y: 108)
+        case .waist:      return CGPoint(x: 120, y: 180)
+        case .bicepLeft:  return CGPoint(x: 65,  y: 132)
+        case .bicepRight: return CGPoint(x: 175, y: 132)
+        case .thighLeft:  return CGPoint(x: 108, y: 290)
+        case .thighRight: return CGPoint(x: 132, y: 290)
         }
     }
 }

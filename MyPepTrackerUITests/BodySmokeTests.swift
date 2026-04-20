@@ -70,6 +70,35 @@ final class BodySmokeTests: XCTestCase {
         XCTAssertEqual(app.state, .runningForeground, "App crashed while saving goal.")
     }
 
+    func test_silhouetteMarkerNavigatesToMetricDetail() throws {
+        // Switch Body tab to silhouette layout and tap the Waist marker.
+        app.tabBars.buttons["Body"].tap()
+
+        // Log a weight measurement first so the Weight pill has data
+        // (unrelated to the waist marker tap but verifies the pills render).
+        app.staticTexts["Weight"].firstMatch.tap()
+        let recordButton = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Record your current'")).firstMatch
+        XCTAssertTrue(recordButton.waitForExistence(timeout: 3))
+        recordButton.tap()
+        let valueField = app.textFields["Value"].firstMatch
+        XCTAssertTrue(valueField.waitForExistence(timeout: 3))
+        valueField.tap(); valueField.typeText("82.0")
+        app.buttons["Save"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap() // back to Body
+
+        // Flip to the silhouette layout.
+        app.buttons["Body"].firstMatch.tap()
+
+        // Markers use accessibilityLabel: "<Metric>: ... Double tap to open."
+        let waistMarker = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Waist'")).firstMatch
+        XCTAssertTrue(waistMarker.waitForExistence(timeout: 3), "Waist marker missing on silhouette")
+        waistMarker.tap()
+
+        XCTAssertTrue(app.navigationBars["Waist"].waitForExistence(timeout: 3),
+                      "Tapping Waist marker did not open Waist detail")
+        XCTAssertEqual(app.state, .runningForeground, "App crashed navigating from silhouette")
+    }
+
     func test_everyMetricOpensWithoutCrashing() throws {
         // Comprehensive: tap every metric and back out. Cheap; fails fast on regressions.
         let metrics = [

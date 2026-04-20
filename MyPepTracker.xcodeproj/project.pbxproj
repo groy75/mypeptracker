@@ -27,6 +27,7 @@
 		64F80D8C4009C6E4BD5CA730 /* DemoSeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C23AAD8372C2C56BF7DA68F /* DemoSeed.swift */; };
 		657CEA4720AFC0FEEF36A5AE /* SetGoalSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E5CBC4C1A374B54451A0B53 /* SetGoalSheet.swift */; };
 		6AA0934573AE3873FD490892 /* MyPepTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D105B935C290C357603283 /* MyPepTrackerApp.swift */; };
+		702C4E901E5E6A7B3A17DE81 /* BodySilhouetteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E190038D436C5F658234F939 /* BodySilhouetteView.swift */; };
 		76CC53D08607C2EE9FE84F71 /* PeptidePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5860419A80D895EE8346617 /* PeptidePreset.swift */; };
 		7DC026CCA2877B995C756024 /* NotificationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE67484E9876714CFF5E7D7B /* NotificationManagerTests.swift */; };
 		7FE35A597743B443D8505E65 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E061ABC1B347FAF70CACD /* AppState.swift */; };
@@ -131,6 +132,7 @@
 		D34BF1EBB782D2A7D0480080 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		DCB5B6EBA083D7B616394EA6 /* DoseEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseEntry.swift; sourceTree = "<group>"; };
 		E18E061ABC1B347FAF70CACD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		E190038D436C5F658234F939 /* BodySilhouetteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodySilhouetteView.swift; sourceTree = "<group>"; };
 		E4B8432D611F57248EF83751 /* MyPepTrackerUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MyPepTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBD21CE0A8F0CD7C7D307769 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		EE67484E9876714CFF5E7D7B /* NotificationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManagerTests.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 		67300B092EA66F5339A0F130 /* Body */ = {
 			isa = PBXGroup;
 			children = (
+				E190038D436C5F658234F939 /* BodySilhouetteView.swift */,
 				AFF8603AEB3F0911479947E6 /* BodyView.swift */,
 				CE4BF5E1B65748F333B09B3D /* LogMeasurementView.swift */,
 				10774E3A1DB078C43414D5D5 /* MetricDetailView.swift */,
@@ -462,6 +465,7 @@
 				F7BF34700E656EBB691B6369 /* BodyMeasurement.swift in Sources */,
 				B756E0BFF06E14E5451D2FED /* BodyMetric.swift in Sources */,
 				3DE9E4582BAFF3072F95B73C /* BodyMetricGoal.swift in Sources */,
+				702C4E901E5E6A7B3A17DE81 /* BodySilhouetteView.swift in Sources */,
 				5B7F0208479E76A2CD28AF1A /* BodyView.swift in Sources */,
 				EA30653EEAACB5402DE96943 /* Changelog.swift in Sources */,
 				141F1FCA7399C1D55AF5D162 /* ChangelogEntry.swift in Sources */,
