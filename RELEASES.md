@@ -40,8 +40,9 @@ Single source of truth for MyPepTracker App Store submissions.
 | 1.7.0     | 9     | 2026-04-19      | **Superseded** | Phase 3 body silhouette: new `BodySilhouetteView` renders a front-facing figure with tappable markers at each anatomy metric's `bodyPosition`. Delivery UUID `73f9a8ad-737f-4b17-9329-6fd1056f98f8`. Superseded by 1.7.1 — silhouette was too small; neck/chest/back markers overlapped. |
 | 1.7.1     | 10    | 2026-04-19      | **Superseded** | Bigger athletic silhouette (320x560). Delivery UUID `7797037f-b897-4424-9bed-eb4e1d5d24b1`. Superseded by 1.8.0. |
 | 1.8.0     | 11    | 2026-04-19      | **TestFlight** | Silhouette is now the only Body layout — segmented List/Body toggle removed. BodyView is a thin wrapper around BodySilhouetteView; `Layout` enum, `row(for:)`, `latestByMetric`, `sevenDayDelta`, and `@AppStorage("bodyLayout")` all deleted (~112 LoC net). Every metric remains reachable via pills (weight/body-fat) or silhouette markers. Delivery UUID `ea7f8823-d4b5-4fb5-8b24-40c4de2b6990`. **TestFlight-only**. |
+| 1.8.1     | 12    | 2026-04-19      | **TestFlight** | History's injection-site map now uses the same athletic silhouette as the Body tab. Extracted into reusable `AthleticSilhouette` that scales to container size (Body tab renders 320x560, History renders 240x420). `InjectionSite` gains `silhouettePosition: CGPoint` in the same 320x560 reference space; BodyMapView scales per render. Delivery UUID `e217c8e4-bc81-473d-a360-c6b5f2f2204d`. **TestFlight-only**. |
 
 ## Next submission will be
 
 - Marketing: **1.9.0** (TBD).
-- Build: **12**.
+- Build: **13**.
