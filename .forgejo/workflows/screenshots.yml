@@ -1,0 +1,304 @@
+name: App Store Screenshots
+
+# Captures App Store screenshots via XCUITest on iPhone 17 Pro Max and uploads
+# them to the active PREPARE_FOR_SUBMISSION App Store version localization.
+#
+# Required repo secrets:
+#   INFISICAL_CLIENT_ID      — machine identity client ID (universal auth)
+#   INFISICAL_CLIENT_SECRET  — matching client secret
+#
+# Both secrets are shared with the myfaxxer-ios and nfn-connect repos and use
+# the same machine identity. ASC API key lives at Infisical /peptide-tracker/.
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_capture:
+        description: "Skip XCUITest; upload existing PNGs from docs/screenshots/<version>/"
+        type: boolean
+        default: false
+      skip_upload:
+        description: "Capture only; do not upload to App Store Connect"
+        type: boolean
+        default: false
+
+jobs:
+  screenshots:
+    runs-on: macos-arm64
+    timeout-minutes: 45
+    env:
+      INFISICAL_URL: https://infisical.gregsplace.cc
+      INFISICAL_WORKSPACE_ID: d0560c57-02e5-4660-82e0-3d136f28f919
+      ASC_APP_ID: "6762103081"
+      SCHEME: MyPepTracker
+      TMP_SCREENSHOTS: /tmp/mypeptracker-screenshots
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain versions
+        run: |
+          set -eu
+          sw_vers
+          xcodebuild -version
+          xcodegen --version
+          python3 --version
+
+      - name: Fetch secrets from Infisical
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${INFISICAL_CLIENT_ID:-}" || -z "${INFISICAL_CLIENT_SECRET:-}" ]]; then
+            echo "::error::INFISICAL_CLIENT_ID / INFISICAL_CLIENT_SECRET not set on this repo."
+            exit 1
+          fi
+
+          TOKEN=$(curl -fsS -X POST "$INFISICAL_URL/api/v1/auth/universal-auth/login" \
+            -H 'Content-Type: application/json' \
+            -d "{\"clientId\":\"$INFISICAL_CLIENT_ID\",\"clientSecret\":\"$INFISICAL_CLIENT_SECRET\"}" \
+            | jq -r .accessToken)
+          test -n "$TOKEN" || { echo "::error::Infisical login returned no accessToken"; exit 1; }
+
+          JSON=$(curl -fsS \
+            "$INFISICAL_URL/api/v3/secrets/raw?workspaceId=$INFISICAL_WORKSPACE_ID&environment=prod&secretPath=%2Fpeptide-tracker" \
+            -H "Authorization: Bearer $TOKEN")
+
+          get() { echo "$JSON" | jq -r --arg k "$1" '.secrets[] | select(.secretKey==$k) | .secretValue'; }
+
+          ASC_API_KEY_ID=$(get ASC_API_KEY_ID)
+          ASC_API_ISSUER_ID=$(get ASC_API_ISSUER_ID)
+          P8_CONTENTS=$(get ASC_API_KEY_P8)
+          M4_LOGIN_PASSWORD=$(get M4_LOGIN_PASSWORD)
+
+          for v in ASC_API_KEY_ID ASC_API_ISSUER_ID P8_CONTENTS M4_LOGIN_PASSWORD; do
+            eval "val=\${$v}"
+            if [[ -z "${val:-}" ]]; then
+              echo "::error::Missing $v in Infisical /peptide-tracker/ prod"
+              exit 1
+            fi
+          done
+
+          echo "::add-mask::$ASC_API_KEY_ID"
+          echo "::add-mask::$ASC_API_ISSUER_ID"
+          echo "::add-mask::$M4_LOGIN_PASSWORD"
+
+          P8_DIR="$HOME/.appstoreconnect/private_keys"
+          mkdir -p "$P8_DIR"
+          P8_PATH="$P8_DIR/AuthKey_${ASC_API_KEY_ID}.p8"
+          printf '%s' "$P8_CONTENTS" > "$P8_PATH"
+          chmod 600 "$P8_PATH"
+
+          {
+            echo "ASC_API_KEY_ID=$ASC_API_KEY_ID"
+            echo "ASC_API_ISSUER_ID=$ASC_API_ISSUER_ID"
+            echo "P8_PATH=$P8_PATH"
+            echo "M4_LOGIN_PASSWORD=$M4_LOGIN_PASSWORD"
+          } >> "$GITHUB_ENV"
+
+      - name: Unlock keychain
+        run: |
+          set -euo pipefail
+          KC="$HOME/Library/Keychains/login.keychain-db"
+          security unlock-keychain -p "$M4_LOGIN_PASSWORD" "$KC" >/dev/null
+          security set-keychain-settings -t 3600 -l "$KC"
+          echo "login keychain unlocked"
+
+      - name: Detect version
+        run: |
+          set -euo pipefail
+          VERSION=$(python3 -c "
+import re
+with open('project.yml') as f:
+    text = f.read()
+m = re.search(r'MARKETING_VERSION: [\"\\x27]?([^\"\\x27\\n]+)', text)
+print(m.group(1).strip())
+")
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "version: $VERSION"
+
+      - name: Capture screenshots (XCUITest)
+        if: ${{ inputs.skip_capture != true }}
+        run: |
+          set -euo pipefail
+          xcodegen generate --quiet
+
+          rm -rf "$TMP_SCREENSHOTS"
+          mkdir -p "$TMP_SCREENSHOTS"
+
+          echo "==> Running ScreenshotTests (v${VERSION}) on iPhone 17 Pro Max"
+          xcodebuild test \
+              -project "${SCHEME}.xcodeproj" \
+              -scheme "${SCHEME}" \
+              -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' \
+              -only-testing:"${SCHEME}UITests/ScreenshotTests" \
+              TEST_RUNNER_SCREENSHOT_DIR="$TMP_SCREENSHOTS"
+
+          PNG_COUNT=$(find "$TMP_SCREENSHOTS" -maxdepth 1 -name '[0-9][0-9]-*.png' | wc -l | tr -d ' ')
+          if [[ $PNG_COUNT -eq 0 ]]; then
+              echo "::error::No screenshots written to $TMP_SCREENSHOTS"
+              exit 1
+          fi
+
+          SHOTS_DIR="docs/screenshots/$VERSION"
+          mkdir -p "$SHOTS_DIR"
+          cp "$TMP_SCREENSHOTS"/[0-9][0-9]-*.png "$SHOTS_DIR/"
+          echo "Captured $PNG_COUNT screenshots → $SHOTS_DIR"
+
+      - name: Validate screenshots
+        run: |
+          set -euo pipefail
+          SHOTS_DIR="docs/screenshots/$VERSION"
+          PNG_COUNT=$(find "$SHOTS_DIR" -maxdepth 1 -name '[0-9][0-9]-*.png' 2>/dev/null | wc -l | tr -d ' ')
+          if [[ $PNG_COUNT -eq 0 ]]; then
+              echo "::error::No screenshots in $SHOTS_DIR"
+              exit 1
+          fi
+          echo "$PNG_COUNT screenshot(s) in $SHOTS_DIR"
+          ls -lh "$SHOTS_DIR"
+
+      - name: Install PyJWT
+        if: ${{ inputs.skip_upload != true }}
+        run: pip install pyjwt --quiet --break-system-packages 2>/dev/null || pip install pyjwt --quiet
+
+      - name: Upload to App Store Connect
+        if: ${{ inputs.skip_upload != true }}
+        run: |
+          python3 - "$ASC_APP_ID" "docs/screenshots/$VERSION" "$ASC_API_KEY_ID" "$ASC_API_ISSUER_ID" "$P8_PATH" "$VERSION" <<'PYEOF'
+          import hashlib, json, os, sys, time, urllib.error, urllib.request
+          import jwt  # PyJWT
+
+          app_id, shots_dir, key_id, issuer_id, p8_path, version = sys.argv[1:7]
+          BASE = "https://api.appstoreconnect.apple.com"
+          DISPLAY_TYPE = "APP_IPHONE_67"
+
+          with open(p8_path) as f:
+              p8 = f.read()
+
+          def make_jwt():
+              now = int(time.time())
+              return jwt.encode(
+                  {"iss": issuer_id, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
+                  p8, algorithm="ES256",
+                  headers={"alg": "ES256", "kid": key_id, "typ": "JWT"},
+              )
+
+          def req(method, path, body=None):
+              url = BASE + path
+              hdrs = {"Authorization": f"Bearer {make_jwt()}", "Content-Type": "application/json"}
+              data = json.dumps(body).encode() if body else None
+              r = urllib.request.Request(url, data=data, method=method, headers=hdrs)
+              try:
+                  resp = urllib.request.urlopen(r)
+                  raw = resp.read()
+                  return json.loads(raw) if raw else None
+              except urllib.error.HTTPError as e:
+                  txt = e.read().decode(errors="replace")
+                  print(f"HTTP {e.code} {method} {path}\n{txt}", file=sys.stderr)
+                  raise
+
+          # Find an editable App Store version for this version string
+          editable = {"PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "REJECTED", "METADATA_REJECTED", "WAITING_FOR_REVIEW"}
+          data = req("GET", f"/v1/apps/{app_id}/appStoreVersions?filter[platform]=IOS&filter[versionString]={version}")
+          rows = [r for r in (data or {}).get("data", []) if r["attributes"].get("appStoreState") in editable]
+          if not rows:
+              data = req("GET", f"/v1/apps/{app_id}/appStoreVersions?filter[platform]=IOS")
+              rows = [r for r in (data or {}).get("data", []) if r["attributes"].get("appStoreState") in editable]
+          if not rows:
+              print(f"No editable App Store version found — screenshots saved to {shots_dir}, upload manually.", file=sys.stderr)
+              sys.exit(0)
+
+          version_id = rows[0]["id"]
+          state = rows[0]["attributes"]["appStoreState"]
+          print(f"appStoreVersion: {version_id} ({state})", file=sys.stderr)
+
+          data = req("GET", f"/v1/appStoreVersions/{version_id}/appStoreVersionLocalizations?filter[locale]=en-US")
+          locs = (data or {}).get("data", [])
+          if not locs:
+              print("No en-US localization found.", file=sys.stderr)
+              sys.exit(1)
+          loc_id = locs[0]["id"]
+          print(f"localization:    {loc_id}", file=sys.stderr)
+
+          # Delete existing APP_IPHONE_67 set, create fresh one
+          data = req("GET", f"/v1/appStoreVersionLocalizations/{loc_id}/appScreenshotSets")
+          for s in (data or {}).get("data", []):
+              if s["attributes"].get("screenshotDisplayType") == DISPLAY_TYPE:
+                  print(f"deleting existing {DISPLAY_TYPE} set {s['id']}", file=sys.stderr)
+                  req("DELETE", f"/v1/appScreenshotSets/{s['id']}")
+
+          data = req("POST", "/v1/appScreenshotSets", {
+              "data": {
+                  "type": "appScreenshotSets",
+                  "attributes": {"screenshotDisplayType": DISPLAY_TYPE},
+                  "relationships": {"appStoreVersionLocalization": {"data": {"type": "appStoreVersionLocalizations", "id": loc_id}}},
+              }
+          })
+          set_id = data["data"]["id"]
+          print(f"set id:          {set_id}", file=sys.stderr)
+
+          # Upload each PNG: reserve / PUT chunks / commit
+          shots = sorted(
+              fn for fn in os.listdir(shots_dir)
+              if fn.endswith(".png") and len(fn) >= 3 and fn[:2].isdigit() and fn[2] == "-"
+          )
+          if not shots:
+              print(f"No NN-*.png files in {shots_dir}", file=sys.stderr)
+              sys.exit(1)
+
+          for fn in shots:
+              path = os.path.join(shots_dir, fn)
+              size = os.path.getsize(path)
+              with open(path, "rb") as f:
+                  raw_bytes = f.read()
+              md5 = hashlib.md5(raw_bytes).hexdigest()
+
+              print(f"  uploading {fn} ({size} bytes, md5={md5})", file=sys.stderr)
+              reserve = req("POST", "/v1/appScreenshots", {
+                  "data": {
+                      "type": "appScreenshots",
+                      "attributes": {"fileName": fn, "fileSize": size},
+                      "relationships": {"appScreenshotSet": {"data": {"type": "appScreenshotSets", "id": set_id}}},
+                  }
+              })
+              shot_id = reserve["data"]["id"]
+              for op in (reserve["data"]["attributes"]["uploadOperations"] or []):
+                  method = op.get("method", "PUT")
+                  url = op["url"]
+                  offset, length = op.get("offset", 0), op.get("length", size)
+                  hdrs = {h["name"]: h["value"] for h in op.get("requestHeaders", [])}
+                  chunk = raw_bytes[offset:offset + length]
+                  r = urllib.request.Request(url, data=chunk, method=method, headers=hdrs)
+                  try:
+                      urllib.request.urlopen(r).read()
+                  except urllib.error.HTTPError as e:
+                      print(f"ERROR chunk {method} -> HTTP {e.code}: {e.read().decode(errors='replace')}", file=sys.stderr)
+                      sys.exit(1)
+              req("PATCH", f"/v1/appScreenshots/{shot_id}", {
+                  "data": {"type": "appScreenshots", "id": shot_id, "attributes": {"uploaded": True, "sourceFileChecksum": md5}}
+              })
+              print(f"  committed {fn}", file=sys.stderr)
+
+          print(f"\nuploaded {len(shots)} screenshot(s) to localization {loc_id}", file=sys.stderr)
+          PYEOF
+
+      - name: Commit screenshots to repo
+        run: |
+          set -euo pipefail
+          SHOTS_DIR="docs/screenshots/$VERSION"
+          git config user.email "ci@gregsplace.cc"
+          git config user.name "CI Runner"
+          git add "$SHOTS_DIR/"
+          if git diff --staged --quiet; then
+              echo "no new screenshots to commit"
+          else
+              git commit -m "chore: screenshots for v${VERSION}"
+              git push
+          fi
+
+      - name: Cleanup credentials
+        if: always()
+        run: |
+          rm -f "${P8_PATH:-}" || true
+          security lock-keychain "$HOME/Library/Keychains/login.keychain-db" 2>/dev/null || true

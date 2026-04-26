@@ -84,6 +84,10 @@ final class ScreenshotTests: XCTestCase {
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
+        if let dir = ProcessInfo.processInfo.environment["SCREENSHOT_DIR"] {
+            let url = URL(fileURLWithPath: dir).appendingPathComponent("\(name).png")
+            try? screenshot.pngRepresentation.write(to: url)
+        }
     }
 
     private func wait(_ seconds: TimeInterval) {
