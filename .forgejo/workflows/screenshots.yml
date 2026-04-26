@@ -119,68 +119,17 @@ jobs:
           set -euo pipefail
           xcodegen generate --quiet
 
-          XCRESULT="/tmp/mypeptracker-screenshots.xcresult"
-          rm -rf "$TMP_SCREENSHOTS" "$XCRESULT"
-          mkdir -p "$TMP_SCREENSHOTS"
+          rm -rf "$TMP_SCREENSHOTS"
+          # snap() in ScreenshotTests.swift creates this directory and writes PNGs
+          # to it directly — UITest runner runs on the host, not inside the simulator,
+          # so host /tmp paths are reachable without any env var propagation.
 
           echo "==> Running ScreenshotTests (v${VERSION}) on iPhone 17 Pro Max"
           xcodebuild test \
               -project "${SCHEME}.xcodeproj" \
               -scheme "${SCHEME}" \
               -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' \
-              -only-testing:"${SCHEME}UITests/ScreenshotTests" \
-              -resultBundlePath "$XCRESULT"
-
-          echo "==> Extracting screenshots from xcresult bundle"
-          XCRESULT="$XCRESULT" TMP_SCREENSHOTS="$TMP_SCREENSHOTS" python3 <<'PYEOF'
-          import json, os, shutil, subprocess, sys
-
-          result_path = os.environ['XCRESULT']
-          shots_dir   = os.environ['TMP_SCREENSHOTS']
-          os.makedirs(shots_dir, exist_ok=True)
-
-          # Xcode 26 renamed 'xcresulttool get' → 'xcresulttool get object --legacy'
-          raw = subprocess.check_output(
-              ['xcrun', 'xcresulttool', 'get', 'object', '--legacy',
-               '--format', 'json', '--path', result_path],
-              text=True
-          )
-          data = json.loads(raw)
-
-          def val(obj):
-              return obj['_value'] if isinstance(obj, dict) and '_value' in obj else obj
-
-          def walk(obj, found):
-              if isinstance(obj, dict):
-                  tname = val(obj.get('_type', {}).get('_name', ''))
-                  if tname == 'ActionTestAttachment':
-                      name   = str(val(obj.get('name', '')))
-                      ref_id = str(val(obj.get('payloadRef', {}).get('id', '')))
-                      if name and ref_id:
-                          found.append((name, ref_id))
-                  for v in obj.values():
-                      walk(v, found)
-              elif isinstance(obj, list):
-                  for item in obj:
-                      walk(item, found)
-
-          found = []
-          walk(data, found)
-          print(f'Found {len(found)} attachment(s)', file=sys.stderr)
-
-          # Attachment files live at result.xcresult/Attachments/<ref_id> (no extension).
-          # Copying directly avoids the also-deprecated 'xcresulttool export' subcommand.
-          attachments_dir = os.path.join(result_path, 'Attachments')
-          for name, ref_id in found:
-              fname = name if name.endswith('.png') else name + '.png'
-              out   = os.path.join(shots_dir, fname)
-              src   = os.path.join(attachments_dir, ref_id)
-              if os.path.exists(src):
-                  shutil.copy(src, out)
-                  print(f'  {fname}', file=sys.stderr)
-              else:
-                  print(f'  WARNING: {ref_id} not found in Attachments/', file=sys.stderr)
-          PYEOF
+              -only-testing:"${SCHEME}UITests/ScreenshotTests"
 
           PNG_COUNT=$(find "$TMP_SCREENSHOTS" -maxdepth 1 -name '[0-9][0-9]-*.png' | wc -l | tr -d ' ')
           if [[ $PNG_COUNT -eq 0 ]]; then

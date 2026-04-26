@@ -84,10 +84,11 @@ final class ScreenshotTests: XCTestCase {
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
-        if let dir = ProcessInfo.processInfo.environment["SCREENSHOT_DIR"] {
-            let url = URL(fileURLWithPath: dir).appendingPathComponent("\(name).png")
-            try? screenshot.pngRepresentation.write(to: url)
-        }
+        let dir = ProcessInfo.processInfo.environment["SCREENSHOT_DIR"]
+                  ?? "/tmp/mypeptracker-screenshots"
+        let dirURL = URL(fileURLWithPath: dir)
+        try? FileManager.default.createDirectory(at: dirURL, withIntermediateDirectories: true)
+        try? screenshot.pngRepresentation.write(to: dirURL.appendingPathComponent("\(name).png"))
     }
 
     private func wait(_ seconds: TimeInterval) {
