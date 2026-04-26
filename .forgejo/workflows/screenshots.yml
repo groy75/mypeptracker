@@ -207,7 +207,7 @@ jobs:
 
       - name: Install PyJWT
         if: ${{ inputs.skip_upload != true }}
-        run: pip install pyjwt --quiet --break-system-packages 2>/dev/null || pip install pyjwt --quiet
+        run: python3 -m pip install pyjwt --quiet --break-system-packages 2>/dev/null || python3 -m pip install pyjwt --quiet
 
       - name: Upload to App Store Connect
         if: ${{ inputs.skip_upload != true }}
