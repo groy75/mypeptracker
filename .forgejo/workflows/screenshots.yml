@@ -119,7 +119,8 @@ jobs:
           set -euo pipefail
           xcodegen generate --quiet
 
-          rm -rf "$TMP_SCREENSHOTS"
+          XCRESULT="/tmp/mypeptracker-screenshots.xcresult"
+          rm -rf "$TMP_SCREENSHOTS" "$XCRESULT"
           mkdir -p "$TMP_SCREENSHOTS"
 
           echo "==> Running ScreenshotTests (v${VERSION}) on iPhone 17 Pro Max"
@@ -128,11 +129,57 @@ jobs:
               -scheme "${SCHEME}" \
               -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' \
               -only-testing:"${SCHEME}UITests/ScreenshotTests" \
-              TEST_RUNNER_SCREENSHOT_DIR="$TMP_SCREENSHOTS"
+              -resultBundlePath "$XCRESULT"
+
+          echo "==> Extracting screenshots from xcresult bundle"
+          XCRESULT="$XCRESULT" TMP_SCREENSHOTS="$TMP_SCREENSHOTS" python3 <<'PYEOF'
+          import json, os, subprocess, sys
+
+          result_path = os.environ['XCRESULT']
+          shots_dir   = os.environ['TMP_SCREENSHOTS']
+          os.makedirs(shots_dir, exist_ok=True)
+
+          raw = subprocess.check_output(
+              ['xcrun', 'xcresulttool', 'get', '--format', 'json', '--path', result_path],
+              text=True
+          )
+          data = json.loads(raw)
+
+          def val(obj):
+              return obj['_value'] if isinstance(obj, dict) and '_value' in obj else obj
+
+          def walk(obj, found):
+              if isinstance(obj, dict):
+                  tname = val(obj.get('_type', {}).get('_name', ''))
+                  if tname == 'ActionTestAttachment':
+                      name   = str(val(obj.get('name', '')))
+                      ref_id = str(val(obj.get('payloadRef', {}).get('id', '')))
+                      if name and ref_id:
+                          found.append((name, ref_id))
+                  for v in obj.values():
+                      walk(v, found)
+              elif isinstance(obj, list):
+                  for item in obj:
+                      walk(item, found)
+
+          found = []
+          walk(data, found)
+          print(f'Found {len(found)} attachment(s)', file=sys.stderr)
+
+          for name, ref_id in found:
+              fname = name if name.endswith('.png') else name + '.png'
+              out   = os.path.join(shots_dir, fname)
+              subprocess.run(
+                  ['xcrun', 'xcresulttool', 'export', '--path', result_path,
+                   '--id', ref_id, '--output-path', out, '--type', 'file'],
+                  check=True
+              )
+              print(f'  {fname}', file=sys.stderr)
+          PYEOF
 
           PNG_COUNT=$(find "$TMP_SCREENSHOTS" -maxdepth 1 -name '[0-9][0-9]-*.png' | wc -l | tr -d ' ')
           if [[ $PNG_COUNT -eq 0 ]]; then
-              echo "::error::No screenshots written to $TMP_SCREENSHOTS"
+              echo "::error::No screenshots extracted from $XCRESULT"
               exit 1
           fi
 
