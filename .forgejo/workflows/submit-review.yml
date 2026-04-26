@@ -1,0 +1,245 @@
+name: Submit for App Store Review
+
+# Waits for a TestFlight build to process, attaches it to the editable
+# App Store version, and submits for review. MyPepTracker has no IAPs so
+# submission is fully automated.
+#
+# Dispatch this AFTER ship-ios.yml succeeds (or via the submit_for_review
+# input on ship-ios.yml for automatic chaining). Polls up to 30 minutes
+# for the build to become VALID before continuing.
+#
+# Required repo secrets:
+#   INFISICAL_CLIENT_ID      — machine identity client ID (universal auth)
+#   INFISICAL_CLIENT_SECRET  — matching client secret
+#
+# ASC API key lives at Infisical /peptide-tracker/ prod.
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: "Build number to submit (blank = auto-detect from project.yml)"
+        required: false
+        default: ""
+
+jobs:
+  submit:
+    runs-on: macos-arm64
+    timeout-minutes: 45
+    env:
+      INFISICAL_URL: https://infisical.gregsplace.cc
+      INFISICAL_WORKSPACE_ID: d0560c57-02e5-4660-82e0-3d136f28f919
+      ASC_APP_ID: "6762103081"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect version info
+        run: |
+          set -euo pipefail
+          if [[ -n "${{ inputs.build_number }}" ]]; then
+            BUILD_NUMBER="${{ inputs.build_number }}"
+          else
+            BUILD_NUMBER=$(grep 'CURRENT_PROJECT_VERSION:' project.yml | tr -d '"' | awk '{print $2}')
+          fi
+          test -n "$BUILD_NUMBER" || { echo "::error::could not detect CURRENT_PROJECT_VERSION from project.yml"; exit 1; }
+
+          MARKETING_VERSION=$(grep 'MARKETING_VERSION:' project.yml | tr -d '"' | awk '{print $2}')
+          test -n "$MARKETING_VERSION" || { echo "::error::could not detect MARKETING_VERSION from project.yml"; exit 1; }
+
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+          echo "MARKETING_VERSION=$MARKETING_VERSION" >> "$GITHUB_ENV"
+          echo "build: $BUILD_NUMBER / marketing: $MARKETING_VERSION"
+
+      - name: Fetch secrets from Infisical
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${INFISICAL_CLIENT_ID:-}" || -z "${INFISICAL_CLIENT_SECRET:-}" ]]; then
+            echo "::error::INFISICAL_CLIENT_ID / INFISICAL_CLIENT_SECRET not set on this repo."
+            exit 1
+          fi
+
+          TOKEN=$(curl -fsS -X POST "$INFISICAL_URL/api/v1/auth/universal-auth/login" \
+            -H 'Content-Type: application/json' \
+            -d "{\"clientId\":\"$INFISICAL_CLIENT_ID\",\"clientSecret\":\"$INFISICAL_CLIENT_SECRET\"}" \
+            | jq -r .accessToken)
+          test -n "$TOKEN" || { echo "::error::Infisical login returned no accessToken"; exit 1; }
+
+          JSON=$(curl -fsS \
+            "$INFISICAL_URL/api/v3/secrets/raw?workspaceId=$INFISICAL_WORKSPACE_ID&environment=prod&secretPath=%2Fpeptide-tracker" \
+            -H "Authorization: Bearer $TOKEN")
+
+          get() { echo "$JSON" | jq -r --arg k "$1" '.secrets[] | select(.secretKey==$k) | .secretValue'; }
+
+          ASC_API_KEY_ID=$(get ASC_API_KEY_ID)
+          ASC_API_ISSUER_ID=$(get ASC_API_ISSUER_ID)
+          P8_CONTENTS=$(get ASC_API_KEY_P8)
+
+          for v in ASC_API_KEY_ID ASC_API_ISSUER_ID P8_CONTENTS; do
+            eval "val=\${$v}"
+            if [[ -z "${val:-}" ]]; then
+              echo "::error::Missing $v in Infisical /peptide-tracker/ prod"
+              exit 1
+            fi
+          done
+
+          echo "::add-mask::$ASC_API_KEY_ID"
+          echo "::add-mask::$ASC_API_ISSUER_ID"
+
+          P8_DIR="$HOME/.appstoreconnect/private_keys"
+          mkdir -p "$P8_DIR"
+          P8_PATH="$P8_DIR/AuthKey_${ASC_API_KEY_ID}.p8"
+          printf '%s' "$P8_CONTENTS" > "$P8_PATH"
+          chmod 600 "$P8_PATH"
+
+          {
+            echo "ASC_API_KEY_ID=$ASC_API_KEY_ID"
+            echo "ASC_API_ISSUER_ID=$ASC_API_ISSUER_ID"
+            echo "P8_PATH=$P8_PATH"
+          } >> "$GITHUB_ENV"
+
+      - name: Install PyJWT
+        run: python3 -m pip install pyjwt --quiet --break-system-packages 2>/dev/null || python3 -m pip install pyjwt --quiet
+
+      - name: Wait for build + submit for review
+        run: |
+          python3 - "$ASC_APP_ID" "$BUILD_NUMBER" "$MARKETING_VERSION" "$ASC_API_KEY_ID" "$ASC_API_ISSUER_ID" "$P8_PATH" <<'PYEOF'
+          import json, sys, time, urllib.error, urllib.request
+          import jwt  # PyJWT
+
+          app_id, build_number, marketing_version, key_id, issuer_id, p8_path = sys.argv[1:7]
+          BASE = "https://api.appstoreconnect.apple.com"
+
+          with open(p8_path) as f:
+              p8 = f.read()
+
+          def make_jwt():
+              now = int(time.time())
+              return jwt.encode(
+                  {"iss": issuer_id, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
+                  p8, algorithm="ES256",
+                  headers={"alg": "ES256", "kid": key_id, "typ": "JWT"},
+              )
+
+          def req(method, path, body=None):
+              url = BASE + path
+              hdrs = {"Authorization": f"Bearer {make_jwt()}", "Content-Type": "application/json"}
+              data = json.dumps(body).encode() if body else None
+              r = urllib.request.Request(url, data=data, method=method, headers=hdrs)
+              try:
+                  resp = urllib.request.urlopen(r)
+                  raw = resp.read()
+                  return json.loads(raw) if raw else {}
+              except urllib.error.HTTPError as e:
+                  txt = e.read().decode(errors="replace")
+                  print(f"HTTP {e.code} {method} {path}\n{txt}", file=sys.stderr)
+                  raise
+
+          # ── 1. Poll for build to become VALID ─────────────────────────────────
+          print(f"Waiting for build {build_number} to process in ASC (up to 30 min)...", file=sys.stderr)
+          build_id = None
+          for attempt in range(60):
+              data = req("GET", f"/v1/builds?filter[app]={app_id}&filter[version]={build_number}&limit=10")
+              builds = data.get("data", [])
+              valid = [b for b in builds if b["attributes"].get("processingState") == "VALID"]
+              if valid:
+                  build_id = valid[0]["id"]
+                  print(f"Build {build_number} is VALID (id: {build_id})", file=sys.stderr)
+                  break
+              states = [b["attributes"].get("processingState", "?") for b in builds] or ["not found yet"]
+              print(f"  [{attempt+1}/60] state: {', '.join(states)} — retrying in 30s...", file=sys.stderr)
+              time.sleep(30)
+
+          if not build_id:
+              print(f"::error::Build {build_number} did not become VALID within 30 min. Check ship-ios.yml succeeded.", file=sys.stderr)
+              sys.exit(1)
+
+          # ── 2. Find version — prefer editable states, accept READY_FOR_REVIEW ──
+          data = req("GET", f"/v1/apps/{app_id}/appStoreVersions?filter[platform]=IOS&limit=10")
+          all_versions = data.get("data", [])
+          editable = {"PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "REJECTED", "METADATA_REJECTED"}
+          candidates = [v for v in all_versions if v["attributes"].get("appStoreState") in editable]
+          if not candidates:
+              candidates = [v for v in all_versions if v["attributes"].get("appStoreState") == "READY_FOR_REVIEW"]
+          if not candidates:
+              print("::error::No modifiable App Store version found. States: " +
+                    str([v["attributes"].get("appStoreState") for v in all_versions]), file=sys.stderr)
+              sys.exit(1)
+
+          version_id = candidates[0]["id"]
+          asc_state = candidates[0]["attributes"]["appStoreState"]
+          print(f"appStoreVersion: {version_id} ({asc_state})", file=sys.stderr)
+
+          # ── 3. Attach build to version ─────────────────────────────────────────
+          print(f"Attaching build {build_id} to version {version_id}...", file=sys.stderr)
+          try:
+              req("PATCH", f"/v1/appStoreVersions/{version_id}", {
+                  "data": {
+                      "type": "appStoreVersions",
+                      "id": version_id,
+                      "relationships": {
+                          "build": {"data": {"type": "builds", "id": build_id}}
+                      }
+                  }
+              })
+              print("Build attached.", file=sys.stderr)
+          except urllib.error.HTTPError:
+              print(f"::warning::Could not attach build (version is {asc_state}). Proceeding with existing build.", file=sys.stderr)
+
+          # ── 4. Find existing active submission, or create one ──────────────────
+          data = req("GET", f"/v1/reviewSubmissions?filter[app]={app_id}&filter[platform]=IOS&limit=10")
+          active = [s for s in data.get("data", []) if s["attributes"].get("state") not in ("COMPLETE", "CANCELING")]
+          if active:
+              submission_id = active[0]["id"]
+              sub_state = active[0]["attributes"].get("state")
+              print(f"Reusing existing reviewSubmission: {submission_id} ({sub_state})", file=sys.stderr)
+          else:
+              print("Creating new reviewSubmission...", file=sys.stderr)
+              data = req("POST", "/v1/reviewSubmissions", {
+                  "data": {
+                      "type": "reviewSubmissions",
+                      "attributes": {"platform": "IOS"},
+                      "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}
+                  }
+              })
+              submission_id = data["data"]["id"]
+              print(f"reviewSubmission created: {submission_id}", file=sys.stderr)
+
+          # ── 5. Inspect existing items; add version item if absent ──────────────
+          data = req("GET", f"/v1/reviewSubmissions/{submission_id}/items?limit=20")
+          existing_items = data.get("data", [])
+          version_present = any(
+              item.get("relationships", {}).get("appStoreVersion", {}).get("data", {}).get("id") == version_id
+              for item in existing_items
+          )
+          if not version_present:
+              print("Adding app version item...", file=sys.stderr)
+              req("POST", "/v1/reviewSubmissionItems", {
+                  "data": {
+                      "type": "reviewSubmissionItems",
+                      "relationships": {
+                          "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                          "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
+                      }
+                  }
+              })
+          else:
+              print("App version item already in submission.", file=sys.stderr)
+
+          # ── 6. Submit — MyPepTracker has no IAPs, auto-submit immediately ──────
+          print("Submitting for review...", file=sys.stderr)
+          req("POST", f"/v1/reviewSubmissions/{submission_id}/actions/submit", {
+              "data": {"type": "reviewSubmissionActions", "attributes": {}}
+          })
+
+          print(f"\n✓ Submitted for App Store review.", file=sys.stderr)
+          print(f"  Version:       {marketing_version} (build {build_number})", file=sys.stderr)
+          print(f"  Submission ID: {submission_id}", file=sys.stderr)
+          PYEOF
+
+      - name: Cleanup credentials
+        if: always()
+        run: rm -f "${P8_PATH:-}" || true

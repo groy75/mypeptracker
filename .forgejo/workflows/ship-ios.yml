@@ -1,0 +1,220 @@
+name: Ship iOS
+
+# Builds an App Store Connect-ready archive on the m4-macmini Forgejo runner
+# and uploads to TestFlight via altool.
+#
+# Triggers:
+#   - Manual (workflow_dispatch) — default for routine TestFlight pushes.
+#
+# Required Forgejo repo secrets:
+#   INFISICAL_CLIENT_ID     — machine identity client ID (universal auth)
+#   INFISICAL_CLIENT_SECRET — matching client secret
+#
+# Everything else (ASC API key material, M4 keychain password) is fetched
+# from Infisical /peptide-tracker/ in prod.
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_upload:
+        description: "Archive + export only, skip altool upload"
+        type: boolean
+        default: false
+      submit_for_review:
+        description: "After a successful upload, automatically trigger submit-review.yml"
+        type: boolean
+        default: false
+
+jobs:
+  ship:
+    runs-on: macos-arm64
+    timeout-minutes: 60
+    env:
+      INFISICAL_URL: https://infisical.gregsplace.cc
+      INFISICAL_WORKSPACE_ID: d0560c57-02e5-4660-82e0-3d136f28f919
+      TEAM_ID: 7FCS8W78F5
+      SCHEME: MyPepTracker
+      ARCHIVE_PATH: /tmp/MyPepTracker.xcarchive
+      EXPORT_PATH: /tmp/MyPepTracker-export
+      EXPORT_OPTIONS: /tmp/MyPepTracker-ExportOptions.plist
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Toolchain versions
+        run: |
+          set -eu
+          sw_vers
+          xcodebuild -version
+          xcodegen --version
+          jq --version
+          security -h 2>&1 | head -1 || true
+
+      - name: Fetch secrets from Infisical
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${INFISICAL_CLIENT_ID:-}" || -z "${INFISICAL_CLIENT_SECRET:-}" ]]; then
+            echo "::error::INFISICAL_CLIENT_ID / INFISICAL_CLIENT_SECRET not set on this repo."
+            echo "Set them at https://git.gregsplace.cc/greg/peptide-tracker/settings/actions/secrets."
+            exit 1
+          fi
+
+          TOKEN=$(curl -fsS -X POST "$INFISICAL_URL/api/v1/auth/universal-auth/login" \
+            -H 'Content-Type: application/json' \
+            -d "{\"clientId\":\"$INFISICAL_CLIENT_ID\",\"clientSecret\":\"$INFISICAL_CLIENT_SECRET\"}" \
+            | jq -r .accessToken)
+          test -n "$TOKEN" || { echo "::error::Infisical login returned no accessToken"; exit 1; }
+
+          JSON=$(curl -fsS "$INFISICAL_URL/api/v3/secrets/raw?workspaceId=$INFISICAL_WORKSPACE_ID&environment=prod&secretPath=%2Fpeptide-tracker" \
+            -H "Authorization: Bearer $TOKEN")
+
+          get() { echo "$JSON" | jq -r --arg k "$1" '.secrets[] | select(.secretKey==$k) | .secretValue'; }
+
+          ASC_API_KEY_ID=$(get ASC_API_KEY_ID)
+          ASC_API_ISSUER_ID=$(get ASC_API_ISSUER_ID)
+          P8_CONTENTS=$(get ASC_API_KEY_P8)
+          M4_LOGIN_PASSWORD=$(get M4_LOGIN_PASSWORD)
+
+          for v in ASC_API_KEY_ID ASC_API_ISSUER_ID P8_CONTENTS M4_LOGIN_PASSWORD; do
+            eval "val=\${$v}"
+            if [[ -z "${val:-}" ]]; then
+              echo "::error::Missing $v in Infisical /peptide-tracker/ prod"
+              exit 1
+            fi
+          done
+
+          echo "::add-mask::$ASC_API_KEY_ID"
+          echo "::add-mask::$ASC_API_ISSUER_ID"
+          echo "::add-mask::$M4_LOGIN_PASSWORD"
+
+          P8_DIR="$HOME/.appstoreconnect/private_keys"
+          mkdir -p "$P8_DIR"
+          P8_PATH="$P8_DIR/AuthKey_${ASC_API_KEY_ID}.p8"
+          printf '%s' "$P8_CONTENTS" > "$P8_PATH"
+          chmod 600 "$P8_PATH"
+
+          # Fetch FORGEJO_API_TOKEN for optional submit-for-review dispatch.
+          FORGEJO_API_TOKEN=$(curl -fsS \
+            "$INFISICAL_URL/api/v3/secrets/raw/FORGEJO_API_TOKEN?workspaceId=$INFISICAL_WORKSPACE_ID&environment=prod&secretPath=%2F" \
+            -H "Authorization: Bearer $TOKEN" \
+            | jq -r .secret.secretValue)
+          test -n "$FORGEJO_API_TOKEN" || { echo "::error::Missing FORGEJO_API_TOKEN in Infisical / prod"; exit 1; }
+          echo "::add-mask::$FORGEJO_API_TOKEN"
+
+          {
+            echo "ASC_API_KEY_ID=$ASC_API_KEY_ID"
+            echo "ASC_API_ISSUER_ID=$ASC_API_ISSUER_ID"
+            echo "P8_PATH=$P8_PATH"
+            echo "M4_LOGIN_PASSWORD=$M4_LOGIN_PASSWORD"
+            echo "FORGEJO_API_TOKEN=$FORGEJO_API_TOKEN"
+          } >> "$GITHUB_ENV"
+
+      - name: Unlock keychain
+        run: |
+          set -euo pipefail
+          KC="$HOME/Library/Keychains/login.keychain-db"
+          test -f "$KC" || { echo "::error::login keychain missing at $KC"; exit 1; }
+          security unlock-keychain -p "$M4_LOGIN_PASSWORD" "$KC" >/dev/null
+          security set-keychain-settings -t 3600 -l "$KC"
+          echo "login keychain unlocked"
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Archive
+        run: |
+          set -euo pipefail
+          rm -rf "$ARCHIVE_PATH"
+          xcodebuild archive \
+            -project MyPepTracker.xcodeproj \
+            -scheme "$SCHEME" \
+            -destination 'generic/platform=iOS' \
+            -configuration Release \
+            -archivePath "$ARCHIVE_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyIssuerID "$ASC_API_ISSUER_ID" \
+            -authenticationKeyID "$ASC_API_KEY_ID" \
+            -authenticationKeyPath "$P8_PATH" \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_STYLE=Automatic
+          test -d "$ARCHIVE_PATH" || { echo "::error::archive missing at $ARCHIVE_PATH"; exit 1; }
+
+      - name: Export IPA
+        run: |
+          set -euo pipefail
+          rm -rf "$EXPORT_PATH"
+          cat > "$EXPORT_OPTIONS" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key><string>app-store-connect</string>
+              <key>destination</key><string>export</string>
+              <key>teamID</key><string>$TEAM_ID</string>
+              <key>uploadSymbols</key><true/>
+              <key>stripSwiftSymbols</key><true/>
+              <key>signingStyle</key><string>automatic</string>
+          </dict>
+          </plist>
+          PLIST
+
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportOptionsPlist "$EXPORT_OPTIONS" \
+            -exportPath "$EXPORT_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyIssuerID "$ASC_API_ISSUER_ID" \
+            -authenticationKeyID "$ASC_API_KEY_ID" \
+            -authenticationKeyPath "$P8_PATH"
+
+          IPA=$(find "$EXPORT_PATH" -name '*.ipa' -print -quit)
+          test -n "$IPA" && test -f "$IPA" || { echo "::error::no .ipa in $EXPORT_PATH"; exit 1; }
+          echo "IPA_PATH=$IPA" >> "$GITHUB_ENV"
+          printf 'IPA: %s (%s bytes)\n' "$IPA" "$(stat -f %z "$IPA")"
+
+      - name: Upload to TestFlight
+        if: ${{ inputs.skip_upload != true }}
+        run: |
+          set -euo pipefail
+          UPLOAD_LOG=$(mktemp -t mypeptracker-altool-upload.XXXXXX)
+          set +e
+          xcrun altool --upload-app \
+            -f "$IPA_PATH" \
+            -t ios \
+            --apiKey "$ASC_API_KEY_ID" \
+            --apiIssuer "$ASC_API_ISSUER_ID" 2>&1 | tee "$UPLOAD_LOG"
+          rc=${PIPESTATUS[0]}
+          set -e
+          if [[ $rc -ne 0 ]]; then
+            echo "::error::altool upload failed (exit $rc)"
+            rm -f "$UPLOAD_LOG"
+            exit $rc
+          fi
+          DELIVERY_UUID=$(grep -E 'Delivery UUID' "$UPLOAD_LOG" | awk '{print $NF}' | tail -1 || true)
+          rm -f "$UPLOAD_LOG"
+          if [[ -n "$DELIVERY_UUID" ]]; then
+            echo "Delivery UUID: $DELIVERY_UUID"
+          fi
+
+      - name: Trigger submit-review.yml
+        if: ${{ inputs.submit_for_review == true && inputs.skip_upload != true }}
+        run: |
+          set -euo pipefail
+          curl -fsS -X POST \
+            "https://git.gregsplace.cc/api/v1/repos/greg/peptide-tracker/actions/workflows/submit-review.yml/dispatches" \
+            -H "Authorization: token $FORGEJO_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"ref":"main","inputs":{"build_number":""}}' \
+          && echo "submit-review.yml dispatched — it will poll ASC until the build is VALID then submit."
+
+      - name: Cleanup credentials
+        if: always()
+        run: |
+          rm -f "${P8_PATH:-}" || true
+          rm -rf "$ARCHIVE_PATH" "$EXPORT_PATH" "$EXPORT_OPTIONS" || true
+          security lock-keychain "$HOME/Library/Keychains/login.keychain-db" 2>/dev/null || true
