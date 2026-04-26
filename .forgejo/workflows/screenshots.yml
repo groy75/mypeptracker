@@ -108,13 +108,8 @@ jobs:
       - name: Detect version
         run: |
           set -euo pipefail
-          VERSION=$(python3 -c "
-import re
-with open('project.yml') as f:
-    text = f.read()
-m = re.search(r'MARKETING_VERSION: [\"\\x27]?([^\"\\x27\\n]+)', text)
-print(m.group(1).strip())
-")
+          VERSION=$(grep 'MARKETING_VERSION:' project.yml | tr -d '"' | awk '{print $2}')
+          test -n "$VERSION" || { echo "::error::could not detect MARKETING_VERSION from project.yml"; exit 1; }
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "version: $VERSION"
 
