@@ -221,12 +221,12 @@ print(m.group(1).strip())
           loc_id = locs[0]["id"]
           print(f"localization:    {loc_id}", file=sys.stderr)
 
-          # Delete existing APP_IPHONE_67 set, create fresh one
+          # Delete ALL existing screenshot sets (any display type), then create fresh APP_IPHONE_67
           data = req("GET", f"/v1/appStoreVersionLocalizations/{loc_id}/appScreenshotSets")
           for s in (data or {}).get("data", []):
-              if s["attributes"].get("screenshotDisplayType") == DISPLAY_TYPE:
-                  print(f"deleting existing {DISPLAY_TYPE} set {s['id']}", file=sys.stderr)
-                  req("DELETE", f"/v1/appScreenshotSets/{s['id']}")
+              dtype = s["attributes"].get("screenshotDisplayType", "?")
+              print(f"deleting existing {dtype} set {s['id']}", file=sys.stderr)
+              req("DELETE", f"/v1/appScreenshotSets/{s['id']}")
 
           data = req("POST", "/v1/appScreenshotSets", {
               "data": {
