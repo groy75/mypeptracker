@@ -62,7 +62,13 @@ struct PeptideDetailView: View {
                     LabeledContent("Expires", value: vial.expiryDate, format: .dateTime.month().day())
                     LabeledContent("Days Left", value: "\(vial.daysUntilExpiry)")
                     let remaining = vial.estimatedRemainingDoses(forPeptide: peptide)
-                    LabeledContent("Doses Remaining", value: "~\(remaining)")
+                    let basisMcg = vial.lastDoseMcg ?? peptide.defaultDoseMcg
+                    VStack(alignment: .leading, spacing: 2) {
+                        LabeledContent("Doses Remaining", value: "~\(remaining)")
+                        Text("Based on last dose: \(Int(basisMcg)) mcg")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.textSecondary)
+                    }
                 } else {
                     Text("No active vial")
                         .foregroundStyle(AppTheme.textSecondary)

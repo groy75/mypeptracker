@@ -55,15 +55,19 @@ final class Vial {
         return Int(remainingMcg / doseMcg)
     }
 
-    /// Remaining doses projected from the actual dose history of this vial.
-    /// Uses the average logged doseMcg; falls back to the peptide's default when no history.
+    /// The most recent logged dose on this vial, nil if no doses yet.
+    var lastDoseMcg: Double? {
+        doseEntries
+            .sorted { $0.timestamp > $1.timestamp }
+            .first
+            .map(\.doseMcg)
+    }
+
+    /// Remaining doses projected using the last logged dose as the per-dose size.
+    /// Falls back to the peptide's default when no history exists yet.
     func estimatedRemainingDoses(forPeptide peptide: Peptide) -> Int {
-        let loggedMcg = doseEntries.map(\.doseMcg).filter { $0 > 0 }
-        guard !loggedMcg.isEmpty else {
-            return estimatedRemainingDoses(forDoseMcg: peptide.defaultDoseMcg)
-        }
-        let avgDoseMcg = loggedMcg.reduce(0, +) / Double(loggedMcg.count)
-        return estimatedRemainingDoses(forDoseMcg: avgDoseMcg)
+        let basis = lastDoseMcg ?? peptide.defaultDoseMcg
+        return estimatedRemainingDoses(forDoseMcg: basis)
     }
 
     init(

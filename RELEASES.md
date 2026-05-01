@@ -47,7 +47,9 @@ Single source of truth for MyPepTracker App Store submissions.
 
 | 1.10.0    | 15    | 2026-04-30      | **TestFlight** | Spoil Vial: new destructive action in Active Vial section to retire a vial immediately (marks spoiledAt timestamp, sets isActive=false, preserves dose history). Changelog updated with 1.9.0 and 1.10.0 entries — What's New popup was stale at build 12. Delivery UUID `0d3f99f9-da59-49c8-87c2-fcb1bbc4b869`. **TestFlight-only**. |
 
+| 1.11.0    | 16    | 2026-04-30      | **TestFlight** | Doses remaining now based on last logged dose instead of average, so titrating users see an estimate that reflects their current dose level. Vial detail shows "Based on last dose: X mcg" so the basis is always explicit. Delivery UUID `64c0dbac-3d11-4ac4-bcfc-b8fc2132a3f6`. **TestFlight-only**. |
+
 ## Next submission will be
 
-- Marketing: **1.11.0** (TBD).
-- Build: **16**.
+- Marketing: **1.12.0** (TBD).
+- Build: **17**.

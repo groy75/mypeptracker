@@ -6,6 +6,14 @@ enum Changelog {
     /// Newest entry first.
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.11.0",
+            build: 16,
+            date: date("2026-04-30"),
+            changes: [
+                "Doses remaining is now based on your last dose, not an average. If you\u{2019}re titrating up, the estimate reflects where you actually are \u{2014} and the vial detail shows exactly which dose size it\u{2019}s using."
+            ]
+        ),
+        ChangelogEntry(
             version: "1.10.0",
             build: 15,
             date: date("2026-04-30"),
