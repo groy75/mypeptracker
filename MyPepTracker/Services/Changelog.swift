@@ -6,6 +6,23 @@ enum Changelog {
     /// Newest entry first.
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.10.0",
+            build: 15,
+            date: date("2026-04-30"),
+            changes: [
+                "Spoil a vial when you need to dump it — tap \u{201C}Spoil Vial\u{201D} in the Active Vial section to retire it immediately and preserve your dose history."
+            ]
+        ),
+        ChangelogEntry(
+            version: "1.9.0",
+            build: 14,
+            date: date("2026-04-30"),
+            changes: [
+                "New vial form now warns until you\u{2019}ve explicitly set both the peptide amount and water volume, preventing the defaults from silently producing the wrong dose calculation.",
+                "Fixed \u{201C}doses remaining\u{201D} going to zero after editing a vial\u{2019}s concentration. The estimate now works from your original mcg values, so it stays accurate no matter how many times you edit the vial."
+            ]
+        ),
+        ChangelogEntry(
             version: "1.8.1",
             build: 12,
             date: date("2026-04-19"),

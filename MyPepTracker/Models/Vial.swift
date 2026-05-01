@@ -9,6 +9,7 @@ final class Vial {
     var expiryDays: Int
     var totalVolumeUsedML: Double
     var isActive: Bool
+    var spoiledAt: Date?
 
     var peptide: Peptide?
 
@@ -29,6 +30,8 @@ final class Vial {
     var isExpired: Bool {
         expiryDate < Date()
     }
+
+    var isSpoiled: Bool { spoiledAt != nil }
 
     var remainingVolumeML: Double {
         waterVolumeML - totalVolumeUsedML

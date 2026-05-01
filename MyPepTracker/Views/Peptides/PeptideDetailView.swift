@@ -10,6 +10,7 @@ struct PeptideDetailView: View {
     @State private var showingEditVial = false
     @State private var showingLogDose = false
     @State private var showingDeleteConfirmation = false
+    @State private var showingSpoilConfirmation = false
     @State private var dosePendingDeletion: DoseEntry?
 
     private var recentDoses: [DoseEntry] {
@@ -72,6 +73,12 @@ struct PeptideDetailView: View {
                         showingEditVial = true
                     } label: {
                         Label("Edit Vial", systemImage: "pencil")
+                    }
+
+                    Button(role: .destructive) {
+                        showingSpoilConfirmation = true
+                    } label: {
+                        Label("Spoil Vial", systemImage: "exclamationmark.triangle")
                     }
                 }
 
@@ -155,6 +162,22 @@ struct PeptideDetailView: View {
             LogDoseSheet(peptide: peptide)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+        }
+        .confirmationDialog(
+            "Spoil this vial?",
+            isPresented: $showingSpoilConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Spoil Vial", role: .destructive) {
+                UINotificationFeedbackGenerator().notificationOccurred(.warning)
+                if let vial = peptide.vials.first(where: \.isActive) {
+                    vial.spoiledAt = Date()
+                    vial.isActive = false
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Marks this vial as contaminated or unusable and retires it. Dose history is preserved.")
         }
         .confirmationDialog(
             "Delete \(peptide.name)?",

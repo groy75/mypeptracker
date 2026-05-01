@@ -45,7 +45,9 @@ Single source of truth for MyPepTracker App Store submissions.
 | 1.9.0     | 13    | 2026-04-30      | **Superseded** | New vial form shows an orange warning banner until both peptide amount and water volume are explicitly changed from defaults. Superseded by build 14 (dose-remaining fix). Delivery UUID `3240fbba-2c2d-4acb-b938-492a3f07eb22`. |
 | 1.9.0     | 14    | 2026-04-30      | **TestFlight** | Fix: estimated remaining doses now calculated from doseMcg (preserved on each entry) rather than unitsInjectedML, making it immune to concentration edits. Also fixes saveVial() to recompute unitsInjectedML and totalVolumeUsedML for all entries when concentration changes — previously editing a vial's amount/water after logging doses caused totalVolumeUsedML to exceed waterVolumeML, reporting 0 doses remaining. Delivery UUID `22f3d0c7-6919-48e4-9edc-c21fabb430bc`. **TestFlight-only**. |
 
+| 1.10.0    | 15    | 2026-04-30      | **TestFlight** | Spoil Vial: new destructive action in Active Vial section to retire a vial immediately (marks spoiledAt timestamp, sets isActive=false, preserves dose history). Changelog updated with 1.9.0 and 1.10.0 entries — What's New popup was stale at build 12. Delivery UUID `0d3f99f9-da59-49c8-87c2-fcb1bbc4b869`. **TestFlight-only**. |
+
 ## Next submission will be
 
-- Marketing: **1.10.0** (TBD).
-- Build: **15**.
+- Marketing: **1.11.0** (TBD).
+- Build: **16**.
