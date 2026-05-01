@@ -34,30 +34,33 @@ final class Vial {
         waterVolumeML - totalVolumeUsedML
     }
 
+    var totalMcgUsed: Double {
+        doseEntries.reduce(0) { $0 + $1.doseMcg }
+    }
+
+    var remainingMcg: Double {
+        max(0, peptideAmountMg * 1000 - totalMcgUsed)
+    }
+
     var daysUntilExpiry: Int {
         Calendar.current.dateComponents([.day], from: Date(), to: expiryDate).day ?? 0
     }
 
+    // Uses doseMcg (preserved on each entry) so it stays correct after concentration edits.
     func estimatedRemainingDoses(forDoseMcg doseMcg: Double) -> Int {
-        ConcentrationCalculator.estimatedRemainingDoses(
-            totalVolumeML: waterVolumeML,
-            usedVolumeML: totalVolumeUsedML,
-            doseMcg: doseMcg,
-            concentrationMcgPerML: concentrationMcgPerML
-        )
+        guard doseMcg > 0 else { return 0 }
+        return Int(remainingMcg / doseMcg)
     }
 
-    /// Remaining doses projected from the actual volume-per-dose history of this vial.
-    /// Uses the average of logged doses on this vial; falls back to the peptide's default
-    /// when there is no history yet.
+    /// Remaining doses projected from the actual dose history of this vial.
+    /// Uses the average logged doseMcg; falls back to the peptide's default when no history.
     func estimatedRemainingDoses(forPeptide peptide: Peptide) -> Int {
-        let loggedVolumes = doseEntries.map(\.unitsInjectedML).filter { $0 > 0 }
-        guard !loggedVolumes.isEmpty else {
+        let loggedMcg = doseEntries.map(\.doseMcg).filter { $0 > 0 }
+        guard !loggedMcg.isEmpty else {
             return estimatedRemainingDoses(forDoseMcg: peptide.defaultDoseMcg)
         }
-        let avgVolumeML = loggedVolumes.reduce(0, +) / Double(loggedVolumes.count)
-        guard avgVolumeML > 0 else { return 0 }
-        return Int(remainingVolumeML / avgVolumeML)
+        let avgDoseMcg = loggedMcg.reduce(0, +) / Double(loggedMcg.count)
+        return estimatedRemainingDoses(forDoseMcg: avgDoseMcg)
     }
 
     init(

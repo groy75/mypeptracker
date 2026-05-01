@@ -305,10 +305,19 @@ struct ReconstitutionSheet: View {
 
     private func saveVial() {
         if let vial = existingVial {
+            let oldConcentration = vial.concentrationMcgPerML
             vial.peptideAmountMg = peptideAmountMg
             vial.waterVolumeML = waterVolumeML
             vial.expiryDays = expiryDays
             vial.dateMixed = dateMixed
+            let newConcentration = vial.concentrationMcgPerML
+            // Recompute stored volumes so remaining-dose tracking stays accurate.
+            if oldConcentration != newConcentration, newConcentration > 0 {
+                for entry in vial.doseEntries {
+                    entry.unitsInjectedML = entry.doseMcg / newConcentration
+                }
+                vial.totalVolumeUsedML = vial.doseEntries.reduce(0) { $0 + $1.unitsInjectedML }
+            }
             NotificationManager.shared.scheduleVialExpiryWarning(for: peptide, vial: vial)
         } else {
             for vial in peptide.vials where vial.isActive {
