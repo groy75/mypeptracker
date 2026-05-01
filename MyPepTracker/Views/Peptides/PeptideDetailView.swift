@@ -57,6 +57,26 @@ struct PeptideDetailView: View {
 
             Section("Active Vial") {
                 if let vial = peptide.activeVial {
+                    let totalMcg = vial.peptideAmountMg * 1000
+                    let fill = totalMcg > 0 ? vial.remainingMcg / totalMcg : 0
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(String(format: "%.0f mg in %.1f mL", vial.peptideAmountMg, vial.waterVolumeML))
+                                .font(.subheadline.weight(.semibold))
+                            Spacer()
+                            Text(String(format: "%.0f mcg/mL", vial.concentrationMcgPerML))
+                                .font(.caption)
+                                .foregroundStyle(AppTheme.textSecondary)
+                        }
+                        VialGaugeView(
+                            fillFraction: fill,
+                            remainingMcg: vial.remainingMcg,
+                            totalMcg: totalMcg,
+                            lastDoseMcg: vial.lastDoseMcg ?? peptide.defaultDoseMcg
+                        )
+                    }
+                    .padding(.vertical, 4)
+
                     LabeledContent("Mixed", value: vial.dateMixed, format: .dateTime.month().day().year())
                     LabeledContent("Concentration", value: String(format: "%.0f mcg/mL", vial.concentrationMcgPerML))
                     LabeledContent("Expires", value: vial.expiryDate, format: .dateTime.month().day())

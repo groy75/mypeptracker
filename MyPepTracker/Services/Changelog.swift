@@ -6,6 +6,15 @@ enum Changelog {
     /// Newest entry first.
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.12.0",
+            build: 17,
+            date: date("2026-04-30"),
+            changes: [
+                "New vial gauge on each peptide card and in the vial detail \u{2014} a colour-coded bar (green \u{2192} amber \u{2192} red) shows how full your vial is at a glance. Shows mcg remaining, total mcg mixed, and how many doses are left at your last dose size.",
+                "Vial detail now shows the full reconstitution summary: peptide amount, water volume, and concentration all in one header line."
+            ]
+        ),
+        ChangelogEntry(
             version: "1.11.0",
             build: 16,
             date: date("2026-04-30"),

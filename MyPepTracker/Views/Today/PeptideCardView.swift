@@ -57,22 +57,21 @@ struct PeptideCardView: View {
             }
 
             if let vial = peptide.activeVial {
-                HStack(spacing: 12) {
-                    Label(
-                        "\(vial.daysUntilExpiry)d left",
-                        systemImage: "flask.fill"
-                    )
-                    .font(.caption)
-                    .foregroundStyle(vial.daysUntilExpiry <= 3 ? AppTheme.warning : AppTheme.textSecondary)
-
-                    let remaining = vial.estimatedRemainingDoses(forPeptide: peptide)
-                    Label(
-                        "~\(remaining) doses",
-                        systemImage: "syringe.fill"
-                    )
-                    .font(.caption)
-                    .foregroundStyle(remaining <= 2 ? AppTheme.warning : AppTheme.textSecondary)
+                let totalMcg = vial.peptideAmountMg * 1000
+                let fill = totalMcg > 0 ? vial.remainingMcg / totalMcg : 0
+                VialGaugeView(
+                    fillFraction: fill,
+                    remainingMcg: vial.remainingMcg,
+                    totalMcg: totalMcg,
+                    lastDoseMcg: vial.lastDoseMcg ?? peptide.defaultDoseMcg
+                )
+                HStack(spacing: 4) {
+                    Image(systemName: "flask.fill")
+                        .font(.caption2)
+                    Text("Expires in \(vial.daysUntilExpiry)d")
+                        .font(.caption)
                 }
+                .foregroundStyle(vial.daysUntilExpiry <= 3 ? AppTheme.warning : AppTheme.textSecondary)
             } else {
                 Text("No active vial")
                     .font(.caption)

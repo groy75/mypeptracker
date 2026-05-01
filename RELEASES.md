@@ -49,7 +49,9 @@ Single source of truth for MyPepTracker App Store submissions.
 
 | 1.11.0    | 16    | 2026-04-30      | **TestFlight** | Doses remaining now based on last logged dose instead of average, so titrating users see an estimate that reflects their current dose level. Vial detail shows "Based on last dose: X mcg" so the basis is always explicit. Delivery UUID `64c0dbac-3d11-4ac4-bcfc-b8fc2132a3f6`. **TestFlight-only**. |
 
+| 1.12.0    | 17    | 2026-04-30      | **TestFlight** | Vial gauge: colour-coded fill bar (green→amber→red) on both the Today peptide card and the vial detail view. Shows mcg remaining / total mcg mixed, and how many doses at the last dose size. Vial detail header now shows the full reconstitution summary (Xmg in YmL • Z mcg/mL). Delivery UUID `b3d29b5f-2ed7-4af4-85df-1a3a1ce6ac8c`. **TestFlight-only**. |
+
 ## Next submission will be
 
-- Marketing: **1.12.0** (TBD).
-- Build: **17**.
+- Marketing: **1.13.0** (TBD).
+- Build: **18**.
