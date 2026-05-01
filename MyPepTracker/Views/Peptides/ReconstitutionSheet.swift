@@ -14,6 +14,8 @@ struct ReconstitutionSheet: View {
     @State private var dateMixed: Date
     @State private var showGuide = false
     @State private var desiredDoses: Double = 20
+    @State private var hasEditedAmount = false
+    @State private var hasEditedWater = false
 
     private var isEditing: Bool { existingVial != nil }
 
@@ -215,6 +217,19 @@ struct ReconstitutionSheet: View {
                     .frame(maxWidth: .infinity)
                 }
 
+                if !isEditing && !(hasEditedAmount && hasEditedWater) {
+                    Section {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                                .accessibilityHidden(true)
+                            Text("Enter your actual vial amount and water volume. The defaults below may not match what you mixed.")
+                                .font(.subheadline)
+                                .foregroundStyle(AppTheme.textPrimary)
+                        }
+                    }
+                }
+
                 Section("Calculated") {
                     HStack {
                         Text("Concentration")
@@ -272,6 +287,8 @@ struct ReconstitutionSheet: View {
                     }
                 }
             }
+            .onChange(of: peptideAmountMg) { hasEditedAmount = true }
+            .onChange(of: waterVolumeML) { hasEditedWater = true }
             .navigationTitle(isEditing ? "Edit Vial" : "New Vial")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
