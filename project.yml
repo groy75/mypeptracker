@@ -51,6 +51,8 @@ targets:
         # HTTPS (Apple's always-exempt category) so this is truthful and lets
         # builds skip the manual Export Compliance click in ASC.
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        INFOPLIST_KEY_NSHealthShareUsageDescription: "MyPepTracker can read weight and body fat percentage from Apple Health to display alongside your tracking data."
+        INFOPLIST_KEY_NSHealthUpdateUsageDescription: "MyPepTracker writes weight and body fat percentage measurements to Apple Health when you enable sync in Settings."
     dependencies:
       - sdk: HealthKit.framework
   MyPepTrackerTests:
