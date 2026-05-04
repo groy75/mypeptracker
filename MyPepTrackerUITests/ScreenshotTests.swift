@@ -66,8 +66,15 @@ final class ScreenshotTests: XCTestCase {
         snap("05-history-body-map")
     }
 
-    // 6 — What's New / Changelog
-    func test06_WhatsNew() throws {
+    // 6 — Settings: HealthKit toggle + Import button (v1.13.0)
+    func test06_Settings() throws {
+        app.tabBars.buttons["Settings"].tap()
+        waitFor(app.staticTexts["Settings"])
+        snap("06-settings-v1.13")
+    }
+
+    // 7 — What's New / Changelog
+    func test07_WhatsNew() throws {
         app.tabBars.buttons["Settings"].tap()
         waitFor(app.staticTexts["Settings"])
         // About is at the bottom of the Settings form — scroll to it.
@@ -77,7 +84,7 @@ final class ScreenshotTests: XCTestCase {
         waitFor(app.staticTexts["About"])
         app.staticTexts["What's New"].firstMatch.tap()
         waitFor(app.staticTexts["What's New"])
-        snap("06-whats-new")
+        snap("07-whats-new")
     }
 
     // MARK: - Helpers
