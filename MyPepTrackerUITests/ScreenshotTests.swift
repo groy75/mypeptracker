@@ -95,11 +95,15 @@ final class ScreenshotTests: XCTestCase {
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
-        let dir = ProcessInfo.processInfo.environment["SCREENSHOT_DIR"]
-                  ?? "/tmp/mypeptracker-screenshots"
-        let dirURL = URL(fileURLWithPath: dir)
+        let dirURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("Screenshots")
         try? FileManager.default.createDirectory(at: dirURL, withIntermediateDirectories: true)
-        try? screenshot.pngRepresentation.write(to: dirURL.appendingPathComponent("\(name).png"))
+        let fileURL = dirURL.appendingPathComponent("\(name).png")
+        do {
+            try screenshot.pngRepresentation.write(to: fileURL)
+        } catch {
+            print("Failed to write screenshot: \(error)")
+        }
     }
 
     /// Waits for an element to exist before proceeding. Replaces fixed sleeps
