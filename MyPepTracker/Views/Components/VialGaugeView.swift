@@ -19,13 +19,13 @@ struct VialGaugeView: View {
         if mcg >= 1000 {
             return String(format: "%.1f mg left", mcg / 1000)
         }
-        return "\(Int(mcg)) mcg left"
+        return "\(safeInt(mcg)) mcg left"
     }
 
     private var totalLabel: String {
         totalMcg >= 1000
             ? String(format: "%.0f mg", totalMcg / 1000)
-            : "\(Int(totalMcg)) mcg"
+            : "\(safeInt(totalMcg)) mcg"
     }
 
     var body: some View {
@@ -50,12 +50,13 @@ struct VialGaugeView: View {
                     .font(.caption)
                     .foregroundStyle(AppTheme.textSecondary.opacity(0.6))
                 Spacer()
-                if let dose = lastDoseMcg {
-                    Text("~\(max(0, Int(fillFraction * totalMcg / dose))) doses at \(Int(dose)) mcg")
+                if let dose = lastDoseMcg, dose > 0 {
+                    let doses = Int(fillFraction * totalMcg / dose)
+                    Text("~\(max(0, doses)) doses at \(Int(dose)) mcg")
                         .font(.caption)
                         .foregroundStyle(AppTheme.textSecondary)
                 }
-                Text("\(Int(max(0, fillFraction) * 100))%")
+                Text("\(safeInt(max(0, fillFraction) * 100))%")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(gaugeColor)
             }

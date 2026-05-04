@@ -2,6 +2,21 @@ import SwiftUI
 import SwiftData
 import Charts
 
+/// Detail view for a single body metric: chart, goal, history.
+///
+/// **Architecture note:** This view does four things:
+/// 1. Chart rendering (Swift Charts) with 7-day rolling mean overlay
+/// 2. Goal card with progress bar and narrative
+/// 3. History list with delete support
+/// 4. Per-metric unit toggle (kg/lb or cm/in)
+///
+/// **Performance note:** The `rollingMean` property uses a sliding window
+/// algorithm (O(n)) instead of the original O(n²) filter-per-entry approach.
+/// The `dateString` method uses a static cached DateFormatter.
+///
+/// **SwiftData quirk:** We fetch ALL BodyMeasurement entries and filter
+/// in-memory because `#Predicate` traversing enum rawValue on @Model
+/// enums crashes at query time on some builds.
 struct MetricDetailView: View {
     @Environment(\.modelContext) private var context
     let metric: BodyMetric

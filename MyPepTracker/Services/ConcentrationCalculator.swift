@@ -21,6 +21,6 @@ enum ConcentrationCalculator {
     ) -> Int {
         let remainingML = totalVolumeML - usedVolumeML
         let mlPerDose = volumeMLForDose(doseMcg: doseMcg, concentrationMcgPerML: concentrationMcgPerML)
-        return Int(remainingML / mlPerDose)
+        return safeInt(remainingML / mlPerDose)
     }
 }

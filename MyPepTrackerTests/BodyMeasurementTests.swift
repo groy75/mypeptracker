@@ -5,8 +5,6 @@ import SwiftData
 
 @MainActor
 struct BodyMeasurementTests {
-    }
-
     @Test func storesValueInSI() {
         let entry = BodyMeasurement(metric: .weight, value: 80.5)
         #expect(entry.metric == .weight)

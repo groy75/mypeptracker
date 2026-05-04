@@ -1,6 +1,27 @@
 import SwiftUI
 import SwiftData
 
+/// Sheet for creating or editing a vial reconstitution.
+///
+/// **Architecture note:** This is the most complex view in the app (340 lines).
+/// It mixes UI, guide calculator math, and model mutation. Future refactor:
+/// extract the guide math to `ReconstitutionGuideCalculator` and the save
+/// workflow to `VialReconstitutionService`.
+///
+/// **Guide calculator logic:**
+/// - User enters desired number of doses (default 20)
+/// - App computes recommended BAC water volume targeting 0.1mL per dose
+///   (10 IU, easy to measure with a standard syringe)
+/// - Concentration and actual dose count are derived from that volume
+///
+/// **Warning banner:** Orange banner appears until both peptide amount and
+/// water volume are explicitly changed from defaults. Prevents accidental
+/// saves with placeholder values.
+///
+/// **Edit mode:** When `existingVial` is non-nil, saving re-computes
+/// `unitsInjectedML` for all existing dose entries to match the new
+/// concentration. This preserves `doseMcg` (ground truth) while updating
+/// the derived volume.
 struct ReconstitutionSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -87,7 +108,7 @@ struct ReconstitutionSheet: View {
 
     private var guideActualDoses: Int {
         guard guideMLPerDose > 0 else { return 0 }
-        return Int(guideRecommendedWaterML / guideMLPerDose)
+        return safeInt(guideRecommendedWaterML / guideMLPerDose)
     }
 
     var body: some View {
@@ -112,7 +133,7 @@ struct ReconstitutionSheet: View {
                                     }
                                     .buttonStyle(.plain)
 
-                                    Text("\(Int(desiredDoses))")
+                                    Text("\(safeInt(desiredDoses))")
                                         .font(.title3.weight(.semibold).monospacedDigit())
                                         .frame(minWidth: 40)
 
@@ -239,7 +260,7 @@ struct ReconstitutionSheet: View {
                     }
 
                     HStack {
-                        Text("Per Dose (\(Int(peptide.defaultDoseMcg))mcg)")
+                        Text("Per Dose (\(safeInt(peptide.defaultDoseMcg))mcg)")
                         Spacer()
                         Text(String(format: "%.2f mL (%.0f IU)", doseVolume, ConcentrationCalculator.insulinUnits(fromML: doseVolume)))
                             .foregroundStyle(AppTheme.textSecondary)

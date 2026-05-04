@@ -39,7 +39,7 @@ struct SettingsView: View {
                         .font(.caption2)
                 }
 
-                Section("HealthKit") {
+                Section {
                     Toggle("Sync to Apple Health", isOn: $healthKitEnabled)
                         .onChange(of: healthKitEnabled) { _, newValue in
                             if newValue {
@@ -51,6 +51,8 @@ struct SettingsView: View {
                                 }
                             }
                         }
+                } header: {
+                    Text("HealthKit")
                 } footer: {
                     Text("Writes weight and body fat % measurements to Apple Health.")
                         .font(.caption2)

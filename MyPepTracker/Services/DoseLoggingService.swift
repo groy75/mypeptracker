@@ -75,6 +75,6 @@ struct DoseLoggingService {
 
         hapticGenerator.notificationOccurred(.success)
 
-        return "Logged \(Int(doseMcg))mcg of \(peptide.name)"
+        return "Logged \(safeInt(doseMcg))mcg of \(peptide.name)"
     }
 }

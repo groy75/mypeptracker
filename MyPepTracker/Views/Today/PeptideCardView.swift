@@ -26,7 +26,7 @@ struct PeptideCardView: View {
                     Text(peptide.name)
                         .font(.headline)
                         .foregroundStyle(AppTheme.textPrimary)
-                    Text("\(Int(peptide.defaultDoseMcg))mcg • \(peptide.scheduleType.displayName)")
+                    Text("\(safeInt(peptide.defaultDoseMcg))mcg • \(peptide.scheduleType.displayName)")
                         .font(.subheadline)
                         .foregroundStyle(AppTheme.textSecondary)
                 }

@@ -75,12 +75,13 @@ struct VialTests {
         #expect(vial.estimatedRemainingDoses(forPeptide: peptide) == 10)
     }
 
-    @Test func remainingDosesUsesActualAverageWhenHistoryExists() {
-        // User's actual doses: 0.1 mL and 0.3 mL → avg 0.2 mL.
-        // Total used = 0.4 mL, remaining = 1.6 mL. 1.6 / 0.2 = 8 doses.
+    @Test func remainingDosesUsesLastDoseWhenHistoryExists() {
+        // Uses lastDoseMcg (not average). Last dose = 750 mcg.
+        // 5mg in 2mL → 2500 mcg/mL. Total mcg used = 250 + 750 = 1000.
+        // Remaining mcg = 5000 - 1000 = 4000. 4000 / 750 = 5.33 → 5 doses.
         let peptide = Peptide(
             name: "Test",
-            defaultDoseMcg: 1000,   // default would project only 4 remaining — precision matters
+            defaultDoseMcg: 1000,
             scheduleType: .fixedRecurring,
             frequency: .daily
         )
@@ -91,11 +92,13 @@ struct VialTests {
         let d2 = DoseEntry(timestamp: Date(), doseMcg: 750, unitsInjectedML: 0.3)
         vial.doseEntries = [d1, d2]
 
-        #expect(vial.estimatedRemainingDoses(forPeptide: peptide) == 8)
+        #expect(vial.estimatedRemainingDoses(forPeptide: peptide) == 5)
     }
 
     @Test func remainingDosesIgnoresZeroVolumeEntries() {
-        // Zero-volume entries (logged when no active vial) must not drag the average.
+        // Uses lastDoseMcg. Last dose = 500 mcg (phantom has 0 volume but 500 mcg).
+        // 5mg in 2mL → 2500 mcg/mL. Total mcg used = 500 + 500 = 1000.
+        // Remaining mcg = 5000 - 1000 = 4000. 4000 / 500 = 8 doses.
         let peptide = Peptide(
             name: "Test",
             defaultDoseMcg: 500,
@@ -107,8 +110,7 @@ struct VialTests {
         let phantom = DoseEntry(timestamp: Date(), doseMcg: 500, unitsInjectedML: 0)
         vial.doseEntries = [valid, phantom]
 
-        // Average should be 0.2 mL (only the valid dose), so 2.0 / 0.2 = 10.
-        #expect(vial.estimatedRemainingDoses(forPeptide: peptide) == 10)
+        #expect(vial.estimatedRemainingDoses(forPeptide: peptide) == 8)
     }
 
     // MARK: - fillFraction

@@ -104,7 +104,7 @@ struct PeptideRowView: View {
             Text(peptide.name)
                 .font(.body.weight(.medium))
             HStack(spacing: 8) {
-                Text("\(Int(peptide.defaultDoseMcg))mcg")
+                Text("\(safeInt(peptide.defaultDoseMcg))mcg")
                 Text("•")
                 Text(peptide.scheduleType.displayName)
             }

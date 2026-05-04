@@ -44,11 +44,11 @@ struct LogDoseSheet: View {
                         Slider(value: $doseMcg, in: 0...sliderMax, step: sliderStep)
                             .tint(AppTheme.primary)
                             .accessibilityLabel("Dose in micrograms")
-                            .accessibilityValue("\(Int(doseMcg)) micrograms")
+                            .accessibilityValue("\(safeInt(doseMcg)) micrograms")
                         HStack {
                             Text("0")
                             Spacer()
-                            Text("\(Int(sliderMax)) mcg")
+                            Text("\(safeInt(sliderMax)) mcg")
                         }
                         .font(.caption2)
                         .foregroundStyle(AppTheme.textSecondary)

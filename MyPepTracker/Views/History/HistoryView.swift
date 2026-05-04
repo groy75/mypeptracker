@@ -94,7 +94,7 @@ struct HistoryView: View {
                 Button("Cancel", role: .cancel) { dosePendingDeletion = nil }
             } message: { dose in
                 let peptideName = dose.peptide?.name ?? "peptide"
-                Text("Removes \(Int(dose.doseMcg))mcg of \(peptideName). Any vial volume used by this dose will be returned.")
+                Text("Removes \(safeInt(dose.doseMcg))mcg of \(peptideName). Any vial volume used by this dose will be returned.")
             }
         }
     }

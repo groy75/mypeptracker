@@ -21,9 +21,7 @@ struct MyPepTrackerApp: App {
         }
         #endif
 
-        let config = ModelConfiguration(
-            cloudKitDatabase: .automatic
-        )
+        let config = ModelConfiguration()
         // swiftlint:disable:next force_try
         let container = try! ModelContainer(for: schema, configurations: config)
         Self.sharedContainer = container

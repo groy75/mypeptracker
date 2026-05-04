@@ -124,7 +124,7 @@ final class NotificationManager: @unchecked Sendable {
 
         let content = UNMutableNotificationContent()
         content.title = "Time to take your \(peptide.name)"
-        content.body = "\(Int(peptide.defaultDoseMcg))mcg dose"
+        content.body = "\(safeInt(peptide.defaultDoseMcg))mcg dose"
         content.sound = .default
         content.categoryIdentifier = "DOSE_REMINDER"
 

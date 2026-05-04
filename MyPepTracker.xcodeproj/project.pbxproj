@@ -13,9 +13,12 @@
 		141F1FCA7399C1D55AF5D162 /* ChangelogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5CCF00A726CF4E34B1CC89 /* ChangelogEntry.swift */; };
 		1642014B0577C1214E497E81 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D04F1B869D20A5F77D05F /* ScreenshotTests.swift */; };
 		221FABA8C87B231A26A2E860 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9B581FC5A23A2E43E00B30 /* NotificationManager.swift */; };
+		233978BE0583FCF1FBA8A98E /* ImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E866A1F94B5F3F6E65DA9DA /* ImportService.swift */; };
 		332E766E2253F9F92A4112D7 /* ChangelogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2891B96AD4082F9C80488300 /* ChangelogView.swift */; };
+		3B4D6B7DBE66040FE4FC0AB4 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AF295F6AF89F125181F916 /* TestHelpers.swift */; };
 		3DE9E4582BAFF3072F95B73C /* BodyMetricGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE1E2F79C7B604A7B2A01B0 /* BodyMetricGoal.swift */; };
 		4A41AE1D6BB125BD74909165 /* MyPepTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DC584CD04CF9002461B159 /* MyPepTrackerTests.swift */; };
+		5080C7EBFDB1DE9F49C2831A /* PeptideTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1ECFFCBAA21D59A8B61DEA /* PeptideTests.swift */; };
 		50E371DDDF549F6E11B3B277 /* BodyMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 421280E413EB1ACAFE7B40D6 /* BodyMapView.swift */; };
 		516A1E080F6C4BB3A9D5A7A3 /* Vial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7FCA9C8C55C0CD522B4FA2 /* Vial.swift */; };
 		557F3359D7D0392CC5B2C743 /* PeptideDeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95982356A66ECB822F58DFEA /* PeptideDeletionTests.swift */; };
@@ -23,11 +26,13 @@
 		5B7F0208479E76A2CD28AF1A /* BodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF8603AEB3F0911479947E6 /* BodyView.swift */; };
 		5BB59CE92FAAB8A305EA34B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C2FF38F93794C374A2F7A34 /* Assets.xcassets */; };
 		5E4CCDCCBF72551D1B55FD56 /* BodySmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207E7A48D44B7FE25A8A59C3 /* BodySmokeTests.swift */; };
+		61729A0ACBF7BD4700A1C412 /* DateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12F50F64027179244DA99B /* DateProvider.swift */; };
 		62678171A54118E1820FCC1B /* BodyMetricGoalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89034B3E187651CFC429D8CF /* BodyMetricGoalTests.swift */; };
 		64F80D8C4009C6E4BD5CA730 /* DemoSeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C23AAD8372C2C56BF7DA68F /* DemoSeed.swift */; };
 		657CEA4720AFC0FEEF36A5AE /* SetGoalSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E5CBC4C1A374B54451A0B53 /* SetGoalSheet.swift */; };
 		6AA0934573AE3873FD490892 /* MyPepTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D105B935C290C357603283 /* MyPepTrackerApp.swift */; };
 		702C4E901E5E6A7B3A17DE81 /* BodySilhouetteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E190038D436C5F658234F939 /* BodySilhouetteView.swift */; };
+		7577DAA7A934F430C1A84E77 /* DoseLoggingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C978AA18CFDBFDA21DF3C53 /* DoseLoggingService.swift */; };
 		76CC53D08607C2EE9FE84F71 /* PeptidePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5860419A80D895EE8346617 /* PeptidePreset.swift */; };
 		7DC026CCA2877B995C756024 /* NotificationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE67484E9876714CFF5E7D7B /* NotificationManagerTests.swift */; };
 		7FE35A597743B443D8505E65 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E061ABC1B347FAF70CACD /* AppState.swift */; };
@@ -42,15 +47,19 @@
 		A40C5B28CD80F4137221F670 /* DoseStepperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF431A6421D9AFAEE3A68793 /* DoseStepperView.swift */; };
 		A4485427DB57C8357C21E879 /* VialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9440C9FBE8980AEE280E66D /* VialTests.swift */; };
 		B31750A11BB1E2F890C845C7 /* PeptideListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9F57C6589006BF91933039 /* PeptideListView.swift */; };
+		B4B4AB8F508B22500E38B971 /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E5B8D90D84A3EABFAEC1E4 /* ExportService.swift */; };
 		B4D288B23DA6200A1D3655E5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E0B8EAF0BD0CDFB22ED08 /* ContentView.swift */; };
 		B5A462A5D3BA8FD32478E9C8 /* PeptideDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D233B90C406D254DF1E697 /* PeptideDetailView.swift */; };
 		B756E0BFF06E14E5451D2FED /* BodyMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34533476C5E0C5A357C1343E /* BodyMetric.swift */; };
+		BBC7FC4A2CAB697A9057DD45 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10D3189CCB5D734462F0C99 /* HealthKit.framework */; };
 		BE1A6FB64CB28EC26FA3ED56 /* AthleticSilhouette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3720E9237E658F85BDD94385 /* AthleticSilhouette.swift */; };
 		C0C47889864F61D697921076 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E40E4118013F034C6E3E9B /* TodayView.swift */; };
+		C38FA20F03B1F8F3A18C34F7 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52372B20ADE6E1BA33F4056D /* HealthKitService.swift */; };
 		CC31BCD0BC5CAEA6C18D9A07 /* DoseFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4FD0E2F614AE531BA12F6D /* DoseFrequency.swift */; };
 		D1A22F0F79BBC937DB767432 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34BF1EBB782D2A7D0480080 /* AboutView.swift */; };
 		D2AE5F45C97683158DCF5495 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201B88F975FD649F6561B5B0 /* HistoryView.swift */; };
 		D49F84B241EB4A0420632BD1 /* PeptidePresetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841771287EFD5C384684A851 /* PeptidePresetTests.swift */; };
+		D846E5DBF9A0F90C2510A0E1 /* WidgetSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABD180A2CF90699D522C5F3 /* WidgetSyncService.swift */; };
 		DD5328A56AD3B7C64EED3CC2 /* VialGaugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136D490FCAD317E3CB7EBC00 /* VialGaugeView.swift */; };
 		E4C7874A2CC3F3E5AB845B27 /* AddPeptideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5693C9EE963CE69AB7655F /* AddPeptideView.swift */; };
 		E5F9E5AAA7392992895FF00A /* ConcentrationCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3180C14ADE1B1847F2BB2255 /* ConcentrationCalculatorTests.swift */; };
@@ -93,16 +102,22 @@
 		204E1C4E2FB245D90E7DF24F /* MyPepTrackerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MyPepTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		207E7A48D44B7FE25A8A59C3 /* BodySmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodySmokeTests.swift; sourceTree = "<group>"; };
 		263A347A8F041A96CF876E44 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		27E5B8D90D84A3EABFAEC1E4 /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportService.swift; sourceTree = "<group>"; };
 		2891B96AD4082F9C80488300 /* ChangelogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangelogView.swift; sourceTree = "<group>"; };
+		2ABD180A2CF90699D522C5F3 /* WidgetSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSyncService.swift; sourceTree = "<group>"; };
 		2C2FF38F93794C374A2F7A34 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C4FD0E2F614AE531BA12F6D /* DoseFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseFrequency.swift; sourceTree = "<group>"; };
 		3180C14ADE1B1847F2BB2255 /* ConcentrationCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcentrationCalculatorTests.swift; sourceTree = "<group>"; };
 		34533476C5E0C5A357C1343E /* BodyMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMetric.swift; sourceTree = "<group>"; };
 		3720E9237E658F85BDD94385 /* AthleticSilhouette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AthleticSilhouette.swift; sourceTree = "<group>"; };
+		3C12F50F64027179244DA99B /* DateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProvider.swift; sourceTree = "<group>"; };
 		3C23AAD8372C2C56BF7DA68F /* DemoSeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSeed.swift; sourceTree = "<group>"; };
+		3C978AA18CFDBFDA21DF3C53 /* DoseLoggingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseLoggingService.swift; sourceTree = "<group>"; };
 		421280E413EB1ACAFE7B40D6 /* BodyMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMapView.swift; sourceTree = "<group>"; };
 		482B308AB0857A52C0B902BF /* MyPepTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MyPepTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F191B29147AD98ABDCA19E9 /* Peptide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peptide.swift; sourceTree = "<group>"; };
+		52372B20ADE6E1BA33F4056D /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		55AF295F6AF89F125181F916 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		5D3D04F1B869D20A5F77D05F /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		5E5CBC4C1A374B54451A0B53 /* SetGoalSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGoalSheet.swift; sourceTree = "<group>"; };
 		5E9F57C6589006BF91933039 /* PeptideListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptideListView.swift; sourceTree = "<group>"; };
@@ -115,6 +130,7 @@
 		6EE1E2F79C7B604A7B2A01B0 /* BodyMetricGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMetricGoal.swift; sourceTree = "<group>"; };
 		71AA9B61E4EBF37C8CA6F56C /* ConcentrationCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcentrationCalculator.swift; sourceTree = "<group>"; };
 		7A64A99CE351AF3776765C91 /* DoseEntryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseEntryRow.swift; sourceTree = "<group>"; };
+		7E866A1F94B5F3F6E65DA9DA /* ImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportService.swift; sourceTree = "<group>"; };
 		841771287EFD5C384684A851 /* PeptidePresetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptidePresetTests.swift; sourceTree = "<group>"; };
 		89034B3E187651CFC429D8CF /* BodyMetricGoalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMetricGoalTests.swift; sourceTree = "<group>"; };
 		8D5CCF00A726CF4E34B1CC89 /* ChangelogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangelogEntry.swift; sourceTree = "<group>"; };
@@ -124,15 +140,18 @@
 		9C7FCA9C8C55C0CD522B4FA2 /* Vial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vial.swift; sourceTree = "<group>"; };
 		A3D233B90C406D254DF1E697 /* PeptideDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptideDetailView.swift; sourceTree = "<group>"; };
 		A781D41B9B8C572E0E047A77 /* BodyWalkthrough.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyWalkthrough.swift; sourceTree = "<group>"; };
+		ACF73494A4B8E513525BA84A /* MyPepTracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyPepTracker.entitlements; sourceTree = "<group>"; };
 		AD9B581FC5A23A2E43E00B30 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		AF5A545E4A7A3717F6A6DC90 /* Changelog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changelog.swift; sourceTree = "<group>"; };
 		AFF8603AEB3F0911479947E6 /* BodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyView.swift; sourceTree = "<group>"; };
+		BB1ECFFCBAA21D59A8B61DEA /* PeptideTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptideTests.swift; sourceTree = "<group>"; };
 		BF431A6421D9AFAEE3A68793 /* DoseStepperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseStepperView.swift; sourceTree = "<group>"; };
 		C0B089C108229661247B2648 /* PeptideCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptideCardView.swift; sourceTree = "<group>"; };
 		C0D105B935C290C357603283 /* MyPepTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPepTrackerApp.swift; sourceTree = "<group>"; };
 		C5860419A80D895EE8346617 /* PeptidePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeptidePreset.swift; sourceTree = "<group>"; };
 		C9440C9FBE8980AEE280E66D /* VialTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VialTests.swift; sourceTree = "<group>"; };
 		CE4BF5E1B65748F333B09B3D /* LogMeasurementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogMeasurementView.swift; sourceTree = "<group>"; };
+		D10D3189CCB5D734462F0C99 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		D34BF1EBB782D2A7D0480080 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		DCB5B6EBA083D7B616394EA6 /* DoseEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseEntry.swift; sourceTree = "<group>"; };
 		E18E061ABC1B347FAF70CACD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -143,6 +162,17 @@
 		F25899BA6DFD5B8109D1CE04 /* DoseDeletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseDeletionTests.swift; sourceTree = "<group>"; };
 		FBA7577CAD3B4D5FDBE9AE89 /* BodyMeasurementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMeasurementTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CB9CBF81139C37FF888B0C3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BBC7FC4A2CAB697A9057DD45 /* HealthKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0356095ABF268082DBEE65FC /* History */ = {
@@ -172,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				5F4E0B8EAF0BD0CDFB22ED08 /* ContentView.swift */,
+				ACF73494A4B8E513525BA84A /* MyPepTracker.entitlements */,
 				C0D105B935C290C357603283 /* MyPepTrackerApp.swift */,
 				263A347A8F041A96CF876E44 /* PrivacyInfo.xcprivacy */,
 				910F57A38AA1ED3EEF5C9147 /* Models */,
@@ -189,10 +220,24 @@
 				E18E061ABC1B347FAF70CACD /* AppState.swift */,
 				AF5A545E4A7A3717F6A6DC90 /* Changelog.swift */,
 				71AA9B61E4EBF37C8CA6F56C /* ConcentrationCalculator.swift */,
+				3C12F50F64027179244DA99B /* DateProvider.swift */,
 				3C23AAD8372C2C56BF7DA68F /* DemoSeed.swift */,
+				3C978AA18CFDBFDA21DF3C53 /* DoseLoggingService.swift */,
+				27E5B8D90D84A3EABFAEC1E4 /* ExportService.swift */,
+				52372B20ADE6E1BA33F4056D /* HealthKitService.swift */,
+				7E866A1F94B5F3F6E65DA9DA /* ImportService.swift */,
 				AD9B581FC5A23A2E43E00B30 /* NotificationManager.swift */,
+				2ABD180A2CF90699D522C5F3 /* WidgetSyncService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		17C4520F1D90F2A309076314 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D10D3189CCB5D734462F0C99 /* HealthKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		409495D2B81A9FDE0C561682 /* Theme */ = {
@@ -214,6 +259,8 @@
 				EE67484E9876714CFF5E7D7B /* NotificationManagerTests.swift */,
 				95982356A66ECB822F58DFEA /* PeptideDeletionTests.swift */,
 				841771287EFD5C384684A851 /* PeptidePresetTests.swift */,
+				BB1ECFFCBAA21D59A8B61DEA /* PeptideTests.swift */,
+				55AF295F6AF89F125181F916 /* TestHelpers.swift */,
 				C9440C9FBE8980AEE280E66D /* VialTests.swift */,
 			);
 			path = MyPepTrackerTests;
@@ -316,6 +363,7 @@
 				0C3E6108779968AF9E0F774F /* MyPepTracker */,
 				4F2A35BA2CC8168E4020A216 /* MyPepTrackerTests */,
 				E88664798965A58BCB93BC00 /* MyPepTrackerUITests */,
+				17C4520F1D90F2A309076314 /* Frameworks */,
 				64FA592F0139E6381D0C857F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -339,6 +387,7 @@
 			buildPhases = (
 				A3D7F8920A0F6D333665E74E /* Sources */,
 				7A1BD7C5A345DB9D23916F5E /* Resources */,
+				CB9CBF81139C37FF888B0C3B /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -455,6 +504,8 @@
 				7DC026CCA2877B995C756024 /* NotificationManagerTests.swift in Sources */,
 				557F3359D7D0392CC5B2C743 /* PeptideDeletionTests.swift in Sources */,
 				D49F84B241EB4A0420632BD1 /* PeptidePresetTests.swift in Sources */,
+				5080C7EBFDB1DE9F49C2831A /* PeptideTests.swift in Sources */,
+				3B4D6B7DBE66040FE4FC0AB4 /* TestHelpers.swift in Sources */,
 				A4485427DB57C8357C21E879 /* VialTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -479,12 +530,17 @@
 				332E766E2253F9F92A4112D7 /* ChangelogView.swift in Sources */,
 				A13B7D5CDAE4A508176D42FB /* ConcentrationCalculator.swift in Sources */,
 				B4D288B23DA6200A1D3655E5 /* ContentView.swift in Sources */,
+				61729A0ACBF7BD4700A1C412 /* DateProvider.swift in Sources */,
 				64F80D8C4009C6E4BD5CA730 /* DemoSeed.swift in Sources */,
 				F4CC0527142D6D8991FCD7F0 /* DoseEntry.swift in Sources */,
 				EF5540B861054AA947D84D02 /* DoseEntryRow.swift in Sources */,
 				CC31BCD0BC5CAEA6C18D9A07 /* DoseFrequency.swift in Sources */,
+				7577DAA7A934F430C1A84E77 /* DoseLoggingService.swift in Sources */,
 				A40C5B28CD80F4137221F670 /* DoseStepperView.swift in Sources */,
+				B4B4AB8F508B22500E38B971 /* ExportService.swift in Sources */,
+				C38FA20F03B1F8F3A18C34F7 /* HealthKitService.swift in Sources */,
 				D2AE5F45C97683158DCF5495 /* HistoryView.swift in Sources */,
+				233978BE0583FCF1FBA8A98E /* ImportService.swift in Sources */,
 				8AFB133CC14757D4EC779450 /* InjectionSite.swift in Sources */,
 				9C88344974A0B77CC65D7D6D /* LogDoseSheet.swift in Sources */,
 				123447CB870D03D878413192 /* LogMeasurementView.swift in Sources */,
@@ -504,6 +560,7 @@
 				C0C47889864F61D697921076 /* TodayView.swift in Sources */,
 				516A1E080F6C4BB3A9D5A7A3 /* Vial.swift in Sources */,
 				DD5328A56AD3B7C64EED3CC2 /* VialGaugeView.swift in Sources */,
+				D846E5DBF9A0F90C2510A0E1 /* WidgetSyncService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,8 +594,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MyPepTracker/MyPepTracker.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MyPepTracker;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -551,7 +609,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.12.0;
+				MARKETING_VERSION = 1.13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.greg.roy.MyPepTracker;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -579,8 +637,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MyPepTracker/MyPepTracker.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MyPepTracker;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -593,7 +652,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.12.0;
+				MARKETING_VERSION = 1.13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.greg.roy.MyPepTracker;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -60,8 +60,8 @@ final class Vial {
 
     // Uses doseMcg (preserved on each entry) so it stays correct after concentration edits.
     func estimatedRemainingDoses(forDoseMcg doseMcg: Double) -> Int {
-        guard doseMcg > 0 else { return 0 }
-        return Int(remainingMcg / doseMcg)
+        guard doseMcg > 0, doseMcg.isFinite else { return 0 }
+        return safeInt(remainingMcg / doseMcg)
     }
 
     /// The most recent logged dose on this vial, nil if no doses yet.

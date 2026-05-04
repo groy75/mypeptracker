@@ -43,7 +43,7 @@ struct AddPeptideView: View {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(preset.name)
                                                 .foregroundStyle(AppTheme.textPrimary)
-                                            Text("\(Int(preset.typicalDoseMcgLow))–\(Int(preset.typicalDoseMcgHigh))mcg • \(preset.doseFrequency.displayName)")
+                                            Text("\(safeInt(preset.typicalDoseMcgLow))–\(safeInt(preset.typicalDoseMcgHigh))mcg • \(preset.doseFrequency.displayName)")
                                                 .font(.caption)
                                                 .foregroundStyle(AppTheme.textSecondary)
                                         }

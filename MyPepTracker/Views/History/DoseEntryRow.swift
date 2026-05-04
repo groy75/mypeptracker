@@ -11,7 +11,7 @@ struct DoseEntryRow: View {
                     Text(entry.peptide?.name ?? "Unknown")
                         .font(.body.weight(.medium))
                 } else {
-                    Text("\(Int(entry.doseMcg)) mcg")
+                    Text("\(safeInt(entry.doseMcg)) mcg")
                         .font(.body.weight(.medium))
                 }
                 Spacer()

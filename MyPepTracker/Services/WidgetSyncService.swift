@@ -35,7 +35,8 @@ struct WidgetSyncService {
 
         let d = defaults
         d?.set(bestPeptide ?? "No doses scheduled", forKey: "widget_nextDosePeptide")
-        d?.set(Int(bestInterval / 60), forKey: "widget_nextDoseMinutes")
+        let minutes = bestInterval.isFinite ? Int(bestInterval / 60) : 0
+        d?.set(minutes, forKey: "widget_nextDoseMinutes")
         d?.set(peptides.filter(\.isActive).reduce(0) { $0 + $1.vials.filter(\.isActive).count }, forKey: "widget_activeVials")
 
         WidgetCenter.shared.reloadTimelines(ofKind: "MyPepTrackerWidget")

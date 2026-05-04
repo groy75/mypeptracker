@@ -2,6 +2,15 @@ import SwiftUI
 import SwiftData
 import UIKit
 
+/// Detail view for a single peptide: schedule, active vial, dose history,
+/// notes, and destructive actions (spoil vial, delete peptide).
+///
+/// **Architecture note:** This view manages 3 sheets and 3 confirmation
+/// dialogs. The dose deletion logic (vial volume rollback) should eventually
+/// move to `DoseDeletionService`.
+///
+/// **Reusable components:** Uses `DoseEntryRow` for dose history entries
+/// (with `showPeptideName: false` since the peptide is implicit).
 struct PeptideDetailView: View {
     @Bindable var peptide: Peptide
     @Environment(\.modelContext) private var modelContext
@@ -25,7 +34,7 @@ struct PeptideDetailView: View {
             Section("Schedule") {
                 LabeledContent("Type", value: peptide.scheduleType.displayName)
                 LabeledContent("Frequency", value: peptide.frequency.displayName)
-                LabeledContent("Default Dose", value: "\(Int(peptide.defaultDoseMcg)) mcg")
+                LabeledContent("Default Dose", value: "\(safeInt(peptide.defaultDoseMcg)) mcg")
                 Toggle("Active", isOn: $peptide.isActive)
             }
 
@@ -36,7 +45,7 @@ struct PeptideDetailView: View {
                             HStack {
                                 Text("Progress")
                                 Spacer()
-                                Text("\(Int(progress * 100))%")
+                                Text("\(safeInt(progress * 100))%")
                                     .foregroundStyle(AppTheme.textSecondary)
                             }
                             ProgressView(value: progress)
@@ -85,7 +94,7 @@ struct PeptideDetailView: View {
                     let basisMcg = vial.lastDoseMcg ?? peptide.defaultDoseMcg
                     VStack(alignment: .leading, spacing: 2) {
                         LabeledContent("Doses Remaining", value: "~\(remaining)")
-                        Text("Based on last dose: \(Int(basisMcg)) mcg")
+                        Text("Based on last dose: \(safeInt(basisMcg)) mcg")
                             .font(.caption)
                             .foregroundStyle(AppTheme.textSecondary)
                     }
@@ -215,7 +224,7 @@ struct PeptideDetailView: View {
             }
             Button("Cancel", role: .cancel) { dosePendingDeletion = nil }
         } message: { dose in
-            Text("Removes \(Int(dose.doseMcg))mcg. Any vial volume used by this dose will be returned.")
+            Text("Removes \(safeInt(dose.doseMcg))mcg. Any vial volume used by this dose will be returned.")
         }
     }
 
