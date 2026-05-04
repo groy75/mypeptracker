@@ -64,21 +64,49 @@
             color: #94a3b8;
             font-size: 0.8rem;
         }
+        .highlight {
+            background: #f1f5f9;
+            border-left: 3px solid #3373e6;
+            padding: 0.75rem 1rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 0.75rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Privacy Policy</h1>
-        <p class="subtitle">MyPepTracker &mdash; Last updated April 12, 2026</p>
+        <p class="subtitle">MyPepTracker &mdash; Last updated May 3, 2026</p>
 
-        <span class="badge">No data collected</span>
+        <span class="badge">Data stays on your device</span>
 
         <h2>Summary</h2>
-        <p>MyPepTracker does not collect, transmit, or share any of your data. Everything stays on your device.</p>
+        <p>MyPepTracker is designed with privacy as a core principle. We do not collect, transmit, or share your data with the developer or any third party. All data you enter stays on your device by default. Optional features (HealthKit and iCloud sync) are entirely under your control and use Apple's own encrypted infrastructure.</p>
 
         <h2>Data Storage</h2>
-        <p>All data you enter into MyPepTracker — including peptide names, dosing logs, reconstitution records, injection sites, notes, and schedule preferences — is stored exclusively on your device using Apple's SwiftData framework.</p>
-        <p>Your data is included in your standard iCloud device backup if you have iCloud Backup enabled on your iPhone. This backup is managed entirely by Apple under their own privacy policy and is encrypted end-to-end.</p>
+        <p>By default, all data you enter into MyPepTracker &mdash; including peptide names, dosing logs, reconstitution records, injection sites, notes, body measurements, and schedule preferences &mdash; is stored exclusively on your device using Apple's SwiftData framework.</p>
+
+        <h2>Optional iCloud Sync</h2>
+        <p>If you enable iCloud sync in your device settings, your data may be synchronized across your Apple devices via Apple's CloudKit service. This is handled entirely by Apple:</p>
+        <ul>
+            <li>Data is encrypted in transit and at rest on Apple's servers</li>
+            <li>We never have access to your CloudKit data</li>
+            <li>You can disable iCloud sync at any time in Settings &rarr; Apple ID &rarr; iCloud</li>
+        </ul>
+        <p>Your data is also included in your standard iCloud device backup if you have iCloud Backup enabled. This backup is managed entirely by Apple under their own privacy policy and is encrypted end-to-end.</p>
+
+        <h2>Optional Apple Health Integration</h2>
+        <p>MyPepTracker can optionally write body measurements (weight and body fat percentage) to Apple Health. This feature is off by default and requires your explicit permission:</p>
+        <ul>
+            <li>HealthKit access is requested only when you enable the feature in Settings</li>
+            <li>Only weight and body fat percentage are written to HealthKit</li>
+            <li>No other health data is read from or written to HealthKit</li>
+            <li>You can revoke HealthKit access at any time in the Health app</li>
+        </ul>
+        <p>All HealthKit data is stored and managed by Apple on your device and in your iCloud account. We do not have access to this data.</p>
+
+        <h2>Home Screen Widget</h2>
+        <p>The optional Home Screen widget displays your next scheduled dose timing and active vial count. This information is stored locally in a private app group container on your device and is not transmitted anywhere.</p>
 
         <h2>Data We Do Not Collect</h2>
         <ul>
@@ -87,24 +115,23 @@
             <li>No analytics or usage tracking</li>
             <li>No crash reporting or diagnostics sent to us</li>
             <li>No advertising or ad identifiers</li>
-            <li>No health data shared with HealthKit or any third-party service</li>
-            <li>No network requests — the app works entirely offline</li>
+            <li>No network requests to our servers &mdash; the app works entirely offline</li>
         </ul>
 
         <h2>Notifications</h2>
         <p>MyPepTracker uses local notifications to remind you about scheduled doses, overdue doses, and vial expiration. These notifications are generated and scheduled entirely on your device. No notification data is sent to any server.</p>
 
-        <h2>Data Export</h2>
-        <p>The app allows you to export your dose history as JSON or CSV files. When you export, the file is created locally on your device and shared through the standard iOS share sheet. Where the exported file goes after that is determined by your choice (e.g., saving to Files, sending via Messages, etc.).</p>
+        <h2>Data Export &amp; Import</h2>
+        <p>The app allows you to export your dose history as JSON or CSV files, and import previously exported data. Files are created locally on your device and shared through the standard iOS share sheet. Where the file goes after that is determined by your choice (e.g., saving to Files, sending via Messages, etc.).</p>
 
         <h2>Third-Party Services</h2>
-        <p>MyPepTracker does not integrate with any third-party services, SDKs, or APIs. There are no embedded frameworks that collect data.</p>
+        <p>MyPepTracker does not integrate with any third-party analytics, advertising, or tracking services. The only external integrations are optional Apple frameworks (HealthKit, CloudKit) that you control.</p>
 
         <h2>Children's Privacy</h2>
         <p>MyPepTracker is not directed at children under 17. We do not knowingly collect information from children.</p>
 
         <h2>Changes to This Policy</h2>
-        <p>If we update this privacy policy, the revised version will be posted at this URL with an updated date. Since the app collects no data, meaningful changes are unlikely.</p>
+        <p>If we update this privacy policy, the revised version will be posted at this URL with an updated date. Since the app collects no data directly, meaningful changes are unlikely.</p>
 
         <div class="contact">
             <h2>Contact</h2>
