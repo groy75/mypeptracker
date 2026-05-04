@@ -6,6 +6,19 @@ enum Changelog {
     /// Newest entry first.
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.13.0",
+            build: 18,
+            date: date("2026-05-03"),
+            changes: [
+                "Apple Health integration: optionally sync weight and body fat % measurements to Apple Health from the Body tab. Enable it in Settings.",
+                "Import dose history: bring your data back into the app from a previously exported JSON or CSV file. Find it in Settings \u{2192} Data.",
+                "iCloud sync keeps your peptides, vials, doses, and body metrics in sync across all your devices automatically.",
+                "Home Screen widget shows your next scheduled dose and how many active vials you have at a glance.",
+                "Fixed a rare crash when calculating vial expiry dates around daylight-saving time transitions.",
+                "Smoother Body chart performance with a faster rolling-average calculation and cached date formatting."
+            ]
+        ),
+        ChangelogEntry(
             version: "1.12.0",
             build: 17,
             date: date("2026-04-30"),

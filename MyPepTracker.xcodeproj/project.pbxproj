@@ -600,6 +600,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MyPepTracker;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "MyPepTracker can read weight and body fat percentage from Apple Health to display alongside your tracking data.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "MyPepTracker writes weight and body fat percentage measurements to Apple Health when you enable sync in Settings.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -643,6 +645,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MyPepTracker;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "MyPepTracker can read weight and body fat percentage from Apple Health to display alongside your tracking data.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "MyPepTracker writes weight and body fat percentage measurements to Apple Health when you enable sync in Settings.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
