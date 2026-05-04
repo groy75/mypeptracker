@@ -23,12 +23,14 @@ final class Vial {
         )
     }
 
+    /// Returns the expiry date, or `dateMixed` if calendar arithmetic fails
+    /// (e.g. near DST boundaries). Previously force-unwrapped and could crash.
     var expiryDate: Date {
-        Calendar.current.date(byAdding: .day, value: expiryDays, to: dateMixed)!
+        Calendar.current.date(byAdding: .day, value: expiryDays, to: dateMixed) ?? dateMixed
     }
 
     var isExpired: Bool {
-        expiryDate < Date()
+        expiryDate < DateProviderRegistry.now()
     }
 
     var isSpoiled: Bool { spoiledAt != nil }
@@ -45,8 +47,15 @@ final class Vial {
         max(0, peptideAmountMg * 1000 - totalMcgUsed)
     }
 
+    /// Fraction of total mcg still remaining in the vial (0.0…1.0).
+    var fillFraction: Double {
+        let total = peptideAmountMg * 1000
+        guard total > 0 else { return 0 }
+        return min(1.0, remainingMcg / total)
+    }
+
     var daysUntilExpiry: Int {
-        Calendar.current.dateComponents([.day], from: Date(), to: expiryDate).day ?? 0
+        Calendar.current.dateComponents([.day], from: DateProviderRegistry.now(), to: expiryDate).day ?? 0
     }
 
     // Uses doseMcg (preserved on each entry) so it stays correct after concentration edits.

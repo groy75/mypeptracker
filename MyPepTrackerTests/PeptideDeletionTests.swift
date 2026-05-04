@@ -5,13 +5,6 @@ import SwiftData
 
 @MainActor
 struct PeptideDeletionTests {
-    private func makeContext() throws -> ModelContext {
-        let schema = Schema([Peptide.self, Vial.self, DoseEntry.self])
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [config])
-        return ModelContext(container)
-    }
-
     private func makePeptideWithHistory(in context: ModelContext) -> Peptide {
         let peptide = Peptide(
             name: "Test Peptide",
@@ -35,7 +28,7 @@ struct PeptideDeletionTests {
     }
 
     @Test func deletingPeptideCascadesToVialsAndDoses() throws {
-        let context = try makeContext()
+        let context = try makeInMemoryContext()
         let peptide = makePeptideWithHistory(in: context)
         try context.save()
 
@@ -52,7 +45,7 @@ struct PeptideDeletionTests {
     }
 
     @Test func deletingOnePeptideLeavesOthersIntact() throws {
-        let context = try makeContext()
+        let context = try makeInMemoryContext()
         let doomed = makePeptideWithHistory(in: context)
         let survivor = makePeptideWithHistory(in: context)
         survivor.name = "Survivor"

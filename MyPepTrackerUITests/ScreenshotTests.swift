@@ -12,67 +12,71 @@ final class ScreenshotTests: XCTestCase {
         continueAfterFailure = false
         app.launchArguments += [
             "-screenshotMode",
-            // Force UserDefaults to deterministic values each run. On iOS,
-            // passing "-<key> <value>" on the command line populates UserDefaults
-            // for the session only.
             "-lastSeenChangelogBuild", "0"
         ]
         app.launch()
     }
 
-    // 1 — Hero: Reconstitute New Vial
-    func test01_ReconstituteNewVial() throws {
+    // 1 — Hero: Today tab showing both peptide cards with vial gauges
+    func test01_TodayGauges() throws {
+        app.tabBars.buttons["Today"].tap()
+        waitFor(app.staticTexts["Today"])
+        snap("01-today-gauges")
+    }
+
+    // 2 — Peptide detail: vial header + gauge + titration dose history
+    func test02_PeptideDetailGauge() throws {
         app.tabBars.buttons["Peptides"].tap()
-        // First row = Retatrutide (seeded alphabetically)
+        waitFor(app.staticTexts["Retatrutide"])
         app.staticTexts["Retatrutide"].firstMatch.tap()
-        app.buttons["Reconstitute New Vial"].tap()
-        wait(0.6)
-        snap("01-reconstitute-new-vial")
+        waitFor(app.staticTexts["Active Vial"])
+        snap("02-peptide-detail-gauge")
     }
 
-    // 2 — Today tab with both peptide cards
-    func test02_TodayOverview() throws {
-        if !app.tabBars.buttons["Today"].isSelected {
-            app.tabBars.buttons["Today"].tap()
-        }
-        wait(0.4)
-        snap("02-today-overview")
-    }
-
-    // 3 — Log Dose sheet with slider + live IU
+    // 3 — Log Dose sheet with mcg slider + live mL / IU readout
     func test03_LogDoseSlider() throws {
         app.tabBars.buttons["Today"].tap()
-        // The Log Dose button label we set is "Log dose for {name}"
+        waitFor(app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Log dose for'")).firstMatch)
         app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Log dose for'")).firstMatch.tap()
-        wait(0.8)
+        waitFor(app.navigationBars["Log Retatrutide"])
         snap("03-log-dose-slider")
     }
 
-    // 4 — Peptide detail
-    func test04_PeptideDetail() throws {
+    // 4 — Reconstitute New Vial: calculator + defaults warning banner
+    func test04_ReconstituteNewVial() throws {
         app.tabBars.buttons["Peptides"].tap()
-        app.staticTexts["Selank"].firstMatch.tap()
-        wait(0.4)
-        snap("04-peptide-detail")
+        waitFor(app.staticTexts["Retatrutide"])
+        app.staticTexts["Retatrutide"].firstMatch.tap()
+        waitFor(app.staticTexts["Active Vial"])
+        // Gauge + vial summary push the button below the fold.
+        app.swipeUp()
+        waitFor(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Reconstitute'")).firstMatch)
+        app.buttons.matching(NSPredicate(format: "label CONTAINS 'Reconstitute'")).firstMatch.tap()
+        waitFor(app.navigationBars["Reconstitute Vial"])
+        snap("04-reconstitute-new-vial")
     }
 
-    // 5 — History + body map
+    // 5 — History + injection-site body map
     func test05_HistoryBodyMap() throws {
         app.tabBars.buttons["History"].tap()
-        wait(0.3)
-        // The "Show Injection Sites" button reveals the body map.
+        waitFor(app.staticTexts["History"])
         let showSites = app.buttons["Show Injection Sites"]
-        if showSites.exists { showSites.tap() }
-        wait(0.5)
+        if showSites.waitForExistence(timeout: 2) { showSites.tap() }
+        waitFor(app.images.firstMatch)
         snap("05-history-body-map")
     }
 
     // 6 — What's New / Changelog
     func test06_WhatsNew() throws {
         app.tabBars.buttons["Settings"].tap()
-        app.buttons["About MyPepTracker"].tap()
-        app.buttons["What's New"].tap()
-        wait(0.4)
+        waitFor(app.staticTexts["Settings"])
+        // About is at the bottom of the Settings form — scroll to it.
+        app.swipeUp()
+        waitFor(app.staticTexts["About MyPepTracker"])
+        app.staticTexts["About MyPepTracker"].firstMatch.tap()
+        waitFor(app.staticTexts["About"])
+        app.staticTexts["What's New"].firstMatch.tap()
+        waitFor(app.staticTexts["What's New"])
         snap("06-whats-new")
     }
 
@@ -91,9 +95,9 @@ final class ScreenshotTests: XCTestCase {
         try? screenshot.pngRepresentation.write(to: dirURL.appendingPathComponent("\(name).png"))
     }
 
-    private func wait(_ seconds: TimeInterval) {
-        let exp = expectation(description: "pause")
-        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) { exp.fulfill() }
-        wait(for: [exp], timeout: seconds + 1)
+    /// Waits for an element to exist before proceeding. Replaces fixed sleeps
+    /// with explicit existence checks, eliminating flakiness.
+    private func waitFor(_ element: XCUIElement, timeout: TimeInterval = 5) {
+        _ = element.waitForExistence(timeout: timeout)
     }
 }

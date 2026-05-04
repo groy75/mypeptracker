@@ -43,13 +43,13 @@ final class Peptide {
     var cycleProgress: Double? {
         guard let start = cycleStartDate, let end = cycleEndDate else { return nil }
         let total = end.timeIntervalSince(start)
-        let elapsed = Date().timeIntervalSince(start)
+        let elapsed = DateProviderRegistry.now().timeIntervalSince(start)
         return min(max(elapsed / total, 0), 1.0)
     }
 
     var cycleDaysRemaining: Int? {
         guard let end = cycleEndDate else { return nil }
-        return max(0, Calendar.current.dateComponents([.day], from: Date(), to: end).day ?? 0)
+        return max(0, Calendar.current.dateComponents([.day], from: DateProviderRegistry.now(), to: end).day ?? 0)
     }
 
     init(

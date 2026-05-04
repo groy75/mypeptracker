@@ -2,6 +2,7 @@ import Testing
 import Foundation
 @testable import MyPepTracker
 
+@Suite("Vial")
 struct VialTests {
     @Test func expiryDateCalculation() {
         let mixed = Date(timeIntervalSince1970: 1_700_000_000)
@@ -16,7 +17,9 @@ struct VialTests {
     }
 
     @Test func isExpiredWhenPastExpiry() {
-        let mixed = Calendar.current.date(byAdding: .day, value: -31, to: Date())!
+        let mixed = Calendar.current.date(byAdding: .day, value: -31, to: DateProviderRegistry.now())!
+        setFixedDate(DateProviderRegistry.now())
+        defer { DateProviderRegistry.reset() }
         let vial = Vial(
             peptideAmountMg: 5.0,
             waterVolumeML: 2.0,
@@ -27,10 +30,12 @@ struct VialTests {
     }
 
     @Test func isNotExpiredWhenFresh() {
+        setFixedDate(DateProviderRegistry.now())
+        defer { DateProviderRegistry.reset() }
         let vial = Vial(
             peptideAmountMg: 5.0,
             waterVolumeML: 2.0,
-            dateMixed: Date(),
+            dateMixed: DateProviderRegistry.now(),
             expiryDays: 30
         )
         #expect(vial.isExpired == false)
@@ -104,5 +109,40 @@ struct VialTests {
 
         // Average should be 0.2 mL (only the valid dose), so 2.0 / 0.2 = 10.
         #expect(vial.estimatedRemainingDoses(forPeptide: peptide) == 10)
+    }
+
+    // MARK: - fillFraction
+
+    @Test func fillFractionFull() {
+        let vial = Vial(peptideAmountMg: 5.0, waterVolumeML: 2.0)
+        #expect(vial.fillFraction == 1.0)
+    }
+
+    @Test func fillFractionHalfUsed() {
+        let vial = Vial(peptideAmountMg: 5.0, waterVolumeML: 2.0)
+        let dose = DoseEntry(doseMcg: 2500, unitsInjectedML: 1.0)
+        vial.doseEntries = [dose]
+        // 2500 mcg used out of 5000 mcg → 0.5 remaining
+        #expect(vial.fillFraction == 0.5)
+    }
+
+    @Test func fillFractionEmpty() {
+        let vial = Vial(peptideAmountMg: 5.0, waterVolumeML: 2.0)
+        let dose = DoseEntry(doseMcg: 5000, unitsInjectedML: 2.0)
+        vial.doseEntries = [dose]
+        #expect(vial.fillFraction == 0.0)
+    }
+
+    @Test func fillFractionClampedToZero() {
+        let vial = Vial(peptideAmountMg: 5.0, waterVolumeML: 2.0)
+        // Over-use (shouldn't happen, but math should clamp)
+        let dose = DoseEntry(doseMcg: 6000, unitsInjectedML: 2.5)
+        vial.doseEntries = [dose]
+        #expect(vial.fillFraction == 0.0)
+    }
+
+    @Test func fillFractionWithZeroPeptideAmount() {
+        let vial = Vial(peptideAmountMg: 0.0, waterVolumeML: 2.0)
+        #expect(vial.fillFraction == 0.0)
     }
 }

@@ -20,14 +20,14 @@ final class BodyWalkthrough: XCTestCase {
     func test_walkSilhouette() throws {
         // First flip to list so we can log. (Launch-arg pre-seeded to silhouette.)
         app.tabBars.buttons["Body"].tap()
-        pause(0.6)
+        _ = app.staticTexts["Body"].waitForExistence(timeout: 3)
         snap("30-silhouette-empty")
 
         // Switch to list by tapping the leftmost segment (list icon).
         let segments = app.buttons.matching(identifier: "List")
         if segments.count > 0 {
             segments.firstMatch.tap()
-            pause(0.6)
+            _ = app.staticTexts["Body"].waitForExistence(timeout: 3)
         }
 
         // Log three metrics so markers have data to render.
@@ -39,7 +39,7 @@ final class BodyWalkthrough: XCTestCase {
         let bodySegment = app.buttons.matching(identifier: "Body").element(boundBy: 1)
         if bodySegment.waitForExistence(timeout: 2) {
             bodySegment.tap()
-            pause(1)
+            _ = app.staticTexts["Body"].waitForExistence(timeout: 3)
             snap("31-silhouette-with-data")
         }
     }
@@ -53,9 +53,9 @@ final class BodyWalkthrough: XCTestCase {
         XCTAssertTrue(field.waitForExistence(timeout: 3))
         field.tap(); field.typeText(value)
         app.buttons["Save"].tap()
-        pause(0.4)
+        _ = app.navigationBars.buttons.element(boundBy: 0).waitForExistence(timeout: 3)
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        pause(0.4)
+        _ = app.staticTexts["Body"].waitForExistence(timeout: 3)
     }
 
     private func snap(_ name: String) {

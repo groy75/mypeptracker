@@ -2,12 +2,18 @@ import SwiftUI
 
 struct DoseEntryRow: View {
     let entry: DoseEntry
+    var showPeptideName: Bool = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text(entry.peptide?.name ?? "Unknown")
-                    .font(.body.weight(.medium))
+                if showPeptideName {
+                    Text(entry.peptide?.name ?? "Unknown")
+                        .font(.body.weight(.medium))
+                } else {
+                    Text("\(Int(entry.doseMcg)) mcg")
+                        .font(.body.weight(.medium))
+                }
                 Spacer()
                 Text(entry.timestamp, format: .dateTime.month(.abbreviated).day().hour().minute())
                     .font(.caption)

@@ -101,45 +101,18 @@ struct LogDoseSheet: View {
         }
     }
 
+    private let doseService = DoseLoggingService()
+
     private func logDose() {
-        let vial = peptide.activeVial
-
-        let volumeML: Double
-        if let vial {
-            volumeML = ConcentrationCalculator.volumeMLForDose(
-                doseMcg: doseMcg,
-                concentrationMcgPerML: vial.concentrationMcgPerML
-            )
-        } else {
-            volumeML = 0
-        }
-
-        let entry = DoseEntry(
-            timestamp: doseDate,
+        let message = doseService.logDose(
+            peptide: peptide,
             doseMcg: doseMcg,
-            unitsInjectedML: volumeML,
+            doseDate: doseDate,
             injectionSite: injectionSite,
-            notes: notes.isEmpty ? nil : notes
+            notes: notes.isEmpty ? nil : notes,
+            into: modelContext
         )
-        entry.peptide = peptide
-        entry.vial = vial
-
-        if let vial {
-            vial.totalVolumeUsedML += volumeML
-            let remaining = vial.estimatedRemainingDoses(forPeptide: peptide)
-            NotificationManager.shared.scheduleVialLowWarning(for: peptide, remainingDoses: remaining)
-        }
-
-        modelContext.insert(entry)
-
-        let manager = NotificationManager.shared
-        manager.scheduleDoseReminder(for: peptide)
-        manager.scheduleOverdueReminder(for: peptide)
-
-        UINotificationFeedbackGenerator().notificationOccurred(.success)
-
-        appState.showToast("Logged \(Int(doseMcg))mcg of \(peptide.name)")
-        appState.selectedTab = .today
+        appState.showToast(message)
         dismiss()
     }
 }

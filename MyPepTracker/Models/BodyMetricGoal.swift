@@ -71,4 +71,22 @@ final class BodyMetricGoal {
         guard let p = progress(currentValue: currentValue) else { return false }
         return p >= 1.0
     }
+
+    /// Human-readable progress narrative for display in the UI.
+    func narrative(currentValue: Double, preferImperial: Bool) -> String {
+        let unit = metric.unit
+        let suffix = preferImperial ? unit.imperialSuffix : unit.storageSuffix
+        switch direction {
+        case .increase:
+            let gained = BodyMetricFormat.display(max(currentValue - startValue, 0), unit: unit, imperial: preferImperial)
+            let needed = BodyMetricFormat.display(targetValue - startValue, unit: unit, imperial: preferImperial)
+            return String(format: "%.1f of %.1f %@ gained", gained, needed, suffix)
+        case .decrease:
+            let lost = BodyMetricFormat.display(max(startValue - currentValue, 0), unit: unit, imperial: preferImperial)
+            let needed = BodyMetricFormat.display(startValue - targetValue, unit: unit, imperial: preferImperial)
+            return String(format: "%.1f of %.1f %@ lost", lost, needed, suffix)
+        case .steady:
+            return "Hold steady at \(BodyMetricFormat.formatted(targetValue, unit: unit, imperial: preferImperial))"
+        }
+    }
 }

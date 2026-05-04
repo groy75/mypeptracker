@@ -35,15 +35,26 @@ struct MetricDetailView: View {
     private var latest: BodyMeasurement? { entries.last }
 
     /// Simple 7-day rolling mean for the chart overlay — smooths daily noise (esp. weight).
+    /// Uses a sliding window for O(n) performance instead of O(n²).
     private var rollingMean: [(date: Date, value: Double)] {
         guard entries.count >= 2 else { return [] }
         let window: TimeInterval = 7 * 24 * 3600
-        return entries.map { entry in
+        var result: [(date: Date, value: Double)] = []
+        var windowSum: Double = 0
+        var windowStart = 0
+
+        for (idx, entry) in entries.enumerated() {
             let cutoff = entry.timestamp.addingTimeInterval(-window)
-            let windowEntries = entries.filter { $0.timestamp >= cutoff && $0.timestamp <= entry.timestamp }
-            let mean = windowEntries.map(\.value).reduce(0, +) / Double(windowEntries.count)
-            return (entry.timestamp, mean)
+            // Advance window start to first entry within the window
+            while windowStart < idx && entries[windowStart].timestamp < cutoff {
+                windowSum -= entries[windowStart].value
+                windowStart += 1
+            }
+            windowSum += entry.value
+            let count = idx - windowStart + 1
+            result.append((entry.timestamp, windowSum / Double(count)))
         }
+        return result
     }
 
     private var unitSuffix: String {
@@ -116,7 +127,7 @@ struct MetricDetailView: View {
     private var goalCard: some View {
         if let g = goal, let current = latest?.value {
             let progress = g.progressFractionForDisplay(currentValue: current)
-            let narrative = goalNarrative(goal: g, current: current)
+            let narrative = g.narrative(currentValue: current, preferImperial: preferImperial)
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .firstTextBaseline) {
                     VStack(alignment: .leading, spacing: 2) {
@@ -146,29 +157,17 @@ struct MetricDetailView: View {
         }
     }
 
-    private func goalNarrative(goal g: BodyMetricGoal, current: Double) -> String {
-        let imperial = preferImperial
-        let unit = metric.unit
-        let suffix = imperial ? unit.imperialSuffix : unit.storageSuffix
-        switch g.direction {
-        case .increase:
-            let gained = BodyMetricFormat.display(max(current - g.startValue, 0), unit: unit, imperial: imperial)
-            let needed = BodyMetricFormat.display(g.targetValue - g.startValue, unit: unit, imperial: imperial)
-            return String(format: "%.1f of %.1f %@ gained", gained, needed, suffix)
-        case .decrease:
-            let lost = BodyMetricFormat.display(max(g.startValue - current, 0), unit: unit, imperial: imperial)
-            let needed = BodyMetricFormat.display(g.startValue - g.targetValue, unit: unit, imperial: imperial)
-            return String(format: "%.1f of %.1f %@ lost", lost, needed, suffix)
-        case .steady:
-            return "Hold steady at \(BodyMetricFormat.formatted(g.targetValue, unit: unit, imperial: imperial))"
-        }
-    }
 
-    private func dateString(_ date: Date) -> String {
+
+    private static let dateFormatter: DateFormatter = {
         let fmt = DateFormatter()
         fmt.dateStyle = .medium
         fmt.timeStyle = .none
-        return fmt.string(from: date)
+        return fmt
+    }()
+
+    private func dateString(_ date: Date) -> String {
+        Self.dateFormatter.string(from: date)
     }
 
     @ViewBuilder

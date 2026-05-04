@@ -51,6 +51,7 @@
 		D1A22F0F79BBC937DB767432 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34BF1EBB782D2A7D0480080 /* AboutView.swift */; };
 		D2AE5F45C97683158DCF5495 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201B88F975FD649F6561B5B0 /* HistoryView.swift */; };
 		D49F84B241EB4A0420632BD1 /* PeptidePresetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841771287EFD5C384684A851 /* PeptidePresetTests.swift */; };
+		DD5328A56AD3B7C64EED3CC2 /* VialGaugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136D490FCAD317E3CB7EBC00 /* VialGaugeView.swift */; };
 		E4C7874A2CC3F3E5AB845B27 /* AddPeptideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5693C9EE963CE69AB7655F /* AddPeptideView.swift */; };
 		E5F9E5AAA7392992895FF00A /* ConcentrationCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3180C14ADE1B1847F2BB2255 /* ConcentrationCalculatorTests.swift */; };
 		E9E1FD76BEA1ABE8A6A05D53 /* MetricDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10774E3A1DB078C43414D5D5 /* MetricDetailView.swift */; };
@@ -85,6 +86,7 @@
 		028CCDCB0B3E5408FC57DFA0 /* BodyMeasurement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMeasurement.swift; sourceTree = "<group>"; };
 		079C9A5DE7C9EFC9185156FC /* InjectionSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectionSite.swift; sourceTree = "<group>"; };
 		10774E3A1DB078C43414D5D5 /* MetricDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricDetailView.swift; sourceTree = "<group>"; };
+		136D490FCAD317E3CB7EBC00 /* VialGaugeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VialGaugeView.swift; sourceTree = "<group>"; };
 		13E40E4118013F034C6E3E9B /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		178A306A1886C715EF51B0C8 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		201B88F975FD649F6561B5B0 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
@@ -323,6 +325,7 @@
 			children = (
 				BF431A6421D9AFAEE3A68793 /* DoseStepperView.swift */,
 				633AB668A6887F39BBDDA204 /* ToastView.swift */,
+				136D490FCAD317E3CB7EBC00 /* VialGaugeView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -500,6 +503,7 @@
 				92E7DB68F57CCF0AE1AF46AF /* ToastView.swift in Sources */,
 				C0C47889864F61D697921076 /* TodayView.swift in Sources */,
 				516A1E080F6C4BB3A9D5A7A3 /* Vial.swift in Sources */,
+				DD5328A56AD3B7C64EED3CC2 /* VialGaugeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,7 +538,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MyPepTracker;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -547,7 +551,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.1;
+				MARKETING_VERSION = 1.12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.greg.roy.MyPepTracker;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -576,7 +580,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MyPepTracker;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -589,7 +593,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.1;
+				MARKETING_VERSION = 1.12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.greg.roy.MyPepTracker;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

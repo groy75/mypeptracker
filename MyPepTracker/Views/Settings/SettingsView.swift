@@ -3,10 +3,12 @@ import SwiftData
 import UniformTypeIdentifiers
 
 struct SettingsView: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("syringeType") private var syringeType = "insulin"
     @AppStorage("overdueDelayHours") private var overdueDelayHours = 2.0
     @AppStorage("expiryWarningDays") private var expiryWarningDays = 3
     @AppStorage("preferImperial") private var preferImperial = false
+    @AppStorage("healthKitEnabled") private var healthKitEnabled = false
 
     @Query(sort: \DoseEntry.timestamp) private var allDoses: [DoseEntry]
     @Query(sort: \Peptide.name) private var allPeptides: [Peptide]
@@ -14,6 +16,9 @@ struct SettingsView: View {
 
     @State private var showingExportSheet = false
     @State private var exportURL: URL?
+    @State private var showingImportPicker = false
+    @State private var importResult: ImportResult?
+    @State private var showingImportResult = false
 
     var body: some View {
         NavigationStack {
@@ -31,6 +36,23 @@ struct SettingsView: View {
                     Text("Body Measurements")
                 } footer: {
                     Text("Each metric in Body has its own kg/lb or cm/in toggle. This setting only controls the default for metrics you haven't customized.")
+                        .font(.caption2)
+                }
+
+                Section("HealthKit") {
+                    Toggle("Sync to Apple Health", isOn: $healthKitEnabled)
+                        .onChange(of: healthKitEnabled) { _, newValue in
+                            if newValue {
+                                Task {
+                                    let granted = await HealthKitService.shared.requestPermission()
+                                    await MainActor.run {
+                                        healthKitEnabled = granted
+                                    }
+                                }
+                            }
+                        }
+                } footer: {
+                    Text("Writes weight and body fat % measurements to Apple Health.")
                         .font(.caption2)
                 }
 
@@ -55,6 +77,9 @@ struct SettingsView: View {
                     Button("Export as CSV") {
                         exportData(format: .csv)
                     }
+                    Button("Import from JSON or CSV") {
+                        showingImportPicker = true
+                    }
                 }
 
                 Section("Info") {
@@ -75,52 +100,63 @@ struct SettingsView: View {
                     ShareLink(item: url)
                 }
             }
+            .fileImporter(
+                isPresented: $showingImportPicker,
+                allowedContentTypes: [.json, .plainText, .commaSeparatedText],
+                allowsMultipleSelection: false
+            ) { result in
+                handleImport(result: result)
+            }
+            .alert("Import Result", isPresented: $showingImportResult) {
+                Button("OK") {}
+            } message: {
+                if let result = importResult {
+                    Text(result.message)
+                }
+            }
         }
     }
 
-    private enum ExportFormat { case json, csv }
+    private let exportService = ExportService()
+    private let importService = ImportService()
 
     private func exportData(format: ExportFormat) {
-        let dateFormatter = ISO8601DateFormatter()
-        let fileName = "mypeptracker-export-\(dateFormatter.string(from: Date()))"
-
-        var content: String
-        var ext: String
-
-        switch format {
-        case .json:
-            ext = "json"
-            let entries = allDoses.map { dose -> [String: Any] in
-                var dict: [String: Any] = [
-                    "timestamp": dateFormatter.string(from: dose.timestamp),
-                    "doseMcg": dose.doseMcg,
-                    "unitsInjectedML": dose.unitsInjectedML,
-                    "peptide": dose.peptide?.name ?? "Unknown",
-                ]
-                if let site = dose.injectionSite { dict["injectionSite"] = site.rawValue }
-                if let notes = dose.notes { dict["notes"] = notes }
-                return dict
-            }
-            if let data = try? JSONSerialization.data(withJSONObject: entries, options: .prettyPrinted) {
-                content = String(data: data, encoding: .utf8) ?? "[]"
-            } else {
-                content = "[]"
-            }
-
-        case .csv:
-            ext = "csv"
-            var lines = ["timestamp,peptide,doseMcg,unitsInjectedML,injectionSite,notes"]
-            for dose in allDoses {
-                let site = dose.injectionSite?.rawValue ?? ""
-                let notes = dose.notes?.replacingOccurrences(of: ",", with: ";") ?? ""
-                lines.append("\(dateFormatter.string(from: dose.timestamp)),\(dose.peptide?.name ?? "Unknown"),\(dose.doseMcg),\(dose.unitsInjectedML),\(site),\(notes)")
-            }
-            content = lines.joined(separator: "\n")
+        if let url = exportService.export(doses: allDoses, format: format) {
+            exportURL = url
+            showingExportSheet = true
         }
-
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(fileName).\(ext)")
-        try? content.write(to: tempURL, atomically: true, encoding: .utf8)
-        exportURL = tempURL
-        showingExportSheet = true
     }
+
+    private func handleImport(result: Result<[URL], Error>) {
+        do {
+            let urls = try result.get()
+            guard let url = urls.first else { return }
+
+            // Security-scoped resource — start access
+            guard url.startAccessingSecurityScopedResource() else {
+                importResult = ImportResult(success: false, message: "Could not access the selected file.")
+                showingImportResult = true
+                return
+            }
+            defer { url.stopAccessingSecurityScopedResource() }
+
+            let count: Int
+            if url.pathExtension.lowercased() == "json" {
+                count = try importService.importJSON(from: url, into: modelContext)
+            } else {
+                count = try importService.importCSV(from: url, into: modelContext)
+            }
+            importResult = ImportResult(success: true, message: "Imported \(count) dose entries.")
+        } catch let error as ImportError {
+            importResult = ImportResult(success: false, message: error.localizedDescription)
+        } catch {
+            importResult = ImportResult(success: false, message: error.localizedDescription)
+        }
+        showingImportResult = true
+    }
+}
+
+private struct ImportResult {
+    let success: Bool
+    let message: String
 }

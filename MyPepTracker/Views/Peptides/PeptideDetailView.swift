@@ -118,35 +118,14 @@ struct PeptideDetailView: View {
             if !recentDoses.isEmpty {
                 Section("Recent Doses") {
                     ForEach(recentDoses) { dose in
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack {
-                                Text("\(Int(dose.doseMcg)) mcg")
-                                    .font(.body.weight(.medium))
-                                Spacer()
-                                Text(dose.timestamp, style: .relative)
-                                    .font(.caption)
-                                    .foregroundStyle(AppTheme.textSecondary)
+                        DoseEntryRow(entry: dose, showPeptideName: false)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    dosePendingDeletion = dose
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
                             }
-                            if let site = dose.injectionSite {
-                                Text(site.displayName)
-                                    .font(.caption)
-                                    .foregroundStyle(AppTheme.textSecondary)
-                            }
-                            if let notes = dose.notes {
-                                Text(notes)
-                                    .font(.caption)
-                                    .foregroundStyle(AppTheme.textSecondary)
-                                    .italic()
-                            }
-                        }
-                        .padding(.vertical, 2)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                dosePendingDeletion = dose
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        }
                     }
                 }
             }

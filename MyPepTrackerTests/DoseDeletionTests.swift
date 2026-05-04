@@ -5,13 +5,6 @@ import SwiftData
 
 @MainActor
 struct DoseDeletionTests {
-    private func makeContext() throws -> ModelContext {
-        let schema = Schema([Peptide.self, Vial.self, DoseEntry.self])
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [config])
-        return ModelContext(container)
-    }
-
     private func makeTrio(in context: ModelContext, usedML: Double = 0.5, doseML: Double = 0.1) -> (Peptide, Vial, DoseEntry) {
         let peptide = Peptide(name: "Test", defaultDoseMcg: 250, scheduleType: .fixedRecurring, frequency: .daily)
         context.insert(peptide)
@@ -30,7 +23,7 @@ struct DoseDeletionTests {
     }
 
     @Test func deletingDoseRollsBackVialVolume() throws {
-        let context = try makeContext()
+        let context = try makeInMemoryContext()
         let (_, vial, dose) = makeTrio(in: context, usedML: 0.5, doseML: 0.1)
         try context.save()
 
@@ -48,7 +41,7 @@ struct DoseDeletionTests {
     }
 
     @Test func deletingDoseClampsUsedVolumeToZero() throws {
-        let context = try makeContext()
+        let context = try makeInMemoryContext()
         // Simulate out-of-sync state: dose volume exceeds recorded usage
         let (_, vial, dose) = makeTrio(in: context, usedML: 0.05, doseML: 0.1)
         try context.save()
@@ -61,7 +54,7 @@ struct DoseDeletionTests {
     }
 
     @Test func deletingDoseWithoutVialIsSafe() throws {
-        let context = try makeContext()
+        let context = try makeInMemoryContext()
         let peptide = Peptide(name: "Test", defaultDoseMcg: 250, scheduleType: .fixedRecurring, frequency: .daily)
         context.insert(peptide)
         let dose = DoseEntry(doseMcg: 250, unitsInjectedML: 0.1)

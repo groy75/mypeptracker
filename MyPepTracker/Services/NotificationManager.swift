@@ -1,5 +1,6 @@
 import Foundation
 import UserNotifications
+import SwiftData
 
 final class NotificationManager: @unchecked Sendable {
     static let shared = NotificationManager()
@@ -51,7 +52,7 @@ final class NotificationManager: @unchecked Sendable {
 
         case .fixedRecurring:
             let calendar = Calendar.current
-            let now = Date()
+            let now = DateProviderRegistry.now()
 
             // If specific weekdays are set (e.g., Mon/Wed/Fri), find the next matching day
             if let days = scheduleDays, !days.isEmpty, let time = scheduledTime {
@@ -111,6 +112,7 @@ final class NotificationManager: @unchecked Sendable {
     func scheduleDoseReminder(for peptide: Peptide) {
         let id = Self.doseReminderID(peptideNotificationID: peptide.notificationID)
         center.removePendingNotificationRequests(withIdentifiers: [id])
+        syncWidget()
 
         guard let nextDate = Self.nextDoseDate(
             scheduleType: peptide.scheduleType,
@@ -169,8 +171,9 @@ final class NotificationManager: @unchecked Sendable {
         let id = Self.vialExpiryID(peptideNotificationID: peptide.notificationID)
         center.removePendingNotificationRequests(withIdentifiers: [id])
 
-        let warningDate = Calendar.current.date(byAdding: .day, value: -warningDays, to: vial.expiryDate)!
-        guard warningDate > Date() else { return }
+        guard let warningDate = Calendar.current.date(byAdding: .day, value: -warningDays, to: vial.expiryDate) else { return }
+
+        guard warningDate > DateProviderRegistry.now() else { return }
 
         let content = UNMutableNotificationContent()
         content.title = "\(peptide.name) vial expiring"
@@ -229,6 +232,16 @@ final class NotificationManager: @unchecked Sendable {
             if let vial = peptide.activeVial {
                 scheduleVialExpiryWarning(for: peptide, vial: vial)
             }
+        }
+        WidgetSyncService.shared.syncNextDose(peptides: peptides)
+    }
+
+    private func syncWidget() {
+        Task { @MainActor in
+            let context = MyPepTrackerApp.sharedContainer?.mainContext
+            guard let context else { return }
+            let peptides = (try? context.fetch(FetchDescriptor<Peptide>())) ?? []
+            WidgetSyncService.shared.syncNextDose(peptides: peptides)
         }
     }
 

@@ -3,6 +3,10 @@ import SwiftData
 
 @main
 struct MyPepTrackerApp: App {
+    /// Shared container reference for services that need context access
+    /// (e.g. WidgetSyncService from NotificationManager).
+    static var sharedContainer: ModelContainer?
+
     private let container: ModelContainer = {
         let schema = Schema([Peptide.self, Vial.self, DoseEntry.self, BodyMeasurement.self, BodyMetricGoal.self])
 
@@ -17,9 +21,13 @@ struct MyPepTrackerApp: App {
         }
         #endif
 
-        let config = ModelConfiguration()
+        let config = ModelConfiguration(
+            cloudKitDatabase: .automatic
+        )
         // swiftlint:disable:next force_try
-        return try! ModelContainer(for: schema, configurations: config)
+        let container = try! ModelContainer(for: schema, configurations: config)
+        Self.sharedContainer = container
+        return container
     }()
 
     var body: some Scene {

@@ -70,6 +70,8 @@ struct LogMeasurementView: View {
         }
     }
 
+    @AppStorage("healthKitEnabled") private var healthKitEnabled = false
+
     private func save() {
         guard let input = Double(inputValue) else { return }
         let siValue = BodyMetricFormat.storage(input, unit: metric.unit, imperial: preferImperial)
@@ -80,7 +82,19 @@ struct LogMeasurementView: View {
             notes: notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : notes
         )
         context.insert(entry)
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            appState.showToast("Save failed — please try again.")
+            return
+        }
+
+        if healthKitEnabled {
+            Task {
+                await HealthKitService.shared.write(metric: metric, value: siValue, date: timestamp)
+            }
+        }
+
         appState.showToast("\(metric.displayName): \(BodyMetricFormat.formatted(siValue, unit: metric.unit, imperial: preferImperial))")
         dismiss()
     }

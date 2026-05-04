@@ -5,11 +5,6 @@ import SwiftData
 
 @MainActor
 struct BodyMeasurementTests {
-    private func makeContext() throws -> ModelContext {
-        let schema = Schema([Peptide.self, Vial.self, DoseEntry.self, BodyMeasurement.self])
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [config])
-        return ModelContext(container)
     }
 
     @Test func storesValueInSI() {
@@ -20,7 +15,7 @@ struct BodyMeasurementTests {
     }
 
     @Test func persistsAndQueriesSortedByDate() throws {
-        let ctx = try makeContext()
+        let ctx = try makeInMemoryContext()
         let base = Date()
         let older = BodyMeasurement(metric: .weight, value: 82.0, timestamp: base.addingTimeInterval(-7 * 86_400))
         let newer = BodyMeasurement(metric: .weight, value: 80.5, timestamp: base)
